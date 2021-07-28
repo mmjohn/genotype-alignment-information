@@ -1,0 +1,41 @@
+########## To do ########## 
+Still need to process:
+    exponential batch 1, 2, 3, 4, and 5  
+
+
+
+
+########## Data processing steps after TACC launcher ########## 
+To find simulation files with zero segregating sites:
+    find . -type f -exec bash -c '[[ $(wc -l < "$1") -lt 56 ]] && echo "$1"' _ '{}' \; > empty_aligns.txt
+
+Remove './' from start of each line:
+    sed -i 's/..//' empty_aligns.txt
+    
+Add script call to all lines:
+    awk '{print "../../fill_empty_align_dup.sh " $0}' empty_aligns.txt > fill_sims.sh
+
+To add empty alignments to missing sims:
+	./fill_sims.sh
+
+Test that all files are the right size again:
+    find . -type f -exec bash -c '[[ $(wc -l < "$1") -lt 56 ]] && echo "$1"' _ '{}' \;
+
+Concatenate all individiual runs together:
+    cat exp_batch5_sim*.txt > exp_pop_sims_batch5.txt
+
+Compress and remove individual files:
+    tar -czf exp_sims_batch5.tar.gz exp_batch5_sim*.txt 
+
+    rm exp_batch5_sim*.txt
+
+
+
+
+########## Notes ########## 
+Large file locations:
+    /work2/05072/mmjohn/stampede2/rho_cnn_msprime/equilibrium_sims/
+    /scratch/05072/mmjohn/rho_cnn_msp/equilibrium_msprime/equilibrium_sims_full.txt
+
+
+    mmj2238@wilkstor01.ccbb.utexas.edu:/stor/work/Wilke/mmj2238/rho_cnn_data/raw/
