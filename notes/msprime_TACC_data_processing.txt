@@ -11,9 +11,15 @@ To find simulation files with zero segregating sites:
 
 Remove './' from start of each line:
     sed -i 's/..//' empty_aligns.txt
+
+Remove files that aren't simulations:
+    cat empty_aligns.txt | grep "^n" > empty_aligns_pruned.txt
     
 Add script call to all lines:
-    awk '{print "../../fill_empty_align_dup.sh " $0}' empty_aligns.txt > fill_sims.sh
+    awk '{print "../../fill_empty_align_dup.sh " $0}' empty_aligns_pruned.txt > fill_sims.sh
+    
+Make script executable:
+    chmod u+x fill_sims.sh
 
 To add empty alignments to missing sims:
 	./fill_sims.sh
@@ -22,12 +28,14 @@ Test that all files are the right size again:
     find . -type f -exec bash -c '[[ $(wc -l < "$1") -lt 56 ]] && echo "$1"' _ '{}' \;
 
 Concatenate all individiual runs together:
-    cat exp_batch5_sim*.txt > exp_pop_sims_batch5.txt
+    cat n_100_mu_fixed_sim*.txt > fixed_mu_n_100_sims_all.txt
+
+
 
 Compress and remove individual files:
-    tar -czf exp_sims_batch5.tar.gz exp_batch5_sim*.txt 
+    tar -czf fixed_mu_n_100_sims.tar.gz n_100_mu_fixed_sim*.txt 
 
-    rm exp_batch5_sim*.txt
+    rm n_100_mu_fixed_sim*.txt
 
 
 
