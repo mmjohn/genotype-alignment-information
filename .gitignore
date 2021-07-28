@@ -1,0 +1,16 @@
+# History files
+.Rhistory
+
+# Session data files
+*.RData
+
+# User-specific files
+.Rproj.user
+.Ruserdata
+
+# OS files
+.DS_Store
+
+# Large data files
+*log_*.txt
+*.sh
