@@ -13,8 +13,6 @@ cat("\nConfiguring environment.....\n")
 library(purrr)
 library(dplyr)
 library(tidyr)
-library(ggplot2)
-library(cowplot)
 library(readr)
 library(glue)
 
@@ -82,6 +80,39 @@ vary_pop <- function(index, path, sim_ne, filename, ...){
 
 
 # generate script for different population sizes
+s1_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 50, 
+      filename = 'n_50_mu_fixed' 
+    )
+  )
+
+s2_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 100, 
+      filename = 'n_100_mu_fixed' # updated to use with launcher on TACC
+    )
+  )
+
+s3_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 500, 
+      filename = 'n_500_mu_fixed' # updated to use with launcher on TACC
+    )
+  )
+
 small_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
@@ -90,6 +121,28 @@ small_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       path = path_to_data_TACC,
       sim_ne = 1000, 
       filename = 'n_1000_mu_fixed' # updated to use with launcher on TACC
+    )
+  )
+
+m1_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 2000,
+      filename = 'n_2000_mu_fixed' 
+    )
+  )
+
+m2_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 5000,
+      filename = 'n_5000_mu_fixed' 
     )
   )
 
@@ -116,8 +169,23 @@ large_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
   )
 
 # update function call for TACC only
+s1_n_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> s1_n_set_tidy$call
+
+s2_n_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> s2_n_set_tidy$call
+
+s3_n_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> s3_n_set_tidy$call
+
 small_n_set_tidy$call %>% 
   stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> small_n_set_tidy$call
+
+m1_n_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> m1_n_set_tidy$call
+
+m2_n_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> m2_n_set_tidy$call
 
 med_n_set_tidy$call %>% 
   stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> med_n_set_tidy$call
@@ -127,12 +195,67 @@ large_n_set_tidy$call %>%
 
 
 # write to bash shell script
+s1_n_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_s1_n.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+s2_n_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_s2_n.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+s3_n_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_s3_n.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
 small_n_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
     #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
     'msprime_small_n.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+m1_n_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_m1_n.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+m2_n_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_m2_n.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -208,6 +331,28 @@ vary_mu <- function(index, path, sim_mu, filename, ...){
 }
 
 # generate script for populations with low mutation
+l1_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_mu = 1.5-11,
+      filename = 'mu_l1_n_fixed' # updated to use with launcher on TACC
+    )
+  )
+
+l2_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_mu = 1.5-10,
+      filename = 'mu_l2_n_fixed' # updated to use with launcher on TACC
+    )
+  )
+
 low_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
@@ -216,6 +361,17 @@ low_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       path = path_to_data_TACC,
       sim_mu = 1.5-9,
       filename = 'mu_low_n_fixed' # updated to use with launcher on TACC
+    )
+  )
+
+lm1_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_mu = 0.5-8,
+      filename = 'mu_m1_n_fixed' # updated to use with launcher on TACC
     )
   )
 
@@ -243,8 +399,17 @@ high_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
 
 
 # update function call for TACC only
+l1_mu_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> l1_mu_set_tidy$call
+
+l2_mu_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> l2_mu_set_tidy$call
+
 low_mu_set_tidy$call %>% 
   stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> low_mu_set_tidy$call
+
+lm1_mu_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> lm1_mu_set_tidy$call
 
 med_mu_set_tidy$call %>% 
   stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> med_mu_set_tidy$call
@@ -254,12 +419,48 @@ high_mu_set_tidy$call %>%
 
 
 # write to bash shell script
+l1_mu_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
+    'msprime_l1_mu.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+l2_mu_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
+    'msprime_l2_mu.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
 low_mu_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
     #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
     'msprime_low_mu.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+lm1_mu_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
+    'msprime_lm1_mu.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
