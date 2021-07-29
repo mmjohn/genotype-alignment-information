@@ -337,7 +337,7 @@ l1_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5-11,
+      sim_mu = 1.5e-11,
       filename = 'mu_l1_n_fixed' # updated to use with launcher on TACC
     )
   )
@@ -348,7 +348,7 @@ l2_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5-10,
+      sim_mu = 1.5e-10,
       filename = 'mu_l2_n_fixed' # updated to use with launcher on TACC
     )
   )
@@ -359,7 +359,7 @@ low_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5-9,
+      sim_mu = 1.5e-9,
       filename = 'mu_low_n_fixed' # updated to use with launcher on TACC
     )
   )
@@ -370,7 +370,7 @@ lm1_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 0.5-8,
+      sim_mu = 0.5e-8,
       filename = 'mu_m1_n_fixed' # updated to use with launcher on TACC
     )
   )
@@ -381,7 +381,7 @@ med_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5-8,
+      sim_mu = 1.5e-8,
       filename = 'mu_med_n_fixed' # updated to use with launcher on TACC
     )
   )
@@ -392,7 +392,7 @@ high_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>%
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5-7,
+      sim_mu = 1.5e-7,
       filename = 'mu_high_n_fixed' # updated to use with launcher on TACC
     )
   )
