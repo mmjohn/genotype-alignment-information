@@ -21,9 +21,6 @@ library(devtools)
 #devtools::load_all("/Users/mackenziejohnson/Documents/grad_school/wilke_lab/popgencnn")
 devtools::load_all("/stor/home/mmj2238/popgencnn/")
 
-# check that the right environment loaded
-reticulate::py_config()
-
 # record session info
 sessionInfo()
 
@@ -34,55 +31,53 @@ num_sims <- 20000
 
 # paths to data
 path_to_raw <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/dup_analysis/'
-path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
+path_to_parsed <- '/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/'
 
 # filenames
-s1_n <- 'fixed_mu_n_50_sims_all.txt'
-s2_n <- 'fixed_mu_n_100_sims_all.txt'
-s3_n <- 'fixed_mu_n_500_sims_all.txt'
-s_n <- 'fixed_mu_n_1000_sims_all.txt'
-m1_n <- 'fixed_mu_n_2000_sims_all.txt'
-m2_n <- 'fixed_mu_n_5000_sims_all.txt'
-m_n <- 'fixed_mu_n_10000_sims_all.txt'
-l_n <- 'fixed_mu_n_50000_sims_all.txt'
+n_s1 <- 'fixed_mu_n_50_sims_all.txt'
+n_s2 <- 'fixed_mu_n_100_sims_all.txt'
+n_s3 <- 'fixed_mu_n_500_sims_all.txt'
+n_s <- 'fixed_mu_n_1000_sims_all.txt'
+n_m1 <- 'fixed_mu_n_2000_sims_all.txt'
+n_m2 <- 'fixed_mu_n_5000_sims_all.txt'
+n_m <- 'fixed_mu_n_10000_sims_all.txt'
+n_l <- 'fixed_mu_n_50000_sims_all.txt'
 
-l1_mu <- 'fixed_n_mu_l1_sims_all.txt'
-l1_mu <- 'fixed_n_mu_l2_sims_all.txt'
-l_mu <- 'fixed_n_low_mu_sims_all.txt'
-m1_mu <- 'fixed_n_mu_m1_sims_all.txt'
-m_mu <- 'fixed_n_med_mu_sims_all.txt'
-h_mu <- 'fixed_n_high_mu_sims_all.txt'
+mu_l1 <- 'fixed_n_mu_l1_sims_all.txt'
+mu_l2 <- 'fixed_n_mu_l2_sims_all.txt'
+mu_l <- 'fixed_n_low_mu_sims_all.txt'
+mu_m1 <- 'fixed_n_mu_m1_sims_all.txt'
+mu_m <- 'fixed_n_med_mu_sims_all.txt'
+mu_h <- 'fixed_n_high_mu_sims_all.txt'
 
 # size of alignments
 num_chrom <- 50
 
-# max_size - need to use one standard size for consistency across training and test sets
-max_size <- 400 
 
 #--------------- READ IN DATA --------------------
 Sys.time()
 cat("\nReading in data.....\n")
 
 # read in data for set a
-sm1_pop <- readLines(glue('{path_to_raw}{s1_n}'))
-sm2_pop <- readLines(glue('{path_to_raw}{s2_n}'))
-sm3_pop <- readLines(glue('{path_to_raw}{s3_n}'))
-small_pop <- readLines(glue('{path_to_raw}{s_n}'))
-m1_pop <- readLines(glue('{path_to_raw}{m1_n}'))
-m2_pop <- readLines(glue('{path_to_raw}{m2_n}'))
-medium_pop <- readLines(glue('{path_to_raw}{m_n}'))
-large_pop <- readLines(glue('{path_to_raw}{l_n}'))
+sm1_pop <- readLines(glue('{path_to_raw}{n_s1}'))
+sm2_pop <- readLines(glue('{path_to_raw}{n_s2}'))
+sm3_pop <- readLines(glue('{path_to_raw}{n_s3}'))
+small_pop <- readLines(glue('{path_to_raw}{n_s}'))
+m1_pop <- readLines(glue('{path_to_raw}{n_m1}'))
+m2_pop <- readLines(glue('{path_to_raw}{n_m2}'))
+medium_pop <- readLines(glue('{path_to_raw}{n_m}'))
+large_pop <- readLines(glue('{path_to_raw}{n_l}'))
 
 # read in data for set b
-lo1_mu <- readLines(glue('{path_to_raw}{l1_mu}'))
-lo2_mu <- readLines(glue('{path_to_raw}{l2_mu}'))
-low_mu <- readLines(glue('{path_to_raw}{l_mu}'))
-me1_mu <- readLines(glue('{path_to_raw}{m1_mu}'))
-medium_mu <- readLines(glue('{path_to_raw}{m_mu}'))
-high_mu <- readLines(glue('{path_to_raw}{h_mu}'))
+lo1_mu <- readLines(glue('{path_to_raw}{mu_l1}'))
+lo2_mu <- readLines(glue('{path_to_raw}{mu_l2}'))
+low_mu <- readLines(glue('{path_to_raw}{mu_l}'))
+me1_mu <- readLines(glue('{path_to_raw}{mu_m1}'))
+medium_mu <- readLines(glue('{path_to_raw}{mu_m}'))
+high_mu <- readLines(glue('{path_to_raw}{mu_h}'))
 
-rm(s1_n, s2_n, s3_n, s_n, m1_n, m2_n, m_n, l_n, 
-   l1_mu, l2_mu, l_mu, m1_mu, m_mu, l_mu)
+rm(n_s1, n_s2, n_s, n_m1, n_m2, n_m, n_l)
+rm(mu_l1, mu_l2, mu_l, mu_m1, mu_m, mu_h)
 
 
 #--------------- PARSE DATA (ALIGNMENTS AND RHOS) --------------------
@@ -90,11 +85,19 @@ Sys.time()
 cat("\nParsing data.....\n")
 
 # read in alignments
+sm1_pop_unsorted <- get_alignment_data(sm1_pop)
+sm2_pop_unsorted <- get_alignment_data(sm2_pop)
+sm3_pop_unsorted <- get_alignment_data(sm3_pop)
 sm_pop_unsorted <- get_alignment_data(small_pop)
+md1_pop_unsorted <- get_alignment_data(m1_pop)
+md2_pop_unsorted <- get_alignment_data(m2_pop)
 md_pop_unsorted <- get_alignment_data(medium_pop)
 lg_pop_unsorted <- get_alignment_data(large_pop)
 
+lw1_mu_unsorted <- get_alignment_data(lo1_mu)
+lw2_mu_unsorted <- get_alignment_data(lo2_mu)
 lw_mu_unsorted <- get_alignment_data(low_mu)
+md1_mu_unsorted <- get_alignment_data(me1_mu)
 md_mu_unsorted <- get_alignment_data(medium_mu)
 hg_mu_unsorted <- get_alignment_data(high_mu)
 
@@ -126,24 +129,52 @@ get_rho_msp <- function(all_data) {
   
 }
 
+sm1_pop_rho <- get_rho_msp(sm1_pop)
+sm2_pop_rho <- get_rho_msp(sm2_pop)
+sm3_pop_rho <- get_rho_msp(sm3_pop)
 small_pop_rho <- get_rho_msp(small_pop)
+med1_pop_rho <- get_rho_msp(m1_pop)
+med2_pop_rho <- get_rho_msp(m2_pop)
 med_pop_rho <- get_rho_msp(medium_pop)
 large_pop_rho <- get_rho_msp(large_pop)
 
+lo1_mu_rho <- get_rho_msp(lo1_mu)
+lo2_mu_rho <- get_rho_msp(lo2_mu)
 low_mu_rho <- get_rho_msp(low_mu)
+me1_mu_rho <- get_rho_msp(me1_mu)
 med_mu_rho <- get_rho_msp(medium_mu)
 high_mu_rho <- get_rho_msp(high_mu)
 
 # remove full data set
-rm(small_pop, medium_pop, large_pop, low_mu, medium_mu, high_mu)
+rm(sm1_pop, sm2_pop, sm3_pop, small_pop, m1_pop, m2_pop, medium_pop, large_pop)
+rm(lo1_mu, lo2_mu, low_mu, me1_mu, medium_mu, high_mu)
 
 
 #--------------- SAVE DATA SETS --------------------
 
 save(
-  dup_df, rho_df, 
-  file = glue('{path_to_results}dup_analysis_results.RData')
+  sm1_pop_unsorted, sm2_pop_unsorted, sm3_pop_unsorted,
+  sm_pop_unsorted, md1_pop_unsorted, md2_pop_unsorted, 
+  md_pop_unsorted, lg_pop_unsorted, 
+  file = glue('{path_to_parsed}fixed_mu_vary_n_align.RData')
 )
 
+save(
+  sm1_pop_rho, sm2_pop_rho, sm3_pop_rho, small_pop_rho, 
+  med1_pop_rho, med2_pop_rho, med_pop_rho, large_pop_rho,
+  file = glue('{path_to_parsed}fixed_mu_vary_n_rho.RData')
+)
+
+save(
+  lw1_mu_unsorted, lw2_mu_unsorted, lw_mu_unsorted, 
+  md1_mu_unsorted, md_mu_unsorted, hg_mu_unsorted,
+  file = glue('{path_to_parsed}fixed_n_vary_mu_align.RData')
+)
+
+save(
+  lo1_mu_rho, lo2_mu_rho, low_mu_rho, 
+  me1_mu_rho, med_mu_rho, high_mu_rho,
+  file = glue('{path_to_parsed}fixed_n_vary_mu_rho.RData')
+)
 
 
