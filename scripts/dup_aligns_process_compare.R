@@ -42,7 +42,24 @@ num_sims <- 20000
 
 # paths to data
 path_to_raw <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/dup_analysis/'
-path_to_results <- "/stor/home/mmj2238/bio-cnns/code/recombination/results/"
+path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
+
+# filenames
+s1_n <- 'fixed_mu_n_50_sims_all.txt'
+s2_n <- 'fixed_mu_n_100_sims_all.txt'
+s3_n <- 'fixed_mu_n_500_sims_all.txt'
+s_n <- 'fixed_mu_n_1000_sims_all.txt'
+m1_n <- 'fixed_mu_n_2000_sims_all.txt'
+m2_n <- 'fixed_mu_n_5000_sims_all.txt'
+m_n <- 'fixed_mu_n_10000_sims_all.txt'
+l_n <- 'fixed_mu_n_50000_sims_all.txt'
+
+l1_mu <- 'fixed_n_mu_l1_sims_all.txt'
+l1_mu <- 'fixed_n_mu_l2_sims_all.txt'
+l_mu <- 'fixed_n_low_mu_sims_all.txt'
+m1_mu <- 'fixed_n_mu_m1_sims_all.txt'
+m_mu <- 'fixed_n_med_mu_sims_all.txt'
+h_mu <- 'fixed_n_high_mu_sims_all.txt'
 
 # size of alignments
 num_chrom <- 50
@@ -55,15 +72,25 @@ Sys.time()
 cat("\nReading in data.....\n")
 
 # read in data for set a
-small_pop <- readLines(glue('{path_to_raw}fixed_mu_n_1000_sims_all.txt'))
-medium_pop <- readLines(glue('{path_to_raw}fixed_mu_n_10000_sims_all.txt'))
-large_pop <- readLines(glue('{path_to_raw}fixed_mu_n_50000_sims_all.txt'))
+sm1_pop <- readLines(glue('{path_to_raw}{s1_n}'))
+sm2_pop <- readLines(glue('{path_to_raw}{s2_n}'))
+sm3_pop <- readLines(glue('{path_to_raw}{s3_n}'))
+small_pop <- readLines(glue('{path_to_raw}{s_n}'))
+m1_pop <- readLines(glue('{path_to_raw}{m1_n}'))
+m2_pop <- readLines(glue('{path_to_raw}{m2_n}'))
+medium_pop <- readLines(glue('{path_to_raw}{m_n}'))
+large_pop <- readLines(glue('{path_to_raw}{l_n}'))
 
 # read in data for set b
-low_mu <- readLines(glue('{path_to_raw}fixed_n_low_mu_sims_all.txt'))
-medium_mu <- readLines(glue('{path_to_raw}fixed_n_med_mu_sims_all.txt'))
-high_mu <- readLines(glue('{path_to_raw}fixed_n_high_mu_sims_all.txt'))
+lo1_mu <- readLines(glue('{path_to_raw}{l1_mu}'))
+lo2_mu <- readLines(glue('{path_to_raw}{l2_mu}'))
+low_mu <- readLines(glue('{path_to_raw}{l_mu}'))
+me1_mu <- readLines(glue('{path_to_raw}{m1_mu}'))
+medium_mu <- readLines(glue('{path_to_raw}{m_mu}'))
+high_mu <- readLines(glue('{path_to_raw}{h_mu}'))
 
+rm(s1_n, s2_n, s3_n, s_n, m1_n, m2_n, m_n, l_n, 
+   l1_mu, l2_mu, l_mu, m1_mu, m_mu, l_mu)
 
 #--------------- PARSE DATA (ALIGNMENTS AND RHOS) --------------------
 Sys.time()
