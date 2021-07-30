@@ -1,7 +1,7 @@
 #!/stor/system/opt/R/R-3.6.1/bin/Rscript
 
 # Comparisons of msprime simulation under different parameter conditions
-# This script: parses simulation data and compares all alignments to find duplicates
+# This script: pre-processing steps on alignment data and compares all alignments to find duplicates
 # Mackenzie M. Johnson
 # July 2021 
 
@@ -14,9 +14,6 @@ cat("\nConfiguring environment.....\n")
 library(purrr)
 library(dplyr)
 library(tidyr)
-library(ggplot2)
-library(cowplot)
-library(ggtext)
 library(glue)
 library(reticulate)
 # call the conda environment that has keras and tensorflow installed
@@ -41,25 +38,8 @@ sessionInfo()
 num_sims <- 20000     
 
 # paths to data
-path_to_raw <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/dup_analysis/'
+path_to_data <- '/stor/work/Wilke/mmj2238/rho_cnn_data/PARSED'
 path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
-
-# filenames
-s1_n <- 'fixed_mu_n_50_sims_all.txt'
-s2_n <- 'fixed_mu_n_100_sims_all.txt'
-s3_n <- 'fixed_mu_n_500_sims_all.txt'
-s_n <- 'fixed_mu_n_1000_sims_all.txt'
-m1_n <- 'fixed_mu_n_2000_sims_all.txt'
-m2_n <- 'fixed_mu_n_5000_sims_all.txt'
-m_n <- 'fixed_mu_n_10000_sims_all.txt'
-l_n <- 'fixed_mu_n_50000_sims_all.txt'
-
-l1_mu <- 'fixed_n_mu_l1_sims_all.txt'
-l1_mu <- 'fixed_n_mu_l2_sims_all.txt'
-l_mu <- 'fixed_n_low_mu_sims_all.txt'
-m1_mu <- 'fixed_n_mu_m1_sims_all.txt'
-m_mu <- 'fixed_n_med_mu_sims_all.txt'
-h_mu <- 'fixed_n_high_mu_sims_all.txt'
 
 # size of alignments
 num_chrom <- 50
@@ -71,78 +51,8 @@ max_size <- 400
 Sys.time()
 cat("\nReading in data.....\n")
 
-# read in data for set a
-sm1_pop <- readLines(glue('{path_to_raw}{s1_n}'))
-sm2_pop <- readLines(glue('{path_to_raw}{s2_n}'))
-sm3_pop <- readLines(glue('{path_to_raw}{s3_n}'))
-small_pop <- readLines(glue('{path_to_raw}{s_n}'))
-m1_pop <- readLines(glue('{path_to_raw}{m1_n}'))
-m2_pop <- readLines(glue('{path_to_raw}{m2_n}'))
-medium_pop <- readLines(glue('{path_to_raw}{m_n}'))
-large_pop <- readLines(glue('{path_to_raw}{l_n}'))
+# load data
 
-# read in data for set b
-lo1_mu <- readLines(glue('{path_to_raw}{l1_mu}'))
-lo2_mu <- readLines(glue('{path_to_raw}{l2_mu}'))
-low_mu <- readLines(glue('{path_to_raw}{l_mu}'))
-me1_mu <- readLines(glue('{path_to_raw}{m1_mu}'))
-medium_mu <- readLines(glue('{path_to_raw}{m_mu}'))
-high_mu <- readLines(glue('{path_to_raw}{h_mu}'))
-
-rm(s1_n, s2_n, s3_n, s_n, m1_n, m2_n, m_n, l_n, 
-   l1_mu, l2_mu, l_mu, m1_mu, m_mu, l_mu)
-
-#--------------- PARSE DATA (ALIGNMENTS AND RHOS) --------------------
-Sys.time()
-cat("\nParsing data.....\n")
-
-# read in alignments
-sm_pop_unsorted <- get_alignment_data(small_pop)
-md_pop_unsorted <- get_alignment_data(medium_pop)
-lg_pop_unsorted <- get_alignment_data(large_pop)
-
-lw_mu_unsorted <- get_alignment_data(low_mu)
-md_mu_unsorted <- get_alignment_data(medium_mu)
-hg_mu_unsorted <- get_alignment_data(high_mu)
-
-# read in rhos
-
-# read in rho value (y)  
-#get_rho_data() not working - NEED TO MOVE NEW FUNCTION TO PACKAGE
-get_rho_msp <- function(all_data) {
-  
-  # define pattern
-  y_pattern <- "^.*-r"
-  # get relevant line numbers
-  y_linenum <- which(grepl(y_pattern, all_data))
-  # read those lines
-  y_lines <- all_data[y_linenum]
-  # extract just the rho value
-  y_vec_rho <- y_lines %>%
-    dplyr::tibble() %>%
-    tidyr::extract(., ., "(.* --recombination) (.*)",
-                   into = c("sim", "keep")) %>%
-    dplyr::select(keep) %>%
-    tidyr::extract(., keep, "(.*) (20001)",
-                   into = c("rho", "constant")) %>%
-    dplyr::pull(rho)
-  # convert to numeric
-  y_data_rho <- as.double(y_vec_rho)
-  # return
-  return(y_data_rho)
-  
-}
-
-small_pop_rho <- get_rho_msp(small_pop)
-med_pop_rho <- get_rho_msp(medium_pop)
-large_pop_rho <- get_rho_msp(large_pop)
-
-low_mu_rho <- get_rho_msp(low_mu)
-med_mu_rho <- get_rho_msp(medium_mu)
-high_mu_rho <- get_rho_msp(high_mu)
-
-# remove full data set
-rm(small_pop, medium_pop, large_pop, low_mu, medium_mu, high_mu)
 
 
 #--------------- SORT ALIGNMENTS --------------------
@@ -427,6 +337,7 @@ fixed_n_vary_mu <- tibble(
 
 rm(lw_mu_padded, md_mu_padded, hg_mu_padded)
 
+
 #--------------- TIDY DATA SETS --------------------
 
 # fixed_mu_vary_n <- tibble(
@@ -504,121 +415,6 @@ rho_df %>%
 save(
   dup_df, rho_df, 
   file = glue('{path_to_results}dup_analysis_results.RData')
-)
-
-#--------------- FIGURES --------------------
-
-# figures for duplicates on n vs mu parameter sets
-dup_df %>% 
-  filter(set == "fixed_mu") %>% 
-  ggplot(aes(x = pop_size, y = prop_dup*100)) +
-  geom_vline(xintercept = 1000, linetype = "dashed", color = "grey") +
-  geom_vline(xintercept = 2000, linetype = "dashed", color = "grey") +
-  geom_vline(xintercept = 5000, linetype = "dashed", color = "grey") +
-  geom_vline(xintercept = 10000, linetype = "dashed", color = "grey") +
-  geom_vline(xintercept = 15000, linetype = "dashed", color = "grey") +
-  geom_vline(xintercept = 20000, linetype = "dashed", color = "grey") +
-  geom_vline(xintercept = 50000, linetype = "dashed", color = "grey") +
-  geom_point() +
-  geom_path() +
-  scale_x_log10() +
-  labs( 
-    x = "*N*",
-    y = "Percent duplicated (%)"
-  ) +
-  theme_half_open() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown()
-  ) -> fig_dup_n
-
-fig_dup_n
-
-dup_df %>% 
-  filter(set == "fixed_n") %>% 
-  ggplot(aes(x = mut_rate, y = prop_dup*100)) +
-  geom_vline(xintercept = 1.5e-8, linetype = "dashed", color = "grey") +
-  geom_point() +
-  geom_path() +
-  scale_x_log10() +
-  labs(
-    x = "&mu;", 
-    y = "Percent duplicated (%)"
-  ) +
-  theme_half_open() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown()
-  ) -> fig_dup_mu
-
-fig_dup_mu
-
-plot_grid(
-  fig_dup_n, fig_dup_mu,
-  nrow = 2,
-  align = "v"
-) -> fig_dup_n_mu
-
-fig_dup_n_mu
-
-# figure for rho values of parameter sets
-rho_df %>% 
-  filter(set == "fixed_mu") %>% 
-  ggplot(aes(x = as.factor(pop_size), y = rho)) +
-  geom_violin() +
-  #facet_grid(vars(set)) +
-  coord_flip() +
-  labs(
-    x = "*N*",
-    y = "&rho;"
-  ) +
-  theme_bw() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown()
-  ) -> fig_rho_n
-
-fig_rho_n
-
-rho_df %>% 
-  filter(set == "fixed_n") %>% 
-  ggplot(aes(x = as.factor(mut_rate), y = rho)) +
-  geom_violin() +
-  #facet_grid(vars(set)) +
-  coord_flip() +
-  scale_y_continuous(limits = c(0, 4000)) +
-  labs(
-    x = "&mu;",
-    y = "&rho;"
-  ) +
-  theme_bw() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown()
-  ) -> fig_rho_mu
-
-fig_rho_mu
-
-plot_grid(
-  fig_rho_n, fig_rho_mu,
-  nrow = 2,
-  align = "v"
-) -> fig_rho_n_mu
-
-fig_rho_n_mu
-
-#--------------- SAVE FIGURES --------------------
-
-save_plot(
-  glue('{path_to_results}tmpfigs/fig_dup_by_param.png'), 
-  fig_dup_n_mu, ncol = 1, nrow = 1, base_height = 5.71,
-  base_asp = 1.618, base_width = NULL
-)
-
-save_plot(
-  glue('{path_to_results}tmpfigs/fig_rho_by_param.png'), 
-  fig_rho_n_mu, ncol = 1, nrow = 1, base_height = 3.71,
-  base_asp = 1.618, base_width = NULL
 )
 
 
