@@ -38,7 +38,7 @@ sessionInfo()
 num_sims <- 20000     
 
 # paths to data
-path_to_data <- '/stor/work/Wilke/mmj2238/rho_cnn_data/PARSED'
+path_to_data <- '/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/'
 path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
 
 # size of alignments
@@ -51,103 +51,10 @@ max_size <- 400
 Sys.time()
 cat("\nReading in data.....\n")
 
-# load data
+# load alignments
+load(glue('{path_to_data}fixed_mu_vary_n_align.RData'))
+load(glue('{path_to_data}fixed_n_vary_mu_align.RData'))
 
-
-
-#--------------- SORT ALIGNMENTS --------------------
-Sys.time()
-cat("\nSorting alignments.....\n")
-
-sm_pop_data <- lapply(sm_pop_unsorted, sort_align)
-rm(sm_pop_unsorted)
-
-md_pop_data <- lapply(md_pop_unsorted, sort_align)
-rm(md_pop_unsorted)
-
-lg_pop_data <- lapply(lg_pop_unsorted, sort_align)
-rm(lg_pop_unsorted)
-
-lw_mu_data <- lapply(lw_mu_unsorted, sort_align)
-rm(lw_mu_unsorted)
-
-md_mu_data <- lapply(md_mu_unsorted, sort_align)
-rm(md_mu_unsorted)
-
-hg_mu_data <- lapply(hg_mu_unsorted, sort_align)
-rm(hg_mu_unsorted)
-
-
-#--------------- PAD ALIGNMENTS --------------------
-Sys.time()
-cat("\nPadding alignments.....\n")
-
-# use keras built-in function to pad alignments
-sm_pop_padded <- lapply(
-  sm_pop_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
-
-rm(sm_pop_data)
-
-md_pop_padded <- lapply(
-  md_pop_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
-
-rm(md_pop_data)
-
-lg_pop_padded <- lapply(
-  lg_pop_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
-
-rm(lg_pop_data)
-
-lw_mu_padded <- lapply(
-  lw_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
-
-rm(lw_mu_data)
-
-md_mu_padded <- lapply(
-  md_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
-
-rm(md_mu_data)
-
-hg_mu_padded <- lapply(
-  hg_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
-
-rm(hg_mu_data)
 
 
 #--------------- FIND DUPLICATES --------------------
