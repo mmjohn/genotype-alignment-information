@@ -39,7 +39,15 @@ max_size <- 400
 
 #--------------- LOAD DATA SETS --------------------
 
+# alignment data
+load(glue('{path_to_results}dup_analysis_fixed_mu_align_results.RData'))
+load(glue('{path_to_results}dup_analysis_fixed_n_align_results.RData'))
 
+# join data sets
+dup_df <- full_join(fixed_mu_vary_n, fixed_n_vary_mu)
+
+# rho data
+load(glue('{path_to_results}dup_analysis_rho_results.RData'))
 
 #--------------- FIGURES --------------------
 
