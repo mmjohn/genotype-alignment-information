@@ -1,7 +1,7 @@
 #!/stor/system/opt/R/R-3.6.1/bin/Rscript
 
 # Comparisons of msprime simulation under different parameter conditions
-# This script: pre-processing steps on alignment data and compares all alignments to find duplicates
+# This script: compares all alignments to find duplicates
 # Mackenzie M. Johnson
 # July 2021 
 
@@ -15,19 +15,6 @@ library(purrr)
 library(dplyr)
 library(tidyr)
 library(glue)
-library(reticulate)
-# call the conda environment that has keras and tensorflow installed
-#use_condaenv(condaenv = "r-reticulate", conda = "/home1/05072/mmjohn/.local/share/r-miniconda/conda.exe")
-use_condaenv("r-reticulate", conda = "/stor/home/mmj2238/.local/share/r-miniconda/bin/conda")
-library(keras) 
-
-# load R package
-library(devtools)
-#devtools::load_all("/Users/mackenziejohnson/Documents/grad_school/wilke_lab/popgencnn")
-devtools::load_all("/stor/home/mmj2238/popgencnn/")
-
-# check that the right environment loaded
-reticulate::py_config()
 
 # record session info
 sessionInfo()
@@ -51,20 +38,106 @@ max_size <- 400
 Sys.time()
 cat("\nReading in data.....\n")
 
-# load alignments
-load(glue('{path_to_data}fixed_mu_vary_n_align.RData'))
-load(glue('{path_to_data}fixed_n_vary_mu_align.RData'))
+# load alignments - fixed mu
+load(glue('{path_to_data}fixed_mu_vary_n_align_processed.RData'))
+
+# load alignments - fixed n
+load(glue('{path_to_data}fixed_n_vary_mu_align_processed.RData'))
 
 
 
-#--------------- FIND DUPLICATES --------------------
+#--------------- FIND DUPLICATES - FIXED MU --------------------
 
 Sys.time()
 cat("\nIdentifying duplicates in parameter sets.....\n")
 
 # compare each parameter set
-true_cntr_1 <- 0
-num_dupl_1 <- 0
+true_cntr_sm1 <- 0
+num_dupl_sm1 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        sm1_pop_padded[[i]],
+        sm1_pop_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_sm1 <- true_cntr_sm1 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_sm1 <- num_dupl_sm1 + 1 
+  }
+}
+
+true_cntr_sm1     # 118,657,920
+num_dupl_sm1      # 19,431
+
+rm(does_match, i, j, has_duplicate)
+rm(sm1_pop_padded)
+
+true_cntr_sm2 <- 0
+num_dupl_sm2 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        sm2_pop_padded[[i]],
+        sm2_pop_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_sm2 <- true_cntr_sm2 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_sm2 <- num_dupl_sm2 + 1 
+  }
+}
+
+true_cntr_sm2     # 71,130,698
+num_dupl_sm2      # 18,499
+
+rm(does_match, i, j, has_duplicate)
+rm(sm2_pop_padded)
+
+true_cntr_sm3 <- 0
+num_dupl_sm3 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        sm3_pop_padded[[i]],
+        sm3_pop_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_sm3 <- true_cntr_sm3 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_sm3 <- num_dupl_sm3 + 1 
+  }
+}
+
+true_cntr_sm3     # 1,925,461
+num_dupl_sm3      # 8,209
+
+rm(does_match, i, j, has_duplicate)
+rm(sm3_pop_padded)
+
+true_cntr_sm <- 0
+num_dupl_sm <- 0
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -75,24 +148,80 @@ for (i in 1:20000) {
         sm_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_1 <- true_cntr_1 + 1
+        true_cntr_sm <- true_cntr_sm + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
-    num_dupl_1 <- num_dupl_1 + 1 
+    num_dupl_sm <- num_dupl_sm + 1 
   }
 }
 
-true_cntr_1     # 31,921
-num_dupl_1      # 1,505
-# total_cntr_1    # 199,990,000
+true_cntr_sm     # 31,921
+num_dupl_sm      # 1,505
 
 rm(does_match, i, j, has_duplicate)
+rm(sm_pop_padded)
 
-true_cntr_2 <- 0
-num_dupl_2 <- 0
+true_cntr_md1 <- 0
+num_dupl_md1 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        md1_pop_padded[[i]],
+        md1_pop_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_md1 <- true_cntr_md1 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_md1 <- num_dupl_md1 + 1 
+  }
+}
+
+true_cntr_md1     # 14
+num_dupl_md1      # 11
+
+rm(does_match, i, j, has_duplicate)
+rm(md1_pop_padded)
+
+true_cntr_md2 <- 0
+num_dupl_md2 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        md2_pop_padded[[i]],
+        md2_pop_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_md2 <- true_cntr_md2 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_md2 <- num_dupl_md2 + 1 
+  }
+}
+
+true_cntr_md2     # 0
+num_dupl_md2      # 0
+
+rm(does_match, i, j, has_duplicate)
+rm(md2_pop_padded)
+
+true_cntr_md <- 0
+num_dupl_md <- 0
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -103,23 +232,24 @@ for (i in 1:20000) {
         md_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_2 <- true_cntr_2 + 1
+        true_cntr_md <- true_cntr_md + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
-    num_dupl_2 <- num_dupl_2 + 1 
+    num_dupl_md <- num_dupl_md + 1 
   }
 }
 
-true_cntr_2     # 0
-num_dupl_2      # 0
+true_cntr_md     # 0
+num_dupl_md      # 0
 
 rm(does_match, i, j, has_duplicate)
+rm(md_pop_padded)
 
-true_cntr_3 <- 0
-num_dupl_3 <- 0
+true_cntr_lg <- 0
+num_dupl_lg <- 0
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -130,32 +260,95 @@ for (i in 1:20000) {
         lg_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_3 <- true_cntr_3 + 1
+        true_cntr_lg <- true_cntr_lg + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
-    num_dupl_3 <- num_dupl_3 + 1 
+    num_dupl_lg <- num_dupl_lg + 1 
   }
 }
 
-true_cntr_3     # 0
-num_dupl_3      # 
+true_cntr_lg     # 0
+num_dupl_lg      # 0
  
 rm(does_match, i, j, has_duplicate)
+rm(lg_pop_padded)
 
 fixed_mu_vary_n <- tibble(
-  mut_rate = c(1.5e-8, 1.5e-8, 1.5e-8),
-  pop_size = c(1000, 10000, 50000),
-  num_match = c(true_cntr_1, true_cntr_2, true_cntr_3),
-  total_dupl = c(num_dupl_1, num_dupl_2, num_dupl_3)
+  mut_rate = c(1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8),
+  pop_size = c(50, 100, 500, 1000, 2000, 5000, 10000, 50000),
+  num_match = c(true_cntr_sm1, true_cntr_sm2, true_cntr_sm3,
+                true_cntr_sm, true_cntr_md1, true_cntr_md2,
+                true_cntr_md, true_cntr_lg),
+  total_dupl = c(num_dupl_sm1, num_dupl_sm2, num_dupl_sm3,
+                 num_dupl_sm, num_dupl_md1, num_dupl_md2,
+                 num_dupl_md, num_dupl_lg)
 )
 
-rm(sm_pop_padded, md_pop_padded, lg_pop_padded)
 
-true_cntr_4 <- 0
-num_dupl_4 <- 0
+
+#--------------- FIND DUPLICATES - FIXED N --------------------
+
+true_cntr_lw1 <- 0
+num_dupl_lw1 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        lw1_mu_padded[[i]],
+        lw1_mu_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_lw1 <- true_cntr_lw1 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_lw1 <- num_dupl_lw1 + 1 
+  }
+}
+
+true_cntr_lw1     # 178,525,285
+num_dupl_lw1      # 19,886
+
+rm(does_match, i, j, has_duplicate)
+rm(lw1_mu_padded)
+
+true_cntr_lw2 <- 0
+num_dupl_lw2 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        lw2_mu_padded[[i]],
+        lw2_mu_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_lw2 <- true_cntr_lw2 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_lw2 <- num_dupl_lw2 + 1 
+  }
+}
+
+true_cntr_lw2     # 71595159
+num_dupl_lw2      # 18478
+
+rm(does_match, i, j, has_duplicate)
+rm(lw2_mu_padded)
+
+true_cntr_lw <- 0
+num_dupl_lw <- 0
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -166,23 +359,52 @@ for (i in 1:20000) {
         lw_mu_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_4 <- true_cntr_4 + 1
+        true_cntr_lw <- true_cntr_lw + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
-    num_dupl_4 <- num_dupl_4 + 1 
+    num_dupl_lw <- num_dupl_lw + 1 
   }
 }
 
-true_cntr_4     # 21,897
-num_dupl_4      # 1,170
+true_cntr_lw     # 21,897
+num_dupl_lw      # 1,170
  
 rm(does_match, i, j, has_duplicate)
+rm(lw_mu_padded)
 
-true_cntr_5 <- 0
-num_dupl_5 <- 0
+true_cntr_md1 <- 0
+num_dupl_md1 <- 0
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i > j) {
+      does_match <- identical(
+        md1_mu_padded[[i]],
+        md1_mu_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        true_cntr_md1 <- true_cntr_md1 + 1
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    num_dupl_md1 <- num_dupl_md1 + 1 
+  }
+}
+
+true_cntr_md1     # 0
+num_dupl_md1      # 0
+
+rm(does_match, i, j, has_duplicate)
+rm(md1_mu_padded)
+
+true_cntr_md <- 0
+num_dupl_md <- 0
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -193,23 +415,24 @@ for (i in 1:20000) {
         md_mu_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_5 <- true_cntr_5 + 1
+        true_cntr_md <- true_cntr_md + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
-    num_dupl_5 <- num_dupl_5 + 1 
+    num_dupl_md <- num_dupl_md + 1 
   }
 }
 
-true_cntr_5     # 0
-num_dupl_5
+true_cntr_md     # 0
+num_dupl_md      # 0
 
 rm(does_match, i, j, has_duplicate)
+rm(md_mu_padded)
 
-true_cntr_6 <- 0
-num_dupl_6 <- 0
+true_cntr_hg <- 0
+num_dupl_hg <- 0
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -220,46 +443,34 @@ for (i in 1:20000) {
         hg_mu_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_6 <- true_cntr_6 + 1
+        true_cntr_hg <- true_cntr_hg + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
-    num_dupl_6 <- num_dupl_6 + 1 
+    num_dupl_hg <- num_dupl_hg + 1 
   }
 }
 
-true_cntr_6     # 0
-num_dupl_6      # 0
+true_cntr_hg     # 0
+num_dupl_hg      # 0
 
 rm(does_match, i, j, has_duplicate)
+rm(hg_mu_padded)
 
 fixed_n_vary_mu <- tibble(
-  mut_rate = c(1.5e-9, 1.5e-8, 1.5e-7),
-  pop_size = c(10000, 10000, 10000),
-  num_match = c(true_cntr_4, true_cntr_5, true_cntr_6),
-  total_dupl = c(num_dupl_4, num_dupl_5, num_dupl_6)
+  mut_rate = c(1.5e-11, 1.5e-10, 1.5e-9, 0.5e-8, 1.5e-8, 1.5e-7),
+  pop_size = c(10000, 10000, 10000, 10000, 10000, 10000),
+  num_match = c(true_cntr_lw1, true_cntr_lw2, true_cntr_lw, 
+                true_cntr_md1, true_cntr_md, true_cntr_hg),
+  total_dupl = c(num_dupl_lw1, num_dupl_lw2, num_dupl_lw,
+                 num_dupl_md1, num_dupl_md, num_dupl_hg)
 )
 
-rm(lw_mu_padded, md_mu_padded, hg_mu_padded)
 
 
-#--------------- TIDY DATA SETS --------------------
-
-# fixed_mu_vary_n <- tibble(
-#   mut_rate = c(1.5e-8, 1.5e-8, 1.5e-8),
-#   pop_size = c(1000, 10000, 50000),
-#   num_match = c(31921, 0, 0),
-#   total_dupl = c(1505, 0, 0)
-# )
-# 
-# fixed_n_vary_mu <- tibble(
-#   mut_rate = c(1.5e-9, 1.5e-8, 1.5e-7),
-#   pop_size = c(10000, 10000, 10000),
-#   num_match = c(21897, 0, 0),
-#   total_dupl = c(1170, 0, 0)
-# )
+#--------------- TIDY ALIGN DATA --------------------
 
 fixed_mu_vary_n %>% 
   mutate(
@@ -273,17 +484,43 @@ fixed_n_vary_mu %>%
     prop_dup = total_dupl/20000
   ) -> fixed_n_vary_mu
 
-dup_df <- full_join(fixed_mu_vary_n, fixed_n_vary_mu)
 
+#--------------- SAVE DATA SETS --------------------
+
+save(
+  fixed_mu_vary_n, 
+  file = glue('{path_to_results}dup_analysis_fixed_mu_align_results.RData')
+)
+
+save(
+  fixed_n_vary_mu, 
+  file = glue('{path_to_results}dup_analysis_fixed_n_align_results.RData')
+)
+
+
+#--------------- TIDY RHO DATA --------------------
+# load in rho data
+load(glue('{path_to_data}fixed_mu_vary_n_rho.RData'))
+load(glue('{path_to_data}fixed_n_vary_mu_rho.RData'))
+
+# join data sets
 rho_df <- tibble(
-  small_pop_rho, 
+  sm1_pop_rho,
+  sm2_pop_rho, 
+  sm3_pop_rho,
+  small_pop_rho,
+  med1_pop_rho, 
+  med2_pop_rho,
   med_pop_rho, 
   large_pop_rho,
+  lo1_mu_rho,
+  lo2_mu_rho,
   low_mu_rho,
+  me1_mu_rho,
   med_mu_rho,
   high_mu_rho
 ) %>% pivot_longer(
-  cols = small_pop_rho:high_mu_rho,
+  cols = sm1_pop_rho:high_mu_rho,
   names_to = "param_set",
   values_to = "rho"
 )
@@ -291,37 +528,63 @@ rho_df <- tibble(
 rho_df %>% 
   mutate(
     pop_size = case_when(
+      param_set == "sm1_pop_rho" ~ 50,
+      param_set == "sm2_pop_rho" ~ 100,
+      param_set == "sm3_pop_rho" ~ 500,
       param_set == "small_pop_rho" ~ 1000,
+      param_set == "med1_pop_rho" ~ 2000,
+      param_set == "med2_pop_rho" ~ 5000,
       param_set == "med_pop_rho" ~ 10000,
       param_set == "large_pop_rho" ~ 50000,
-      param_set == "low_mu_rho" | 
+      param_set == "low_mu_rho" |
+        param_set == "lo1_mu_rho" |
+        param_set == "lo2_mu_rho" |
+        param_set == "me1_mu_rho" |
         param_set == "med_mu_rho" | 
         param_set == "high_mu_rho" ~ 10000
     ),
     mut_rate = case_when(
+      param_set == "lo1_mu_rho" ~ 1.5e-11,
+      param_set == "lo2_mu_rho" ~ 1.5e-10,
       param_set == "low_mu_rho" ~ 1.5e-9,
+      param_set == "me1_mu_rho" ~ 0.5e-8,
       param_set == "med_mu_rho" ~ 1.5e-8,
       param_set == "high_mu_rho" ~ 1.5e-7,
-      param_set == "small_pop_rho" | 
+      param_set == "small_pop_rho" |
+        param_set == "sm1_pop_rho" |
+        param_set == "sm2_pop_rho" |
+        param_set == "sm3_pop_rho" |
+        param_set == "med1_pop_rho" |
+        param_set == "med2_pop_rho" |
         param_set == "med_pop_rho" |
         param_set == "large_pop_rho" ~ 1.5e-8,
     ),
     set = case_when(
       param_set == "low_mu_rho" | 
+        param_set == "lo1_mu_rho" | 
+        param_set == "lo2_mu_rho" | 
+        param_set == "me1_mu_rho" |
         param_set == "med_mu_rho" | 
         param_set == "high_mu_rho" ~ "fixed_n",
       param_set == "small_pop_rho" | 
+        param_set == "sm1_pop_rho" | 
+        param_set == "sm2_pop_rho" | 
+        param_set == "sm3_pop_rho" | 
+        param_set == "med1_pop_rho" |
+        param_set == "med2_pop_rho" |
         param_set == "med_pop_rho" |
         param_set == "large_pop_rho" ~ "fixed_mu"
     )
   ) -> rho_df
 
+rho_df$param_set <- as.factor(rho_df$param_set)
+rho_df$set <- as.factor(rho_df$set)
 
 #--------------- SAVE DATA SETS --------------------
 
 save(
-  dup_df, rho_df, 
-  file = glue('{path_to_results}dup_analysis_results.RData')
+  rho_df, 
+  file = glue('{path_to_results}dup_analysis_rho_results.RData')
 )
 
 
