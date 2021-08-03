@@ -52,8 +52,9 @@ Sys.time()
 cat("\nIdentifying duplicates in parameter sets.....\n")
 
 # compare each parameter set
-true_cntr_sm1 <- 0
+#true_cntr_sm1 <- 0
 num_dupl_sm1 <- 0
+sm1_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -64,24 +65,28 @@ for (i in 1:20000) {
         sm1_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_sm1 <- true_cntr_sm1 + 1
+        #true_cntr_sm1 <- true_cntr_sm1 + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_sm1 <- num_dupl_sm1 + 1 
+    sm1_index <- c(sm1_index, i)
   }
 }
 
-true_cntr_sm1     # 118,657,920
+#true_cntr_sm1     # 118,657,920
 num_dupl_sm1      # 19,431
 
 rm(does_match, i, j, has_duplicate)
 rm(sm1_pop_padded)
 
-true_cntr_sm2 <- 0
+# SAVE INDEX
+
+#true_cntr_sm2 <- 0
 num_dupl_sm2 <- 0
+sm2_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -92,24 +97,26 @@ for (i in 1:20000) {
         sm2_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_sm2 <- true_cntr_sm2 + 1
+        #true_cntr_sm2 <- true_cntr_sm2 + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_sm2 <- num_dupl_sm2 + 1 
+    sm2_index <- c(sm2_index, i)
   }
 }
 
-true_cntr_sm2     # 71,130,698
+#true_cntr_sm2     # 71,130,698
 num_dupl_sm2      # 18,499
 
 rm(does_match, i, j, has_duplicate)
 rm(sm2_pop_padded)
 
-true_cntr_sm3 <- 0
+#true_cntr_sm3 <- 0
 num_dupl_sm3 <- 0
+sm3_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -120,24 +127,26 @@ for (i in 1:20000) {
         sm3_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_sm3 <- true_cntr_sm3 + 1
+        #true_cntr_sm3 <- true_cntr_sm3 + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_sm3 <- num_dupl_sm3 + 1 
+    sm3_index <- c(sm3_index, i)
   }
 }
 
-true_cntr_sm3     # 1,925,461
+#true_cntr_sm3     # 1,925,461
 num_dupl_sm3      # 8,209
 
 rm(does_match, i, j, has_duplicate)
 rm(sm3_pop_padded)
 
-true_cntr_sm <- 0
+#true_cntr_sm <- 0
 num_dupl_sm <- 0
+sm_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -148,24 +157,26 @@ for (i in 1:20000) {
         sm_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_sm <- true_cntr_sm + 1
+        #true_cntr_sm <- true_cntr_sm + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_sm <- num_dupl_sm + 1 
+    sm_index <- c(sm_index, i)
   }
 }
 
-true_cntr_sm     # 31,921
+#true_cntr_sm     # 31,921
 num_dupl_sm      # 1,505
 
 rm(does_match, i, j, has_duplicate)
 rm(sm_pop_padded)
 
-true_cntr_md1 <- 0
+#true_cntr_md1 <- 0
 num_dupl_md1 <- 0
+md1_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -176,24 +187,26 @@ for (i in 1:20000) {
         md1_pop_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_md1 <- true_cntr_md1 + 1
+        #true_cntr_md1 <- true_cntr_md1 + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_md1 <- num_dupl_md1 + 1 
+    md1_index <- c(md1_index, i)
   }
 }
 
-true_cntr_md1     # 14
+#true_cntr_md1     # 14
 num_dupl_md1      # 11
 
 rm(does_match, i, j, has_duplicate)
 rm(md1_pop_padded)
 
-true_cntr_md2 <- 0
+#true_cntr_md2 <- 0
 num_dupl_md2 <- 0
+md2_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -220,8 +233,9 @@ num_dupl_md2      # 0
 rm(does_match, i, j, has_duplicate)
 rm(md2_pop_padded)
 
-true_cntr_md <- 0
+#true_cntr_md <- 0
 num_dupl_md <- 0
+md_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -248,8 +262,9 @@ num_dupl_md      # 0
 rm(does_match, i, j, has_duplicate)
 rm(md_pop_padded)
 
-true_cntr_lg <- 0
+#true_cntr_lg <- 0
 num_dupl_lg <- 0
+lg_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -497,6 +512,12 @@ save(
   file = glue('{path_to_results}dup_analysis_fixed_n_align_results.RData')
 )
 
+save(
+  sm1_index, sm2_index, sm3_index,
+  sm_index, md1_index, md2_index, 
+  md_index, lg_index,
+  file = glue('{path_to_results}fixed_mu_align_indices.RData')
+)
 
 #--------------- TIDY RHO DATA --------------------
 # load in rho data
