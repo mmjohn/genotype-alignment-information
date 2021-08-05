@@ -44,6 +44,11 @@ load(glue('{path_to_data}fixed_n_vary_mu_rho.RData'))
 # load in seg sites data
 
 
+# load in indices of duplicated alignments
+load(glue('{path_to_results}fixed_mu_align_indices.RData'))
+load(glue('{path_to_results}fixed_n_align_indices.RData'))
+
+
 #--------------- TIDY RHO DATA --------------------
 
 
