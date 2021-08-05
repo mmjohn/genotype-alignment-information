@@ -1,7 +1,7 @@
 #!/stor/system/opt/R/R-3.6.1/bin/Rscript
 
 # Parse data sets for comparisons of msprime simulation under different parameter conditions
-# This script: parse and save simulation data
+# This script: parse and save simulation data (alignments, rhos, seg sites)
 # Mackenzie M. Johnson
 # July 2021 
 
@@ -80,7 +80,7 @@ rm(n_s1, n_s2, n_s, n_m1, n_m2, n_m, n_l)
 rm(mu_l1, mu_l2, mu_l, mu_m1, mu_m, mu_h)
 
 
-#--------------- PARSE DATA (ALIGNMENTS AND RHOS) --------------------
+#--------------- PARSE DATA (ALIGNMENTS, RHOS, SEG SITES) --------------------
 Sys.time()
 cat("\nParsing data.....\n")
 
