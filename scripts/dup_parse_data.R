@@ -145,6 +145,41 @@ me1_mu_rho <- get_rho_msp(me1_mu)
 med_mu_rho <- get_rho_msp(medium_mu)
 high_mu_rho <- get_rho_msp(high_mu)
 
+# read in seg. sites
+
+get_seg_sites <- function(all_data){
+  
+  # get relevant line numbers
+  ss_linenum <- which(grepl("^segsites: ", all_data))
+  # read those lines
+  ss_lines <- all_data[ss_linenum]
+  # remove "positions: "
+  ss_vec <- ss_lines %>%
+    dplyr::tibble() %>%
+    tidyr::extract(., ., "(segsites): (.*)",
+                   into = c("pos", "keep")) %>%
+    dplyr::pull(keep)
+  # convert to numeric vectors
+  ss_data <- as.numeric(ss_vec)
+  
+}
+
+sm1_segsites <- get_seg_sites(sm1_pop)
+sm2_segsites <- get_seg_sites(sm2_pop)
+sm3_segsites <- get_seg_sites(sm3_pop)
+sm_segsites <- get_seg_sites(small_pop)
+med1_segsites <- get_seg_sites(m1_pop)
+med2_segsites <- get_seg_sites(m2_pop)
+med_segsites <- get_seg_sites(medium_pop)
+lg_segsites <- get_seg_sites(large_pop)
+
+lo1_mu_segsites <- get_seg_sites(lo1_mu)
+lo2_mu_segsites <- get_seg_sites(lo2_mu)
+low_mu_segsites <- get_seg_sites(low_mu)
+md1_mu_segsites <- get_seg_sites(me1_mu)
+med_mu_segsites <- get_seg_sites(medium_mu)
+high_mu_segsites <- get_seg_sites(high_mu)
+
 # remove full data set
 rm(sm1_pop, sm2_pop, sm3_pop, small_pop, m1_pop, m2_pop, medium_pop, large_pop)
 rm(lo1_mu, lo2_mu, low_mu, me1_mu, medium_mu, high_mu)
@@ -166,6 +201,12 @@ save(
 )
 
 save(
+  sm1_segsites, sm2_segsites, sm3_segsites, sm_segsites,
+  med1_segsites, med2_segsites, med_segsites, lg_segsites,
+  file = glue('{path_to_parsed}fixed_mu_vary_n_sites.RData')
+)
+
+save(
   lw1_mu_unsorted, lw2_mu_unsorted, lw_mu_unsorted, 
   md1_mu_unsorted, md_mu_unsorted, hg_mu_unsorted,
   file = glue('{path_to_parsed}fixed_n_vary_mu_align.RData')
@@ -177,4 +218,9 @@ save(
   file = glue('{path_to_parsed}fixed_n_vary_mu_rho.RData')
 )
 
+save(
+  lo1_mu_segsites, lo2_mu_segsites, low_mu_segsites,
+  md1_mu_segsites, med_mu_segsites, high_mu_segsites,
+  file = glue('{path_to_parsed}fixed_n_vary_mu_sites.RData')
+)
 
