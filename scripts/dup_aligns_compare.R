@@ -34,6 +34,7 @@ num_chrom <- 50
 # max_size - need to use one standard size for consistency across training and test sets
 max_size <- 400 
 
+
 #--------------- READ IN DATA --------------------
 Sys.time()
 cat("\nReading in data.....\n")
@@ -306,8 +307,9 @@ fixed_mu_vary_n <- tibble(
 
 #--------------- FIND DUPLICATES - FIXED N --------------------
 
-true_cntr_lw1 <- 0
+#true_cntr_lw1 <- 0
 num_dupl_lw1 <- 0
+lw1_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -318,24 +320,26 @@ for (i in 1:20000) {
         lw1_mu_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_lw1 <- true_cntr_lw1 + 1
+        #true_cntr_lw1 <- true_cntr_lw1 + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_lw1 <- num_dupl_lw1 + 1 
+    lw1_index <- c(lw1_index, i)
   }
 }
 
-true_cntr_lw1     # 178,525,285
+#true_cntr_lw1     # 178,525,285
 num_dupl_lw1      # 19,886
 
 rm(does_match, i, j, has_duplicate)
 rm(lw1_mu_padded)
 
-true_cntr_lw2 <- 0
+#true_cntr_lw2 <- 0
 num_dupl_lw2 <- 0
+lw2_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -346,24 +350,26 @@ for (i in 1:20000) {
         lw2_mu_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_lw2 <- true_cntr_lw2 + 1
+        #true_cntr_lw2 <- true_cntr_lw2 + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_lw2 <- num_dupl_lw2 + 1 
+    lw2_index <- c(lw2_index, i)
   }
 }
 
-true_cntr_lw2     # 71595159
+#true_cntr_lw2     # 71,595,159
 num_dupl_lw2      # 18478
 
 rm(does_match, i, j, has_duplicate)
 rm(lw2_mu_padded)
 
-true_cntr_lw <- 0
+#true_cntr_lw <- 0
 num_dupl_lw <- 0
+lw_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -374,24 +380,26 @@ for (i in 1:20000) {
         lw_mu_padded[[j]]
       )
       if (does_match == TRUE){ 
-        true_cntr_lw <- true_cntr_lw + 1
+        #true_cntr_lw <- true_cntr_lw + 1
         has_duplicate <- TRUE
       }
     }
   }
   if (has_duplicate == TRUE) {
     num_dupl_lw <- num_dupl_lw + 1 
+    lw_index <- c(lw_index, i)
   }
 }
 
-true_cntr_lw     # 21,897
+#true_cntr_lw     # 21,897
 num_dupl_lw      # 1,170
  
 rm(does_match, i, j, has_duplicate)
 rm(lw_mu_padded)
 
-true_cntr_md1 <- 0
+#true_cntr_md1 <- 0
 num_dupl_md1 <- 0
+md1_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -418,8 +426,9 @@ num_dupl_md1      # 0
 rm(does_match, i, j, has_duplicate)
 rm(md1_mu_padded)
 
-true_cntr_md <- 0
+#true_cntr_md <- 0
 num_dupl_md <- 0
+md_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -446,8 +455,9 @@ num_dupl_md      # 0
 rm(does_match, i, j, has_duplicate)
 rm(md_mu_padded)
 
-true_cntr_hg <- 0
+#true_cntr_hg <- 0
 num_dupl_hg <- 0
+hg_index <- c()
 
 for (i in 1:20000) {
   has_duplicate <- FALSE
@@ -519,7 +529,15 @@ save(
   file = glue('{path_to_results}fixed_mu_align_indices.RData')
 )
 
+save(
+  lw1_index, lw2_index, lw_index, 
+  md1_index, md_index, hg_index,
+  file = glue('{path_to_results}fixed_n_align_indices.RData')
+)
+
+
 #--------------- TIDY RHO DATA --------------------
+
 # load in rho data
 load(glue('{path_to_data}fixed_mu_vary_n_rho.RData'))
 load(glue('{path_to_data}fixed_n_vary_mu_rho.RData'))
@@ -600,6 +618,7 @@ rho_df %>%
 
 rho_df$param_set <- as.factor(rho_df$param_set)
 rho_df$set <- as.factor(rho_df$set)
+
 
 #--------------- SAVE DATA SETS --------------------
 
