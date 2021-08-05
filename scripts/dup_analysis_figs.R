@@ -48,6 +48,7 @@ dup_df <- full_join(fixed_mu_vary_n, fixed_n_vary_mu)
 
 # rho data
 load(glue('{path_to_results}dup_analysis_rho_results.RData'))
+load(file.path(path_to_results, "dup_analysis_rho_results.RData"))
 
 # segregating sites data
 load(glue('{path_to_results}dup_analysis_sites_results.RData'))
@@ -158,7 +159,7 @@ fig_rho_n_mu
 rho_df %>% 
   filter(set == "fixed_mu") %>%
   ggplot(aes(x = rho, fill = status, color = status)) +
-  geom_density(alpha = 0.5) +
+  geom_density(alpha = 0.5, position = "fill") +
   facet_wrap(vars(pop_size), scales = "free") +
   labs(
     x = "&rho;",
@@ -177,7 +178,7 @@ fig_rho_dup_v_unq_fixed_mu
 rho_df %>% 
   filter(set == "fixed_n") %>%
   ggplot(aes(x = rho, fill = status, color = status)) +
-  geom_density(alpha = 0.5) +
+  geom_density(alpha = 0.5, position = "fill") +
   facet_wrap(vars(mut_rate), scales = "free") +
   labs(
     x = "&rho;",
