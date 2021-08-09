@@ -16,4 +16,4 @@
 *.sh
 
 # Old figures
-/results/tmpfigs/*
+/results/tmpfigs/
