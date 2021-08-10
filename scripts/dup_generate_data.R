@@ -6,8 +6,6 @@
 # July 2021 
 
 #--------------- CONFIGURE ENVIRONMENT --------------------
-Sys.time()
-cat("\nConfiguring environment.....\n")
 
 # load libraries
 library(purrr)
@@ -16,9 +14,9 @@ library(tidyr)
 library(readr)
 library(glue)
 
-# load R package
-library(devtools)
-devtools::load_all("/stor/home/mmj2238/popgencnn/") # path for Wilk comp
+# # load R package
+# library(devtools)
+# devtools::load_all("/stor/home/mmj2238/popgencnn/") # path for Wilk comp
 
 # record session info
 sessionInfo()
@@ -29,8 +27,8 @@ sessionInfo()
 path_to_data_TACC <- 'Ignore'
 path_to_scripts_TACC <- 'Ignore'
 
-path_to_data_Wilkcomp <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/'
-path_to_scripts_Wilkcomp <- '/stor/home/mmj2238/bio-cnns/code/recombination/scripts/'
+# path_to_data_Wilkcomp <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/'
+# path_to_scripts_Wilkcomp <- '/stor/home/mmj2238/bio-cnns/code/recombination/scripts/'
 
 
 #--------------- GENERATE SCRIPTS --------------------
@@ -39,16 +37,19 @@ cat("\nGenerating scripts for simulations.....\n")
 
 # simulations for duplicate parameter analysis
 
-# SET A ------ fixed mu, vary N
+# fixed mu, vary N
+# N values used: 100, 316, 1000, 3160, 10000, 31600
+# fixed mu set 1: 1.5e-8
+# fixed mu set 2: 1.5e-9
+# fixed mu set 3: 1.5e-7
 
-# general msprime function call used for all sims with fixed mu
-msp_sim_fixed_mu <- function(morgans_per_bp, ne, alpha = 0, output){
+# general msprime function call used for all sims with fixed mu in set 1
+msp_sim_fixed_mu <- function(morgans_per_bp, ne, mu, alpha = 0, output){
   
   # fixed parameters
   sample_size <- 50     # number of chromosomes
-  mu <- 1.5e-8          # fixed only for set A
   num_loci <- 20001
-  num_replicates <- 1   # right now this just generates one sim per rho, mu, ne combo, but could be modified
+  num_replicates <- 1   
   
   # variable parameters
   rho <- 4 * ne * morgans_per_bp * (num_loci - 1)
@@ -65,221 +66,477 @@ msp_sim_fixed_mu <- function(morgans_per_bp, ne, alpha = 0, output){
   
 }
 
-# general function to vary N
-vary_pop <- function(index, path, sim_ne, filename, ...){
+# general function to vary N - set 1
+vary_pop <- function(index, path, sim_ne, sim_mu, filename, ...){
   # picks parameters
   mbp   <- 10^(runif(n = 1,min = -8, max = -6))
-  #sim_ne <- 1000
   msp_sim_fixed_mu(
     morgans_per_bp = mbp,
     ne = sim_ne,
+    mu = sim_mu,
     output = glue::glue('{filename}_sim{index}.txt'), # added {index} for use with launcher
     ...
   )
 }
 
-
-# generate script for different population sizes
-s1_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
-  dplyr::mutate(
-    call = purrr::map_chr(
-      .$sim_num, 
-      vary_pop, 
-      path = path_to_data_TACC,
-      sim_ne = 50, 
-      filename = 'n_50_mu_fixed' 
-    )
-  )
-
-s2_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+# generate script for different population sizes - set 1
+mu1_n1_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
       sim_ne = 100, 
-      filename = 'n_100_mu_fixed' # updated to use with launcher on TACC
+      sim_mu = 1.5e-8,
+      filename = 'n_100_fixed_mu1' 
     )
   )
 
-s3_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+mu1_n2_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
-      sim_ne = 500, 
-      filename = 'n_500_mu_fixed' # updated to use with launcher on TACC
+      sim_ne = 316, 
+      sim_mu = 1.5e-8,
+      filename = 'n_316_fixed_mu1' 
     )
   )
 
-small_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+mu1_n3_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
       sim_ne = 1000, 
-      filename = 'n_1000_mu_fixed' # updated to use with launcher on TACC
+      sim_mu = 1.5e-8,
+      filename = 'n_1000_fixed_mu1' 
     )
   )
 
-m1_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+mu1_n4_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
-      sim_ne = 2000,
-      filename = 'n_2000_mu_fixed' 
+      sim_ne = 3160, 
+      sim_mu = 1.5e-8,
+      filename = 'n_3160_fixed_mu1' 
     )
   )
 
-m2_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+mu1_n5_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
-      sim_ne = 5000,
-      filename = 'n_5000_mu_fixed' 
+      sim_ne = 10000, 
+      sim_mu = 1.5e-8,
+      filename = 'n_10000_fixed_mu1' 
     )
   )
 
-med_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+mu1_n6_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
-      sim_ne = 10000,
-      filename = 'n_10000_mu_fixed' 
+      sim_ne = 31600, 
+      sim_mu = 1.5e-8,
+      filename = 'n_31600_fixed_mu1' 
     )
   )
 
-large_n_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+# generate script for different population sizes - set 2
+mu2_n1_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_pop, 
       path = path_to_data_TACC,
-      sim_ne = 50000,
-      filename = 'n_50000_mu_fixed' 
+      sim_ne = 100, 
+      sim_mu = 1.5e-9,
+      filename = 'n_100_fixed_mu2' 
     )
   )
 
-# update function call for TACC only
-s1_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> s1_n_set_tidy$call
+mu2_n2_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 316, 
+      sim_mu = 1.5e-9,
+      filename = 'n_316_fixed_mu2' 
+    )
+  )
 
-s2_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> s2_n_set_tidy$call
+mu2_n3_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 1000, 
+      sim_mu = 1.5e-9,
+      filename = 'n_1000_fixed_mu2' 
+    )
+  )
 
-s3_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> s3_n_set_tidy$call
+mu2_n4_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 3160, 
+      sim_mu = 1.5e-9,
+      filename = 'n_3160_fixed_mu2' 
+    )
+  )
 
-small_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> small_n_set_tidy$call
+mu2_n5_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 10000, 
+      sim_mu = 1.5e-9,
+      filename = 'n_10000_fixed_mu2' 
+    )
+  )
 
-m1_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> m1_n_set_tidy$call
+mu2_n6_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 31600, 
+      sim_mu = 1.5e-9,
+      filename = 'n_31600_fixed_mu2' 
+    )
+  )
 
-m2_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> m2_n_set_tidy$call
+# generate script for different population sizes - set 3
+mu3_n1_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 100, 
+      sim_mu = 1.5e-7,
+      filename = 'n_100_fixed_mu3' 
+    )
+  )
 
-med_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> med_n_set_tidy$call
+mu3_n2_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 316, 
+      sim_mu = 1.5e-7,
+      filename = 'n_316_fixed_mu3' 
+    )
+  )
 
-large_n_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> large_n_set_tidy$call
+mu3_n3_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 1000, 
+      sim_mu = 1.5e-7,
+      filename = 'n_1000_fixed_mu3' 
+    )
+  )
+
+mu3_n4_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 3160, 
+      sim_mu = 1.5e-7,
+      filename = 'n_3160_fixed_mu3' 
+    )
+  )
+
+mu3_n5_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 10000, 
+      sim_mu = 1.5e-7,
+      filename = 'n_10000_fixed_mu3' 
+    )
+  )
+
+mu3_n6_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_pop, 
+      path = path_to_data_TACC,
+      sim_ne = 31600, 
+      sim_mu = 1.5e-7,
+      filename = 'n_31600_fixed_mu3' 
+    )
+  )
 
 
-# write to bash shell script
-s1_n_set_tidy %>% 
+# update function call for TACC - set 1
+mu1_n1_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu1_n1_set_tidy$call
+mu1_n2_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu1_n2_set_tidy$call
+mu1_n3_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu1_n3_set_tidy$call
+mu1_n4_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu1_n4_set_tidy$call
+mu1_n5_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu1_n5_set_tidy$call
+mu1_n6_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu1_n6_set_tidy$call
+
+# update function call for TACC - set 2
+mu2_n1_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu2_n1_set_tidy$call
+mu2_n2_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu2_n2_set_tidy$call
+mu2_n3_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu2_n3_set_tidy$call
+mu2_n4_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu2_n4_set_tidy$call
+mu2_n5_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu2_n5_set_tidy$call
+mu2_n6_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu2_n6_set_tidy$call
+
+# update function call for TACC - set 3
+mu3_n1_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu3_n1_set_tidy$call
+mu3_n2_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu3_n2_set_tidy$call
+mu3_n3_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu3_n3_set_tidy$call
+mu3_n4_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu3_n4_set_tidy$call
+mu3_n5_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu3_n5_set_tidy$call
+mu3_n6_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> mu3_n6_set_tidy$call
+
+
+# write to bash shell script - set 1
+mu1_n1_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_s1_n.sh', # updated for TACC
+    'msprime_fixedmu1_n1.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-s2_n_set_tidy %>% 
+mu1_n2_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_s2_n.sh', # updated for TACC
+    'msprime_fixedmu1_n2.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-s3_n_set_tidy %>% 
+mu1_n3_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_s3_n.sh', # updated for TACC
+    'msprime_fixedmu1_n3.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-small_n_set_tidy %>% 
+mu1_n4_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_small_n.sh', # updated for TACC
+    'msprime_fixedmu1_n4.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-m1_n_set_tidy %>% 
+mu1_n5_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_m1_n.sh', # updated for TACC
+    'msprime_fixedmu1_n5.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-m2_n_set_tidy %>% 
+mu1_n6_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_m2_n.sh', # updated for TACC
+    'msprime_fixedmu1_n6.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-med_n_set_tidy %>% 
+# write to bash shell script - set 2
+mu2_n1_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_med_n.sh', # updated for TACC
+    'msprime_fixedmu2_n1.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-large_n_set_tidy %>% 
+mu2_n2_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_large_n.sh', # updated for TACC
+    'msprime_fixedmu2_n2.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu2_n3_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu2_n3.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu2_n4_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu2_n4.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu2_n5_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu2_n5.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu2_n6_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu2_n6.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+# write to bash shell script - set 3
+mu3_n1_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu3_n1.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu3_n2_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu3_n2.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu3_n3_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu3_n3.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu3_n4_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu3_n4.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu3_n5_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu3_n5.sh', # updated for TACC
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+mu3_n6_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedmu3_n6.sh', # updated for TACC
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -287,19 +544,20 @@ large_n_set_tidy %>%
   )
 
 
+#################
+# fixed N, vary mu
+# mu values used: 1.0e-10, 3.16e-10, 1.0e-9, 3.16e-9, 1.0e-8, 3.16e-8
+# fixed N set 1: 10,000
+# fixed N set 2: 1,000
+# fixed N set 3: 100,000
 
-
-# SET B ------ fixed N, vary mu
-
-# general msprime function call used for all sims with fixed N
-msp_sim_fixed_n <- function(morgans_per_bp, mu, alpha = 0, output){
+# general msprime function call used for all sims with fixed N - set 1
+msp_sim_fixed_n <- function(morgans_per_bp, ne, mu, alpha = 0, output){
   
   # fixed parameters
   sample_size <- 50 # number of chromosomes
-  #mu <- 1.5e-8 # fixed only for set A
-  ne <- 10000
   num_loci <- 20001
-  num_replicates <- 1   # right now this just generates one sim per rho, mu, ne combo, but could be modified
+  num_replicates <- 1   
   
   # variable parameters
   rho <- 4 * ne * morgans_per_bp * (num_loci - 1)
@@ -316,175 +574,479 @@ msp_sim_fixed_n <- function(morgans_per_bp, mu, alpha = 0, output){
   
 }
 
-# generate low mutation population
-vary_mu <- function(index, path, sim_mu, filename, ...){
+
+# generate population with fixed N, variable mu
+vary_mu <- function(index, path, sim_ne, sim_mu, filename, ...){
   # picks parameters
   mbp   <- 10^(runif(n = 1,min = -8, max = -6))
   #sim_mu <- 1.5e-9
   msp_sim_fixed_n(
     morgans_per_bp = mbp,
+    ne = sim_ne,
     mu = sim_mu,
-    #output = glue::glue('{path}{filename}') # format used on Wilkcomp, one output file
     output = glue::glue('{filename}_sim{index}.txt'), # added {index} for use with launcher
     ...
   )
 }
 
-# generate script for populations with low mutation
-l1_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+
+# generate script for populations with different mutation rates - set 1
+n1_mu1_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5e-11,
-      filename = 'mu_l1_n_fixed' # updated to use with launcher on TACC
+      sim_ne = 10000,
+      sim_mu = 1.0e-10,
+      filename = 'mu1_fixed_n1' 
     )
   )
 
-l2_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+n1_mu2_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5e-10,
-      filename = 'mu_l2_n_fixed' # updated to use with launcher on TACC
+      sim_ne = 10000,
+      sim_mu = 3.16e-10,
+      filename = 'mu2_fixed_n1' 
     )
   )
 
-low_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+n1_mu3_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5e-9,
-      filename = 'mu_low_n_fixed' # updated to use with launcher on TACC
+      sim_ne = 10000,
+      sim_mu = 1.0e-9,
+      filename = 'mu3_fixed_n1' 
     )
   )
 
-lm1_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+n1_mu4_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 0.5e-8,
-      filename = 'mu_m1_n_fixed' # updated to use with launcher on TACC
+      sim_ne = 10000,
+      sim_mu = 3.16e-9,
+      filename = 'mu4_fixed_n1' 
     )
   )
 
-med_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+n1_mu5_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5e-8,
-      filename = 'mu_med_n_fixed' # updated to use with launcher on TACC
+      sim_ne = 10000,
+      sim_mu = 1.0e-8,
+      filename = 'mu5_fixed_n1'
     )
   )
 
-high_mu_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+n1_mu6_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
   dplyr::mutate(
     call = purrr::map_chr(
       .$sim_num, 
       vary_mu, 
       path = path_to_data_TACC,
-      sim_mu = 1.5e-7,
-      filename = 'mu_high_n_fixed' # updated to use with launcher on TACC
+      sim_ne = 10000,
+      sim_mu = 3.16e-8,
+      filename = 'mu6_fixed_n1' 
+    )
+  )
+
+# generate script for populations with different mutation rates - set 2
+n2_mu1_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 1000,
+      sim_mu = 1.0e-10,
+      filename = 'mu1_fixed_n2' 
+    )
+  )
+
+n2_mu2_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 1000,
+      sim_mu = 3.16e-10,
+      filename = 'mu2_fixed_n2' 
+    )
+  )
+
+n2_mu3_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 1000,
+      sim_mu = 1.0e-9,
+      filename = 'mu3_fixed_n2' 
+    )
+  )
+
+n2_mu4_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 1000,
+      sim_mu = 3.16e-9,
+      filename = 'mu4_fixed_n2' 
+    )
+  )
+
+n2_mu5_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 1000,
+      sim_mu = 1.0e-8,
+      filename = 'mu5_fixed_n2' 
+    )
+  )
+
+n2_mu6_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 1000,
+      sim_mu = 3.16e-8,
+    )
+  )
+
+# generate script for populations with different mutation rates - set 3
+n3_mu1_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 100000,
+      sim_mu = 1.0e-10,
+      filename = 'mu1_fixed_n3' 
+    )
+  )
+
+n3_mu2_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 100000,
+      sim_mu = 3.16e-10,
+      filename = 'mu2_fixed_n3' 
+    )
+  )
+
+n3_mu3_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 100000,
+      sim_mu = 1.0e-9,
+      filename = 'mu3_fixed_n3' 
+    )
+  )
+
+n3_mu4_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 100000,
+      sim_mu = 3.16e-9,
+      filename = 'mu4_fixed_n3' 
+    )
+  )
+
+n3_mu5_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 100000,
+      sim_mu = 1.0e-8,
+      filename = 'mu5_fixed_n3' 
+    )
+  )
+
+n3_mu6_set_tidy <- tibble(sim_num = seq(1:20000)) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      vary_mu, 
+      path = path_to_data_TACC,
+      sim_ne = 100000,
+      sim_mu = 3.16e-8,
+      filename = 'mu6_fixed_n3' 
     )
   )
 
 
-# update function call for TACC only
-l1_mu_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> l1_mu_set_tidy$call
+# update function call for TACC - set 1
+n1_mu1_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n1_mu1_set_tidy$call
+n1_mu2_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n1_mu2_set_tidy$call
+n1_mu3_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n1_mu3_set_tidy$call
+n1_mu4_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n1_mu4_set_tidy$call
+n1_mu5_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n1_mu5_set_tidy$call
+n1_mu6_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n1_mu6_set_tidy$call
 
-l2_mu_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> l2_mu_set_tidy$call
+# update function call for TACC - set 2
+n2_mu1_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n2_mu1_set_tidy$call
+n2_mu2_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n2_mu2_set_tidy$call
+n2_mu3_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n2_mu3_set_tidy$call
+n2_mu4_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n2_mu4_set_tidy$call
+n2_mu5_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n2_mu5_set_tidy$call
+n2_mu6_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n2_mu6_set_tidy$call
 
-low_mu_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> low_mu_set_tidy$call
+# update function call for TACC - set 3
+n3_mu1_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n3_mu1_set_tidy$call
+n3_mu2_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n3_mu2_set_tidy$call
+n3_mu3_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n3_mu3_set_tidy$call
+n3_mu4_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n3_mu4_set_tidy$call
+n3_mu5_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n3_mu5_set_tidy$call
+n3_mu6_set_tidy$call %>% 
+  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> n3_mu6_set_tidy$call
 
-lm1_mu_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> lm1_mu_set_tidy$call
 
-med_mu_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> med_mu_set_tidy$call
-
-high_mu_set_tidy$call %>% 
-  stringr::str_replace(., "mspms", "~/.local/bin/mspms") -> high_mu_set_tidy$call
-
-
-# write to bash shell script
-l1_mu_set_tidy %>% 
+# write to bash shell script - set 1
+n1_mu1_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_l1_mu.sh', # updated for TACC
+    'msprime_fixedn1_mu1.sh', 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-l2_mu_set_tidy %>% 
+n1_mu2_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_l2_mu.sh', # updated for TACC
+    'msprime_fixedn1_mu2.sh', 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-low_mu_set_tidy %>% 
+n1_mu3_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_low_mu.sh', # updated for TACC
+    'msprime_fixedn1_mu3.sh', 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-lm1_mu_set_tidy %>% 
+n1_mu4_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_lm1_mu.sh', # updated for TACC
+    'msprime_fixedn1_mu4.sh', 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-med_mu_set_tidy %>% 
+n1_mu5_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_med_mu.sh', # updated for TACC
+    'msprime_fixedn1_mu5.sh', 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
     eol = '\n'
   )
 
-high_mu_set_tidy %>% 
+n1_mu6_set_tidy %>% 
   select(call) %>% 
   readr::write_delim(
     .,
-    #glue::glue({path_to_scripts_Wilkcomp}'run_msprime_eq.sh'),
-    'msprime_high_mu.sh', # updated for TACC
+    'msprime_fixedn1_mu6.sh',
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+# write to bash shell script - set 2
+n2_mu1_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn2_mu1.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n2_mu2_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn2_mu2.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n2_mu3_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn2_mu3.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n2_mu4_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn2_mu4.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n2_mu5_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn2_mu5.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n2_mu6_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn2_mu6.sh',
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+# write to bash shell script - set 3
+n3_mu1_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn3_mu1.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n3_mu2_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn3_mu2.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n3_mu3_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn3_mu3.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n3_mu4_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn3_mu4.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n3_mu5_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn3_mu5.sh', 
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+n3_mu6_set_tidy %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    'msprime_fixedn3_mu6.sh', 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
