@@ -7,8 +7,6 @@
 
 
 #--------------- CONFIGURE ENVIRONMENT --------------------
-Sys.time()
-cat("\nConfiguring environment.....\n")
 
 # load libraries
 library(purrr)
@@ -18,7 +16,6 @@ library(glue)
 
 # load R package
 library(devtools)
-#devtools::load_all("/Users/mackenziejohnson/Documents/grad_school/wilke_lab/popgencnn")
 devtools::load_all("/stor/home/mmj2238/popgencnn/")
 
 # record session info
@@ -34,73 +31,219 @@ path_to_raw <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/dup_analysis/'
 path_to_parsed <- '/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/'
 
 # filenames
-n_s1 <- 'fixed_mu_n_50_sims_all.txt'
-n_s2 <- 'fixed_mu_n_100_sims_all.txt'
-n_s3 <- 'fixed_mu_n_500_sims_all.txt'
-n_s <- 'fixed_mu_n_1000_sims_all.txt'
-n_m1 <- 'fixed_mu_n_2000_sims_all.txt'
-n_m2 <- 'fixed_mu_n_5000_sims_all.txt'
-n_m <- 'fixed_mu_n_10000_sims_all.txt'
-n_l <- 'fixed_mu_n_50000_sims_all.txt'
+# fixed mu sims
+mu1_n1 <- 'fixed_mu/fixed_mu1_n_100_sims_all.txt'
+mu1_n2 <- 'fixed_mu/fixed_mu1_n_316_sims_all.txt'
+mu1_n3 <- 'fixed_mu/fixed_mu1_n_1000_sims_all.txt'
+mu1_n4 <- 'fixed_mu/fixed_mu1_n_3160_sims_all.txt'
+mu1_n5 <- 'fixed_mu/fixed_mu1_n_10000_sims_all.txt'
+mu1_n6 <- 'fixed_mu/fixed_mu1_n_31600_sims_all.txt'
 
-mu_l1 <- 'fixed_n_mu_l1_sims_all.txt'
-mu_l2 <- 'fixed_n_mu_l2_sims_all.txt'
-mu_l <- 'fixed_n_low_mu_sims_all.txt'
-mu_m1 <- 'fixed_n_mu_m1_sims_all.txt'
-mu_m <- 'fixed_n_med_mu_sims_all.txt'
-mu_h <- 'fixed_n_high_mu_sims_all.txt'
+mu2_n1 <- 'fixed_mu/fixed_mu2_n_100_sims_all.txt'
+mu2_n2 <- 'fixed_mu/fixed_mu2_n_316_sims_all.txt'
+mu2_n3 <- 'fixed_mu/fixed_mu2_n_1000_sims_all.txt'
+mu2_n4 <- 'fixed_mu/fixed_mu2_n_3160_sims_all.txt'
+mu2_n5 <- 'fixed_mu/fixed_mu2_n_10000_sims_all.txt'
+mu2_n6 <- 'fixed_mu/fixed_mu2_n_31600_sims_all.txt'
+
+mu3_n1 <- 'fixed_mu/fixed_mu3_n_100_sims_all.txt'
+mu3_n2 <- 'fixed_mu/fixed_mu3_n_316_sims_all.txt'
+mu3_n3 <- 'fixed_mu/fixed_mu3_n_1000_sims_all.txt'
+mu3_n4 <- 'fixed_mu/fixed_mu3_n_3160_sims_all.txt'
+mu3_n5 <- 'fixed_mu/fixed_mu3_n_10000_sims_all.txt'
+mu3_n6 <- 'fixed_mu/fixed_mu3_n_31600_sims_all.txt'
+
+# fixed n sims
+n1_mu1 <- 'fixed_n/fixed_n1_mu1_sims_all.txt'
+n1_mu2 <- 'fixed_n/fixed_n1_mu2_sims_all.txt'
+n1_mu3 <- 'fixed_n/fixed_n1_mu3_sims_all.txt'
+n1_mu4 <- 'fixed_n/fixed_n1_mu4_sims_all.txt'
+n1_mu5 <- 'fixed_n/fixed_n1_mu5_sims_all.txt'
+n1_mu6 <- 'fixed_n/fixed_n1_mu6_sims_all.txt'
+
+n2_mu1 <- 'fixed_n/fixed_n2_mu1_sims_all.txt'
+n2_mu2 <- 'fixed_n/fixed_n2_mu2_sims_all.txt'
+n2_mu3 <- 'fixed_n/fixed_n2_mu3_sims_all.txt'
+n2_mu4 <- 'fixed_n/fixed_n2_mu4_sims_all.txt'
+n2_mu5 <- 'fixed_n/fixed_n2_mu5_sims_all.txt'
+n2_mu6 <- 'fixed_n/fixed_n2_mu6_sims_all.txt'
+
+n3_mu1 <- 'fixed_n/fixed_n3_mu1_sims_all.txt'
+n3_mu2 <- 'fixed_n/fixed_n3_mu2_sims_all.txt'
+n3_mu3 <- 'fixed_n/fixed_n3_mu3_sims_all.txt'
+n3_mu4 <- 'fixed_n/fixed_n3_mu4_sims_all.txt'
+n3_mu5 <- 'fixed_n/fixed_n3_mu5_sims_all.txt'
+n3_mu6 <- 'fixed_n/fixed_n3_mu6_sims_all.txt'
 
 # size of alignments
 num_chrom <- 50
 
 
 #--------------- READ IN DATA --------------------
-Sys.time()
-cat("\nReading in data.....\n")
 
-# read in data for set a
-sm1_pop <- readLines(glue('{path_to_raw}{n_s1}'))
-sm2_pop <- readLines(glue('{path_to_raw}{n_s2}'))
-sm3_pop <- readLines(glue('{path_to_raw}{n_s3}'))
-small_pop <- readLines(glue('{path_to_raw}{n_s}'))
-m1_pop <- readLines(glue('{path_to_raw}{n_m1}'))
-m2_pop <- readLines(glue('{path_to_raw}{n_m2}'))
-medium_pop <- readLines(glue('{path_to_raw}{n_m}'))
-large_pop <- readLines(glue('{path_to_raw}{n_l}'))
+# read in data for set: fixed mu
+pop_mu1_n1 <- readLines(file.path(path_to_raw, mu1_n1))
+pop_mu1_n2 <- readLines(file.path(path_to_raw, mu1_n2))
+pop_mu1_n3 <- readLines(file.path(path_to_raw, mu1_n3))
+pop_mu1_n4 <- readLines(file.path(path_to_raw, mu1_n4))
+pop_mu1_n5 <- readLines(file.path(path_to_raw, mu1_n5))
+pop_mu1_n6 <- readLines(file.path(path_to_raw, mu1_n6))
 
-# read in data for set b
-lo1_mu <- readLines(glue('{path_to_raw}{mu_l1}'))
-lo2_mu <- readLines(glue('{path_to_raw}{mu_l2}'))
-low_mu <- readLines(glue('{path_to_raw}{mu_l}'))
-me1_mu <- readLines(glue('{path_to_raw}{mu_m1}'))
-medium_mu <- readLines(glue('{path_to_raw}{mu_m}'))
-high_mu <- readLines(glue('{path_to_raw}{mu_h}'))
+pop_mu2_n1 <- readLines(file.path(path_to_raw, mu2_n1))
+pop_mu2_n2 <- readLines(file.path(path_to_raw, mu2_n2))
+pop_mu2_n3 <- readLines(file.path(path_to_raw, mu2_n3))
+pop_mu2_n4 <- readLines(file.path(path_to_raw, mu2_n4))
+pop_mu2_n5 <- readLines(file.path(path_to_raw, mu2_n5))
+pop_mu2_n6 <- readLines(file.path(path_to_raw, mu2_n6))
 
-rm(n_s1, n_s2, n_s, n_m1, n_m2, n_m, n_l)
-rm(mu_l1, mu_l2, mu_l, mu_m1, mu_m, mu_h)
+pop_mu3_n1 <- readLines(file.path(path_to_raw, mu3_n1))
+pop_mu3_n2 <- readLines(file.path(path_to_raw, mu3_n2))
+pop_mu3_n3 <- readLines(file.path(path_to_raw, mu3_n3))
+pop_mu3_n4 <- readLines(file.path(path_to_raw, mu3_n4))
+pop_mu3_n5 <- readLines(file.path(path_to_raw, mu3_n5))
+pop_mu3_n6 <- readLines(file.path(path_to_raw, mu3_n6))
+
+# read in data for set: fixed n
+pop_n1_mu1 <- readLines(file.path(path_to_raw, n1_mu1))
+pop_n1_mu2 <- readLines(file.path(path_to_raw, n1_mu2))
+pop_n1_mu3 <- readLines(file.path(path_to_raw, n1_mu3))
+pop_n1_mu4 <- readLines(file.path(path_to_raw, n1_mu4))
+pop_n1_mu5 <- readLines(file.path(path_to_raw, n1_mu5))
+pop_n1_mu6 <- readLines(file.path(path_to_raw, n1_mu6))
+
+pop_n2_mu1 <- readLines(file.path(path_to_raw, n2_mu1))
+pop_n2_mu2 <- readLines(file.path(path_to_raw, n2_mu2))
+pop_n2_mu3 <- readLines(file.path(path_to_raw, n2_mu3))
+pop_n2_mu4 <- readLines(file.path(path_to_raw, n2_mu4))
+pop_n2_mu5 <- readLines(file.path(path_to_raw, n2_mu5))
+pop_n2_mu6 <- readLines(file.path(path_to_raw, n2_mu6))
+
+pop_n3_mu1 <- readLines(file.path(path_to_raw, n3_mu1))
+pop_n3_mu2 <- readLines(file.path(path_to_raw, n3_mu2))
+pop_n3_mu3 <- readLines(file.path(path_to_raw, n3_mu3))
+pop_n3_mu4 <- readLines(file.path(path_to_raw, n3_mu4))
+pop_n3_mu5 <- readLines(file.path(path_to_raw, n3_mu5))
+pop_n3_mu6 <- readLines(file.path(path_to_raw, n3_mu6))
+
+# remove file names
+rm(mu1_n1, mu1_n2, mu1_n3, mu1_n4, mu1_n5, mu1_n6)
+rm(mu2_n1, mu2_n2, mu2_n3, mu2_n4, mu2_n5, mu2_n6)
+rm(mu3_n1, mu3_n2, mu3_n3, mu3_n4, mu3_n5, mu3_n6)
+
+rm(n1_mu1, n1_mu2, n1_mu3, n1_mu4, n1_mu5, n1_mu6)
+rm(n2_mu1, n2_mu2, n2_mu3, n2_mu4, n2_mu5, n2_mu6)
+rm(n3_mu1, n3_mu2, n3_mu3, n3_mu4, n3_mu5, n3_mu6)
 
 
-#--------------- PARSE DATA (ALIGNMENTS, RHOS, SEG SITES) --------------------
-Sys.time()
-cat("\nParsing data.....\n")
+#--------------- PARSE DATA: ALIGNMENTS, RHOS, SEG SITES --------------------
 
 # read in alignments
-sm1_pop_unsorted <- get_alignment_data(sm1_pop)
-sm2_pop_unsorted <- get_alignment_data(sm2_pop)
-sm3_pop_unsorted <- get_alignment_data(sm3_pop)
-sm_pop_unsorted <- get_alignment_data(small_pop)
-md1_pop_unsorted <- get_alignment_data(m1_pop)
-md2_pop_unsorted <- get_alignment_data(m2_pop)
-md_pop_unsorted <- get_alignment_data(medium_pop)
-lg_pop_unsorted <- get_alignment_data(large_pop)
+# fixed mu
+pop_mu1_n1_unsorted <- get_alignment_data(pop_mu1_n1)
+pop_mu1_n2_unsorted <- get_alignment_data(pop_mu1_n2)
+pop_mu1_n3_unsorted <- get_alignment_data(pop_mu1_n3)
+pop_mu1_n4_unsorted <- get_alignment_data(pop_mu1_n4)
+pop_mu1_n5_unsorted <- get_alignment_data(pop_mu1_n5)
+pop_mu1_n6_unsorted <- get_alignment_data(pop_mu1_n6)
 
-lw1_mu_unsorted <- get_alignment_data(lo1_mu)
-lw2_mu_unsorted <- get_alignment_data(lo2_mu)
-lw_mu_unsorted <- get_alignment_data(low_mu)
-md1_mu_unsorted <- get_alignment_data(me1_mu)
-md_mu_unsorted <- get_alignment_data(medium_mu)
-hg_mu_unsorted <- get_alignment_data(high_mu)
+pop_mu2_n1_unsorted <- get_alignment_data(pop_mu2_n1)
+pop_mu2_n2_unsorted <- get_alignment_data(pop_mu2_n2)
+pop_mu2_n3_unsorted <- get_alignment_data(pop_mu2_n3)
+pop_mu2_n4_unsorted <- get_alignment_data(pop_mu2_n4)
+pop_mu2_n5_unsorted <- get_alignment_data(pop_mu2_n5)
+pop_mu2_n6_unsorted <- get_alignment_data(pop_mu2_n6)
 
+pop_mu3_n1_unsorted <- get_alignment_data(pop_mu3_n1)
+pop_mu3_n2_unsorted <- get_alignment_data(pop_mu3_n2)
+pop_mu3_n3_unsorted <- get_alignment_data(pop_mu3_n3)
+pop_mu3_n4_unsorted <- get_alignment_data(pop_mu3_n4)
+pop_mu3_n5_unsorted <- get_alignment_data(pop_mu3_n5)
+pop_mu3_n6_unsorted <- get_alignment_data(pop_mu3_n6)
+
+# fixed n
+pop_n1_mu1_unsorted <- get_alignment_data(pop_n1_mu1)
+pop_n1_mu2_unsorted <- get_alignment_data(pop_n1_mu2)
+pop_n1_mu3_unsorted <- get_alignment_data(pop_n1_mu3)
+pop_n1_mu4_unsorted <- get_alignment_data(pop_n1_mu4)
+pop_n1_mu5_unsorted <- get_alignment_data(pop_n1_mu5)
+pop_n1_mu6_unsorted <- get_alignment_data(pop_n1_mu6)
+
+pop_n2_mu1_unsorted <- get_alignment_data(pop_n2_mu1)
+pop_n2_mu2_unsorted <- get_alignment_data(pop_n2_mu2)
+pop_n2_mu3_unsorted <- get_alignment_data(pop_n2_mu3)
+pop_n2_mu4_unsorted <- get_alignment_data(pop_n2_mu4)
+pop_n2_mu5_unsorted <- get_alignment_data(pop_n2_mu5)
+pop_n2_mu6_unsorted <- get_alignment_data(pop_n2_mu6)
+
+pop_n3_mu1_unsorted <- get_alignment_data(pop_n3_mu1)
+pop_n3_mu2_unsorted <- get_alignment_data(pop_n3_mu2)
+pop_n3_mu3_unsorted <- get_alignment_data(pop_n3_mu3)
+pop_n3_mu4_unsorted <- get_alignment_data(pop_n3_mu4)
+pop_n3_mu5_unsorted <- get_alignment_data(pop_n3_mu5)
+pop_n3_mu6_unsorted <- get_alignment_data(pop_n3_mu6)
+
+
+# save alignment data
+# fixed mu
+save(
+  pop_mu1_n1_unsorted, pop_mu1_n2_unsorted, pop_mu1_n3_unsorted,
+  pop_mu1_n4_unsorted, pop_mu1_n5_unsorted, pop_mu1_n6_unsorted,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu1_vary_n_align.RData')
+)
+
+save(
+  pop_mu2_n1_unsorted, pop_mu2_n2_unsorted, pop_mu2_n3_unsorted,
+  pop_mu2_n4_unsorted, pop_mu2_n5_unsorted, pop_mu2_n6_unsorted,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu2_vary_n_align.RData')
+)
+
+save(
+  pop_mu3_n1_unsorted, pop_mu3_n2_unsorted, pop_mu3_n3_unsorted,
+  pop_mu3_n4_unsorted, pop_mu3_n5_unsorted, pop_mu3_n6_unsorted,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu3_vary_n_align.RData')
+)
+
+# fixed n
+save(
+  pop_n1_mu1_unsorted, pop_n1_mu2_unsorted, pop_n1_mu3_unsorted, 
+  pop_n1_mu4_unsorted, pop_n1_mu5_unsorted, pop_n1_mu6_unsorted,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n1_vary_mu_align.RData')
+)
+
+save(
+  pop_n2_mu1_unsorted, pop_n2_mu2_unsorted, pop_n2_mu3_unsorted, 
+  pop_n2_mu4_unsorted, pop_n2_mu5_unsorted, pop_n2_mu6_unsorted,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n2_vary_mu_align.RData')
+)
+
+save(
+  pop_n3_mu1_unsorted, pop_n3_mu2_unsorted, pop_n3_mu3_unsorted, 
+  pop_n3_mu4_unsorted, pop_n3_mu5_unsorted, pop_n3_mu6_unsorted,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n3_vary_mu_align.RData')
+)
+
+
+# remove alignments
+rm(pop_mu1_n1_unsorted, pop_mu1_n2_unsorted, pop_mu1_n3_unsorted,
+   pop_mu1_n4_unsorted, pop_mu1_n5_unsorted, pop_mu1_n6_unsorted)
+
+rm(pop_mu2_n1_unsorted, pop_mu2_n2_unsorted, pop_mu2_n3_unsorted,
+   pop_mu2_n4_unsorted, pop_mu2_n5_unsorted, pop_mu2_n6_unsorted)
+
+rm(pop_mu3_n1_unsorted, pop_mu3_n2_unsorted, pop_mu3_n3_unsorted,
+   pop_mu3_n4_unsorted, pop_mu3_n5_unsorted, pop_mu3_n6_unsorted)
+
+rm(pop_n1_mu1_unsorted, pop_n1_mu2_unsorted, pop_n1_mu3_unsorted,
+   pop_n1_mu4_unsorted, pop_n1_mu5_unsorted, pop_n1_mu6_unsorted)
+
+rm(pop_n2_mu1_unsorted, pop_n2_mu2_unsorted, pop_n2_mu3_unsorted, 
+   pop_n2_mu4_unsorted, pop_n2_mu5_unsorted, pop_n2_mu6_unsorted)
+
+rm(pop_n3_mu1_unsorted, pop_n3_mu2_unsorted, pop_n3_mu3_unsorted, 
+   pop_n3_mu4_unsorted, pop_n3_mu5_unsorted, pop_n3_mu6_unsorted)
+
+
+#--------------- PARSE DATA: RHOS --------------------
 # read in rhos
 
 # read in rho value (y)  
@@ -129,21 +272,112 @@ get_rho_msp <- function(all_data) {
   
 }
 
-sm1_pop_rho <- get_rho_msp(sm1_pop)
-sm2_pop_rho <- get_rho_msp(sm2_pop)
-sm3_pop_rho <- get_rho_msp(sm3_pop)
-small_pop_rho <- get_rho_msp(small_pop)
-med1_pop_rho <- get_rho_msp(m1_pop)
-med2_pop_rho <- get_rho_msp(m2_pop)
-med_pop_rho <- get_rho_msp(medium_pop)
-large_pop_rho <- get_rho_msp(large_pop)
+# fixed mu set
+pop_mu1_n1_rho <- get_rho_msp(pop_mu1_n1)
+pop_mu1_n2_rho <- get_rho_msp(pop_mu1_n2)
+pop_mu1_n3_rho <- get_rho_msp(pop_mu1_n3)
+pop_mu1_n4_rho <- get_rho_msp(pop_mu1_n4)
+pop_mu1_n5_rho <- get_rho_msp(pop_mu1_n5)
+pop_mu1_n6_rho <- get_rho_msp(pop_mu1_n6)
 
-lo1_mu_rho <- get_rho_msp(lo1_mu)
-lo2_mu_rho <- get_rho_msp(lo2_mu)
-low_mu_rho <- get_rho_msp(low_mu)
-me1_mu_rho <- get_rho_msp(me1_mu)
-med_mu_rho <- get_rho_msp(medium_mu)
-high_mu_rho <- get_rho_msp(high_mu)
+pop_mu2_n1_rho <- get_rho_msp(pop_mu2_n1)
+pop_mu2_n2_rho <- get_rho_msp(pop_mu2_n2)
+pop_mu2_n3_rho <- get_rho_msp(pop_mu2_n3)
+pop_mu2_n4_rho <- get_rho_msp(pop_mu2_n4)
+pop_mu2_n5_rho <- get_rho_msp(pop_mu2_n5)
+pop_mu2_n6_rho <- get_rho_msp(pop_mu2_n6)
+
+pop_mu3_n1_rho <- get_rho_msp(pop_mu3_n1)
+pop_mu3_n2_rho <- get_rho_msp(pop_mu3_n2)
+pop_mu3_n3_rho <- get_rho_msp(pop_mu3_n3)
+pop_mu3_n4_rho <- get_rho_msp(pop_mu3_n4)
+pop_mu3_n5_rho <- get_rho_msp(pop_mu3_n5)
+pop_mu3_n6_rho <- get_rho_msp(pop_mu3_n6)
+
+# fixed n set
+pop_n1_mu1_rho <- get_rho_msp(pop_n1_mu1)
+pop_n1_mu2_rho <- get_rho_msp(pop_n1_mu2)
+pop_n1_mu3_rho <- get_rho_msp(pop_n1_mu3)
+pop_n1_mu4_rho <- get_rho_msp(pop_n1_mu4)
+pop_n1_mu5_rho <- get_rho_msp(pop_n1_mu5)
+pop_n1_mu6_rho <- get_rho_msp(pop_n1_mu6)
+
+pop_n2_mu1_rho <- get_rho_msp(pop_n2_mu1)
+pop_n2_mu2_rho <- get_rho_msp(pop_n2_mu2)
+pop_n2_mu3_rho <- get_rho_msp(pop_n2_mu3)
+pop_n2_mu4_rho <- get_rho_msp(pop_n2_mu4)
+pop_n2_mu5_rho <- get_rho_msp(pop_n2_mu5)
+pop_n2_mu6_rho <- get_rho_msp(pop_n2_mu6)
+
+pop_n3_mu1_rho <- get_rho_msp(pop_n3_mu1)
+pop_n3_mu2_rho <- get_rho_msp(pop_n3_mu2)
+pop_n3_mu3_rho <- get_rho_msp(pop_n3_mu3)
+pop_n3_mu4_rho <- get_rho_msp(pop_n3_mu4)
+pop_n3_mu5_rho <- get_rho_msp(pop_n3_mu5)
+pop_n3_mu6_rho <- get_rho_msp(pop_n3_mu6)
+
+
+# save rho data
+# fixed mu
+save(
+  pop_mu1_n1_rho, pop_mu1_n2_rho, pop_mu1_n3_rho, 
+  pop_mu1_n4_rho, pop_mu1_n5_rho, pop_mu1_n6_rho,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu1_vary_n_rho.RData')
+)
+
+save(
+  pop_mu2_n1_rho, pop_mu2_n2_rho, pop_mu2_n3_rho, 
+  pop_mu2_n4_rho, pop_mu2_n5_rho, pop_mu2_n6_rho,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu2_vary_n_rho.RData')
+)
+
+save(
+  pop_mu3_n1_rho, pop_mu3_n2_rho, pop_mu3_n3_rho, 
+  pop_mu3_n4_rho, pop_mu3_n5_rho, pop_mu3_n6_rho,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu3_vary_n_rho.RData')
+)
+
+# fixed n
+save(
+  pop_n1_mu1_rho, pop_n1_mu2_rho, pop_n1_mu3_rho, 
+  pop_n1_mu4_rho, pop_n1_mu5_rho, pop_n1_mu6_rho,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n1_vary_mu_rho.RData')
+)
+
+save(
+  pop_n2_mu1_rho, pop_n2_mu2_rho, pop_n2_mu3_rho, 
+  pop_n2_mu4_rho, pop_n2_mu5_rho, pop_n2_mu6_rho,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n2_vary_mu_rho.RData')
+)
+
+save(
+  pop_n3_mu1_rho, pop_n3_mu2_rho, pop_n3_mu3_rho, 
+  pop_n3_mu4_rho, pop_n3_mu5_rho, pop_n3_mu6_rho,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n3_vary_mu_rho.RData')
+)
+
+
+# remove rho data
+rm(pop_mu1_n1_rho, pop_mu1_n2_rho, pop_mu1_n3_rho, 
+   pop_mu1_n4_rho, pop_mu1_n5_rho, pop_mu1_n6_rho)
+
+rm(pop_mu2_n1_rho, pop_mu2_n2_rho, pop_mu2_n3_rho, 
+   pop_mu2_n4_rho, pop_mu2_n5_rho, pop_mu2_n6_rho)
+
+rm(pop_mu3_n1_rho, pop_mu3_n2_rho, pop_mu3_n3_rho, 
+   pop_mu3_n4_rho, pop_mu3_n5_rho, pop_mu3_n6_rho)
+
+rm(pop_n1_mu1_rho, pop_n1_mu2_rho, pop_n1_mu3_rho, 
+   pop_n1_mu4_rho, pop_n1_mu5_rho, pop_n1_mu6_rho)
+
+rm(pop_n2_mu1_rho, pop_n2_mu2_rho, pop_n2_mu3_rho, 
+   pop_n2_mu4_rho, pop_n2_mu5_rho, pop_n2_mu6_rho)
+
+rm(pop_n3_mu1_rho, pop_n3_mu2_rho, pop_n3_mu3_rho, 
+   pop_n3_mu4_rho, pop_n3_mu5_rho, pop_n3_mu6_rho)
+
+
+#--------------- PARSE DATA: SEG SITES --------------------
 
 # read in seg. sites
 
@@ -164,63 +398,119 @@ get_seg_sites <- function(all_data){
   
 }
 
-sm1_segsites <- get_seg_sites(sm1_pop)
-sm2_segsites <- get_seg_sites(sm2_pop)
-sm3_segsites <- get_seg_sites(sm3_pop)
-sm_segsites <- get_seg_sites(small_pop)
-med1_segsites <- get_seg_sites(m1_pop)
-med2_segsites <- get_seg_sites(m2_pop)
-med_segsites <- get_seg_sites(medium_pop)
-lg_segsites <- get_seg_sites(large_pop)
+# fixed mu set
+pop_mu1_n1_segsites <- get_seg_sites(pop_mu1_n1)
+pop_mu1_n2_segsites <- get_seg_sites(pop_mu1_n2)
+pop_mu1_n3_segsites <- get_seg_sites(pop_mu1_n3)
+pop_mu1_n4_segsites <- get_seg_sites(pop_mu1_n4)
+pop_mu1_n5_segsites <- get_seg_sites(pop_mu1_n5)
+pop_mu1_n6_segsites <- get_seg_sites(pop_mu1_n6)
 
-lo1_mu_segsites <- get_seg_sites(lo1_mu)
-lo2_mu_segsites <- get_seg_sites(lo2_mu)
-low_mu_segsites <- get_seg_sites(low_mu)
-md1_mu_segsites <- get_seg_sites(me1_mu)
-med_mu_segsites <- get_seg_sites(medium_mu)
-high_mu_segsites <- get_seg_sites(high_mu)
+pop_mu2_n1_segsites <- get_seg_sites(pop_mu2_n1)
+pop_mu2_n2_segsites <- get_seg_sites(pop_mu2_n2)
+pop_mu2_n3_segsites <- get_seg_sites(pop_mu2_n3)
+pop_mu2_n4_segsites <- get_seg_sites(pop_mu2_n4)
+pop_mu2_n5_segsites <- get_seg_sites(pop_mu2_n5)
+pop_mu2_n6_segsites <- get_seg_sites(pop_mu2_n6)
 
-# remove full data set
-rm(sm1_pop, sm2_pop, sm3_pop, small_pop, m1_pop, m2_pop, medium_pop, large_pop)
-rm(lo1_mu, lo2_mu, low_mu, me1_mu, medium_mu, high_mu)
+pop_mu3_n1_segsites <- get_seg_sites(pop_mu3_n1)
+pop_mu3_n2_segsites <- get_seg_sites(pop_mu3_n2)
+pop_mu3_n3_segsites <- get_seg_sites(pop_mu3_n3)
+pop_mu3_n4_segsites <- get_seg_sites(pop_mu3_n4)
+pop_mu3_n5_segsites <- get_seg_sites(pop_mu3_n5)
+pop_mu3_n6_segsites <- get_seg_sites(pop_mu3_n6)
+
+# fixed n set
+pop_n1_mu1_segsites <- get_seg_sites(pop_n1_mu1)
+pop_n1_mu2_segsites <- get_seg_sites(pop_n1_mu2)
+pop_n1_mu3_segsites <- get_seg_sites(pop_n1_mu3)
+pop_n1_mu4_segsites <- get_seg_sites(pop_n1_mu4)
+pop_n1_mu5_segsites <- get_seg_sites(pop_n1_mu5)
+pop_n1_mu6_segsites <- get_seg_sites(pop_n1_mu6)
+
+pop_n2_mu1_segsites <- get_seg_sites(pop_n2_mu1)
+pop_n2_mu2_segsites <- get_seg_sites(pop_n2_mu2)
+pop_n2_mu3_segsites <- get_seg_sites(pop_n2_mu3)
+pop_n2_mu4_segsites <- get_seg_sites(pop_n2_mu4)
+pop_n2_mu5_segsites <- get_seg_sites(pop_n2_mu5)
+pop_n2_mu6_segsites <- get_seg_sites(pop_n2_mu6)
+
+pop_n3_mu1_segsites <- get_seg_sites(pop_n3_mu1)
+pop_n3_mu2_segsites <- get_seg_sites(pop_n3_mu2)
+pop_n3_mu3_segsites <- get_seg_sites(pop_n3_mu3)
+pop_n3_mu4_segsites <- get_seg_sites(pop_n3_mu4)
+pop_n3_mu5_segsites <- get_seg_sites(pop_n3_mu5)
+pop_n3_mu6_segsites <- get_seg_sites(pop_n3_mu6)
 
 
-#--------------- SAVE DATA SETS --------------------
-
+# save seg sites data
+# fixed mu
 save(
-  sm1_pop_unsorted, sm2_pop_unsorted, sm3_pop_unsorted,
-  sm_pop_unsorted, md1_pop_unsorted, md2_pop_unsorted, 
-  md_pop_unsorted, lg_pop_unsorted, 
-  file = glue('{path_to_parsed}fixed_mu_vary_n_align.RData')
+  pop_mu1_n1_segsites, pop_mu1_n2_segsites, pop_mu1_n3_segsites, 
+  pop_mu1_n4_segsites, pop_mu1_n5_segsites, pop_mu1_n6_segsites,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu1_vary_n_sites.RData')
 )
 
 save(
-  sm1_pop_rho, sm2_pop_rho, sm3_pop_rho, small_pop_rho, 
-  med1_pop_rho, med2_pop_rho, med_pop_rho, large_pop_rho,
-  file = glue('{path_to_parsed}fixed_mu_vary_n_rho.RData')
+  pop_mu2_n1_segsites, pop_mu2_n2_segsites, pop_mu2_n3_segsites, 
+  pop_mu2_n4_segsites, pop_mu2_n5_segsites, pop_mu2_n6_segsites,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu2_vary_n_sites.RData')
 )
 
 save(
-  sm1_segsites, sm2_segsites, sm3_segsites, sm_segsites,
-  med1_segsites, med2_segsites, med_segsites, lg_segsites,
-  file = glue('{path_to_parsed}fixed_mu_vary_n_sites.RData')
+  pop_mu3_n1_segsites, pop_mu3_n2_segsites, pop_mu3_n3_segsites, 
+  pop_mu3_n4_segsites, pop_mu3_n5_segsites, pop_mu3_n6_segsites,
+  file = file.path(path_to_parsed, 'fixed_mu/fixed_mu3_vary_n_sites.RData')
+)
+
+# fixed n
+save(
+  pop_n1_mu1_segsites, pop_n1_mu2_segsites, pop_n1_mu3_segsites,
+  pop_n1_mu4_segsites, pop_n1_mu5_segsites, pop_n1_mu6_segsites,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n1_vary_mu_sites.RData')
 )
 
 save(
-  lw1_mu_unsorted, lw2_mu_unsorted, lw_mu_unsorted, 
-  md1_mu_unsorted, md_mu_unsorted, hg_mu_unsorted,
-  file = glue('{path_to_parsed}fixed_n_vary_mu_align.RData')
+  pop_n2_mu1_segsites, pop_n2_mu2_segsites, pop_n2_mu3_segsites,
+  pop_n2_mu4_segsites, pop_n2_mu5_segsites, pop_n2_mu6_segsites,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n2_vary_mu_sites.RData')
 )
 
 save(
-  lo1_mu_rho, lo2_mu_rho, low_mu_rho, 
-  me1_mu_rho, med_mu_rho, high_mu_rho,
-  file = glue('{path_to_parsed}fixed_n_vary_mu_rho.RData')
+  pop_n3_mu1_segsites, pop_n3_mu2_segsites, pop_n3_mu3_segsites,
+  pop_n3_mu4_segsites, pop_n3_mu5_segsites, pop_n3_mu6_segsites,
+  file = file.path(path_to_parsed, 'fixed_n/fixed_n3_vary_mu_sites.RData')
 )
 
-save(
-  lo1_mu_segsites, lo2_mu_segsites, low_mu_segsites,
-  md1_mu_segsites, med_mu_segsites, high_mu_segsites,
-  file = glue('{path_to_parsed}fixed_n_vary_mu_sites.RData')
-)
+
+# remove data 
+rm(pop_mu1_n1_segsites, pop_mu1_n2_segsites, pop_mu1_n3_segsites,
+   pop_mu1_n4_segsites, pop_mu1_n5_segsites, pop_mu1_n6_segsites)
+
+rm(pop_mu2_n1_segsites, pop_mu2_n2_segsites, pop_mu2_n3_segsites, 
+   pop_mu2_n4_segsites, pop_mu2_n5_segsites, pop_mu2_n6_segsites)
+
+rm(pop_mu3_n1_segsites, pop_mu3_n2_segsites, pop_mu3_n3_segsites, 
+   pop_mu3_n4_segsites, pop_mu3_n5_segsites, pop_mu3_n6_segsites)
+
+rm(pop_mu1_n1, pop_mu1_n2, pop_mu1_n3, pop_mu1_n4, pop_mu1_n5, pop_mu1_n6)
+
+rm(pop_mu2_n1, pop_mu2_n2, pop_mu2_n3, pop_mu2_n4, pop_mu2_n5, pop_mu2_n6)
+
+rm(pop_mu3_n1, pop_mu3_n2, pop_mu3_n3, pop_mu3_n4, pop_mu3_n5, pop_mu3_n6)
+
+rm(pop_n1_mu1_segsites, pop_n1_mu2_segsites, pop_n1_mu3_segsites,
+   pop_n1_mu4_segsites, pop_n1_mu5_segsites, pop_n1_mu6_segsites)
+
+rm(pop_n2_mu1_segsites, pop_n2_mu2_segsites, pop_n2_mu3_segsites,
+   pop_n2_mu4_segsites, pop_n2_mu5_segsites, pop_n2_mu6_segsites)
+
+rm(pop_n3_mu1_segsites, pop_n3_mu2_segsites, pop_n3_mu3_segsites,
+   pop_n3_mu4_segsites, pop_n3_mu5_segsites, pop_n3_mu6_segsites)
+
+rm(pop_n1_mu1, pop_n1_mu2, pop_n1_mu3, pop_n1_mu4, pop_n1_mu5, pop_n1_mu6)
+
+rm(pop_n2_mu1, pop_n2_mu2, pop_n2_mu3, pop_n2_mu4, pop_n2_mu5, pop_n2_mu6)
+
+rm(pop_n3_mu1, pop_n3_mu2, pop_n3_mu3, pop_n3_mu4, pop_n3_mu5, pop_n3_mu6)
 
