@@ -7,23 +7,18 @@
 
 
 #--------------- CONFIGURE ENVIRONMENT --------------------
-Sys.time()
-cat("\nConfiguring environment.....\n")
 
 # load libraries
 library(purrr)
 library(dplyr)
 library(tidyr)
-library(glue)
 library(reticulate)
 # call the conda environment that has keras and tensorflow installed
-#use_condaenv(condaenv = "r-reticulate", conda = "/home1/05072/mmjohn/.local/share/r-miniconda/conda.exe")
 use_condaenv("r-reticulate", conda = "/stor/home/mmj2238/.local/share/r-miniconda/bin/conda")
 library(keras) 
 
 # load R package
 library(devtools)
-#devtools::load_all("/Users/mackenziejohnson/Documents/grad_school/wilke_lab/popgencnn")
 devtools::load_all("/stor/home/mmj2238/popgencnn/")
 
 # check that the right environment loaded
@@ -43,238 +38,737 @@ path_to_data <- '/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/'
 # size of alignments
 num_chrom <- 50
 
-# max_size - need to use one standard size for consistency across training and test sets
-max_size <- 400 
+# go back to padding to maximum size of alignments in set to accommodate large pops with high mu
+# # max_size - need to use one standard size for consistency across training and test sets
+# max_size <- 400 
 
-#--------------- READ IN DATA --------------------
-Sys.time()
-cat("\nReading in data.....\n")
+#--------------- READ IN DATA - FIXED MU --------------------
 
-# load alignments - vary n
-load(glue('{path_to_data}fixed_mu_vary_n_align.RData'))
+# load alignments - fixed mu
+load(
+  file = file.path(
+    path_to_data, 
+    'fixed_mu',
+    'fixed_mu1_vary_n_align.RData'
+  )
+)
 
-# load alignments - vary mu
-load(glue('{path_to_data}fixed_n_vary_mu_align.RData'))
+load(
+  file = file.path(
+    path_to_data, 
+    'fixed_mu',
+    'fixed_mu2_vary_n_align.RData'
+  )
+)
+
+load(
+  file = file.path(
+    path_to_data, 
+    'fixed_mu',
+    'fixed_mu3_vary_n_align.RData'
+  )
+)
 
 
-#--------------- SORT ALIGNMENTS --------------------
-Sys.time()
-cat("\nSorting alignments.....\n")
+#--------------- SORT ALIGNMENTS - FIXED MU --------------------
 
 # fixed mu, vary n
-sm1_pop_data <- lapply(sm1_pop_unsorted, sort_align)
-rm(sm1_pop_unsorted)
+# set 1
+pop_mu1_n1_data <- lapply(pop_mu1_n1_unsorted, sort_align)
+rm(pop_mu1_n1_unsorted)
 
-sm2_pop_data <- lapply(sm2_pop_unsorted, sort_align)
-rm(sm2_pop_unsorted)
+pop_mu1_n2_data <- lapply(pop_mu1_n2_unsorted, sort_align)
+rm(pop_mu1_n2_unsorted)
 
-sm3_pop_data <- lapply(sm3_pop_unsorted, sort_align)
-rm(sm3_pop_unsorted)
+pop_mu1_n3_data <- lapply(pop_mu1_n3_unsorted, sort_align)
+rm(pop_mu1_n3_unsorted)
 
-sm_pop_data <- lapply(sm_pop_unsorted, sort_align)
-rm(sm_pop_unsorted)
+pop_mu1_n4_data <- lapply(pop_mu1_n4_unsorted, sort_align)
+rm(pop_mu1_n4_unsorted)
 
-md1_pop_data <- lapply(md1_pop_unsorted, sort_align)
-rm(md1_pop_unsorted)
+pop_mu1_n5_data <- lapply(pop_mu1_n5_unsorted, sort_align)
+rm(pop_mu1_n5_unsorted)
 
-md2_pop_data <- lapply(md2_pop_unsorted, sort_align)
-rm(md2_pop_unsorted)
+pop_mu1_n6_data <- lapply(pop_mu1_n6_unsorted, sort_align)
+rm(pop_mu1_n6_unsorted)
 
-md_pop_data <- lapply(md_pop_unsorted, sort_align)
-rm(md_pop_unsorted)
+# set 2
+pop_mu2_n1_data <- lapply(pop_mu2_n1_unsorted, sort_align)
+rm(pop_mu2_n1_unsorted)
 
-lg_pop_data <- lapply(lg_pop_unsorted, sort_align)
-rm(lg_pop_unsorted)
+pop_mu2_n2_data <- lapply(pop_mu2_n2_unsorted, sort_align)
+rm(pop_mu2_n2_unsorted)
+
+pop_mu2_n3_data <- lapply(pop_mu2_n3_unsorted, sort_align)
+rm(pop_mu2_n3_unsorted)
+
+pop_mu2_n4_data <- lapply(pop_mu2_n4_unsorted, sort_align)
+rm(pop_mu2_n4_unsorted)
+
+pop_mu2_n5_data <- lapply(pop_mu2_n5_unsorted, sort_align)
+rm(pop_mu2_n5_unsorted)
+
+pop_mu2_n6_data <- lapply(pop_mu2_n6_unsorted, sort_align)
+rm(pop_mu2_n6_unsorted)
+
+# set 3
+pop_mu3_n1_data <- lapply(pop_mu3_n1_unsorted, sort_align)
+rm(pop_mu3_n1_unsorted)
+
+pop_mu3_n2_data <- lapply(pop_mu3_n2_unsorted, sort_align)
+rm(pop_mu3_n2_unsorted)
+
+pop_mu3_n3_data <- lapply(pop_mu3_n3_unsorted, sort_align)
+rm(pop_mu3_n3_unsorted)
+
+pop_mu3_n4_data <- lapply(pop_mu3_n4_unsorted, sort_align)
+rm(pop_mu3_n4_unsorted)
+
+pop_mu3_n5_data <- lapply(pop_mu3_n5_unsorted, sort_align)
+rm(pop_mu3_n5_unsorted)
+
+pop_mu3_n6_data <- lapply(pop_mu3_n6_unsorted, sort_align)
+rm(pop_mu3_n6_unsorted)
 
 
-# fixed n, vary mu
-lw1_mu_data <- lapply(lw1_mu_unsorted, sort_align)
-rm(lw1_mu_unsorted)
-
-lw2_mu_data <- lapply(lw2_mu_unsorted, sort_align)
-rm(lw2_mu_unsorted)
-
-lw_mu_data <- lapply(lw_mu_unsorted, sort_align)
-rm(lw_mu_unsorted)
-
-md1_mu_data <- lapply(md1_mu_unsorted, sort_align)
-rm(md1_mu_unsorted)
-
-md_mu_data <- lapply(md_mu_unsorted, sort_align)
-rm(md_mu_unsorted)
-
-hg_mu_data <- lapply(hg_mu_unsorted, sort_align)
-rm(hg_mu_unsorted)
-
-
-#--------------- PAD ALIGNMENTS --------------------
-Sys.time()
-cat("\nPadding alignments.....\n")
+#--------------- PAD ALIGNMENTS - FIXED MU --------------------
 
 # use keras built-in function to pad alignments
 
 # fixed mu, vary n
-sm1_pop_padded <- lapply(
-  sm1_pop_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
-  dtype = "float32",
-  padding = "post"
-)
+# set 1
+max(lengths(pop_mu1_n1_data)/num_chrom)   # 6
 
-rm(sm1_pop_data)
-
-sm2_pop_padded <- lapply(
-  sm2_pop_data,
+pop_mu1_n1_padded <- lapply(
+  pop_mu1_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 6,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(sm2_pop_data)
+rm(pop_mu1_n1_data)
 
-sm3_pop_padded <- lapply(
-  sm3_pop_data,
+max(lengths(pop_mu1_n2_data)/num_chrom)   # 10
+
+pop_mu1_n2_padded <- lapply(
+  pop_mu1_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 10,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(sm3_pop_data)
+rm(pop_mu1_n2_data)
 
-sm_pop_padded <- lapply(
-  sm_pop_data,
+max(lengths(pop_mu1_n3_data)/num_chrom)   # 19
+
+pop_mu1_n3_padded <- lapply(
+  pop_mu1_n3_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 19,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(sm_pop_data)
+rm(pop_mu1_n3_data)
 
-md1_pop_padded <- lapply(
-  md1_pop_data,
+max(lengths(pop_mu1_n4_data)/num_chrom)   # 45
+
+pop_mu1_n4_padded <- lapply(
+  pop_mu1_n4_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 45,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(md1_pop_data)
+rm(pop_mu1_n4_data)
 
-md2_pop_padded <- lapply(
-  md2_pop_data,
+max(lengths(pop_mu1_n5_data)/num_chrom)   # 114
+
+pop_mu1_n5_padded <- lapply(
+  pop_mu1_n5_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 114,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(md2_pop_data)
+rm(pop_mu1_n5_data)
 
-md_pop_padded <- lapply(
-  md_pop_data,
+max(lengths(pop_mu1_n6_data)/num_chrom)   # 266
+
+pop_mu1_n6_padded <- lapply(
+  pop_mu1_n6_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 266,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(md_pop_data)
+rm(pop_mu1_n6_data)
 
-lg_pop_padded <- lapply(
-  lg_pop_data,
+# set 2
+max(lengths(pop_mu2_n1_data)/num_chrom)   # 2
+
+pop_mu2_n1_padded <- lapply(
+  pop_mu2_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = max_size,   
+  maxlen = 2,
+  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(lg_pop_data)
+rm(pop_mu2_n1_data)
 
+max(lengths(pop_mu2_n2_data)/num_chrom)   # 4
+
+pop_mu2_n2_padded <- lapply(
+  pop_mu2_n2_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 4,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu2_n2_data)
+
+max(lengths(pop_mu2_n3_data)/num_chrom)   # 5
+
+pop_mu2_n3_padded <- lapply(
+  pop_mu2_n3_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 5,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu2_n3_data)
+
+max(lengths(pop_mu2_n4_data)/num_chrom)   # 10
+
+pop_mu2_n4_padded <- lapply(
+  pop_mu2_n4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 10,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu2_n4_data)
+
+max(lengths(pop_mu2_n5_data)/num_chrom)   # 17
+
+pop_mu2_n5_padded <- lapply(
+  pop_mu2_n5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 17,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu2_n5_data)
+
+max(lengths(pop_mu2_n6_data)/num_chrom)   # 37
+
+pop_mu2_n6_padded <- lapply(
+  pop_mu2_n6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 37,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu2_n6_data)
+
+# set 3
+max(lengths(pop_mu3_n1_data)/num_chrom)   # 19
+
+pop_mu3_n1_padded <- lapply(
+  pop_mu3_n1_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 19,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu3_n1_data)
+
+max(lengths(pop_mu3_n2_data)/num_chrom)   # 53
+
+pop_mu3_n2_padded <- lapply(
+  pop_mu3_n2_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 53,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu3_n2_data)
+
+max(lengths(pop_mu3_n3_data)/num_chrom)   # 130
+
+pop_mu3_n3_padded <- lapply(
+  pop_mu3_n3_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 130,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu3_n3_data)
+
+max(lengths(pop_mu3_n4_data)/num_chrom)   # 350
+
+pop_mu3_n4_padded <- lapply(
+  pop_mu3_n4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 350,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu3_n4_data)
+
+max(lengths(pop_mu3_n5_data)/num_chrom)   # 982
+
+pop_mu3_n5_padded <- lapply(
+  pop_mu3_n5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 982,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu3_n5_data)
+
+max(lengths(pop_mu3_n6_data)/num_chrom)   # 2473
+
+pop_mu3_n6_padded <- lapply(
+  pop_mu3_n6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 2473,
+  #maxlen = max_size,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_mu3_n6_data)
+
+
+#--------------- SAVE DATA SETS - FIXED MU --------------------
+
+# set 1
+save(
+  pop_mu1_n1_padded, pop_mu1_n2_padded, pop_mu1_n3_padded,
+  pop_mu1_n4_padded, pop_mu1_n5_padded, pop_mu1_n6_padded, 
+  file = file.path(
+    path_to_data, 
+    'fixed_mu', 
+    'fixed_mu1_vary_n_align_processed.RData')
+)
+
+# set 2
+save(
+  pop_mu2_n1_padded, pop_mu2_n2_padded, pop_mu2_n3_padded,
+  pop_mu2_n4_padded, pop_mu2_n5_padded, pop_mu2_n6_padded, 
+  file = file.path(
+    path_to_data, 
+    'fixed_mu', 
+    'fixed_mu2_vary_n_align_processed.RData')
+)
+
+# set 3
+save(
+  pop_mu3_n1_padded, pop_mu3_n2_padded, pop_mu3_n3_padded,
+  pop_mu3_n4_padded, pop_mu3_n5_padded, pop_mu3_n6_padded, 
+  file = file.path(
+    path_to_data, 
+    'fixed_mu', 
+    'fixed_mu3_vary_n_align_processed.RData')
+)
+
+# rm data sets
+rm(pop_mu1_n1_padded, pop_mu1_n2_padded, pop_mu1_n3_padded,
+   pop_mu1_n4_padded, pop_mu1_n5_padded, pop_mu1_n6_padded)
+
+rm(pop_mu2_n1_padded, pop_mu2_n2_padded, pop_mu2_n3_padded,
+   pop_mu2_n4_padded, pop_mu2_n5_padded, pop_mu2_n6_padded)
+
+rm(pop_mu3_n1_padded, pop_mu3_n2_padded, pop_mu3_n3_padded,
+   pop_mu3_n4_padded, pop_mu3_n5_padded, pop_mu3_n6_padded)
+
+
+#--------------- READ IN DATA - FIXED N --------------------
+
+# load alignments - fixed N
+load(
+  file = file.path(
+    path_to_data, 
+    'fixed_n',
+    'fixed_n1_vary_mu_align.RData'
+  )
+)
+
+load(
+  file = file.path(
+    path_to_data, 
+    'fixed_n',
+    'fixed_n2_vary_mu_align.RData'
+  )
+)
+
+load(
+  file = file.path(
+    path_to_data, 
+    'fixed_n',
+    'fixed_n3_vary_mu_align.RData'
+  )
+)
+
+#--------------- SORT ALIGNMENTS - FIXED N --------------------
 
 # fixed n, vary mu
-lw1_mu_padded <- lapply(
-  lw1_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
+# set 1
+pop_n1_mu1_data <- lapply(pop_n1_mu1_unsorted, sort_align)
+rm(pop_n1_mu1_unsorted)
+
+pop_n1_mu2_data <- lapply(pop_n1_mu2_unsorted, sort_align)
+rm(pop_n1_mu2_unsorted)
+
+pop_n1_mu3_data <- lapply(pop_n1_mu3_unsorted, sort_align)
+rm(pop_n1_mu3_unsorted)
+
+pop_n1_mu4_data <- lapply(pop_n1_mu4_unsorted, sort_align)
+rm(pop_n1_mu4_unsorted)
+
+pop_n1_mu5_data <- lapply(pop_n1_mu5_unsorted, sort_align)
+rm(pop_n1_mu5_unsorted)
+
+pop_n1_mu6_data <- lapply(pop_n1_mu6_unsorted, sort_align)
+rm(pop_n1_mu6_unsorted)
+
+# set 2
+pop_n2_mu1_data <- lapply(pop_n2_mu1_unsorted, sort_align)
+rm(pop_n2_mu1_unsorted)
+
+pop_n2_mu2_data <- lapply(pop_n2_mu2_unsorted, sort_align)
+rm(pop_n2_mu2_unsorted)
+
+pop_n2_mu3_data <- lapply(pop_n2_mu3_unsorted, sort_align)
+rm(pop_n2_mu3_unsorted)
+
+pop_n2_mu4_data <- lapply(pop_n2_mu4_unsorted, sort_align)
+rm(pop_n2_mu4_unsorted)
+
+pop_n2_mu5_data <- lapply(pop_n2_mu5_unsorted, sort_align)
+rm(pop_n2_mu5_unsorted)
+
+pop_n2_mu6_data <- lapply(pop_n2_mu6_unsorted, sort_align)
+rm(pop_n2_mu6_unsorted)
+
+# set 3
+pop_n3_mu1_data <- lapply(pop_n3_mu1_unsorted, sort_align)
+rm(pop_n3_mu1_unsorted)
+
+pop_n3_mu2_data <- lapply(pop_n3_mu2_unsorted, sort_align)
+rm(pop_n3_mu2_unsorted)
+
+pop_n3_mu3_data <- lapply(pop_n3_mu3_unsorted, sort_align)
+rm(pop_n3_mu3_unsorted)
+
+pop_n3_mu4_data <- lapply(pop_n3_mu4_unsorted, sort_align)
+rm(pop_n3_mu4_unsorted)
+
+pop_n3_mu5_data <- lapply(pop_n3_mu5_unsorted, sort_align)
+rm(pop_n3_mu5_unsorted)
+
+pop_n3_mu6_data <- lapply(pop_n3_mu6_unsorted, sort_align)
+rm(pop_n3_mu6_unsorted)
+
+
+#--------------- PAD ALIGNMENTS - FIXED N --------------------
+
+# use keras built-in function to pad alignments
+
+# fixed n, vary mu
+# set 1
+max(lengths(pop_n1_mu1_data)/num_chrom)   # 5
+
+pop_n1_mu1_padded <- lapply(
+  pop_n1_mu1_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 5,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(lw1_mu_data)
+rm(pop_n1_mu1_data)
 
-lw2_mu_padded <- lapply(
-  lw2_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
+max(lengths(pop_n1_mu2_data)/num_chrom)   # 8
+
+pop_n1_mu2_padded <- lapply(
+  pop_n1_mu2_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 8, 
   dtype = "float32",
   padding = "post"
 )
 
-rm(lw2_mu_data)
+rm(pop_n1_mu2_data)
 
-lw_mu_padded <- lapply(
-  lw_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
+max(lengths(pop_n1_mu3_data)/num_chrom)   # 13
+
+pop_n1_mu3_padded <- lapply(
+  pop_n1_mu3_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 13,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(lw_mu_data)
+rm(pop_n1_mu3_data)
 
-md1_mu_padded <- lapply(
-  md1_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
+max(lengths(pop_n1_mu4_data)/num_chrom)   # 29
+
+pop_n1_mu4_padded <- lapply(
+  pop_n1_mu4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 29,   
   dtype = "float32",
   padding = "post"
 )
 
-rm(md1_mu_data)
+rm(pop_n1_mu4_data)
 
-md_mu_padded <- lapply(
-  md_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
+max(lengths(pop_n1_mu5_data)/num_chrom)   # 79
+
+pop_n1_mu5_padded <- lapply(
+  pop_n1_mu5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 79,  
   dtype = "float32",
   padding = "post"
 )
 
-rm(md_mu_data)
+rm(pop_n1_mu5_data)
 
-hg_mu_padded <- lapply(
-  hg_mu_data,
-  function(x, ...) {pad_sequences(x, ...)}, # adding ... maintains matrix when segsites = 1
-  #maxlen = 406,
-  maxlen = max_size,   
+max(lengths(pop_n1_mu6_data)/num_chrom)   # 208
+
+pop_n1_mu6_padded <- lapply(
+  pop_n1_mu6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 208,  
   dtype = "float32",
   padding = "post"
 )
 
-rm(hg_mu_data)
+rm(pop_n1_mu6_data)
+
+# set 2
+max(lengths(pop_n2_mu1_data)/num_chrom)   # 2 
+
+pop_n2_mu1_padded <- lapply(
+  pop_n2_mu1_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 2,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n2_mu1_data)
+
+max(lengths(pop_n2_mu2_data)/num_chrom)   # 3
+
+pop_n2_mu2_padded <- lapply(
+  pop_n2_mu2_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 3, 
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n2_mu2_data)
+
+max(lengths(pop_n2_mu3_data)/num_chrom)   # 5
+
+pop_n2_mu3_padded <- lapply(
+  pop_n2_mu3_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 5,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n2_mu3_data)
+
+max(lengths(pop_n2_mu4_data)/num_chrom)   # 8
+
+pop_n2_mu4_padded <- lapply(
+  pop_n2_mu4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 8,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n2_mu4_data)
+
+max(lengths(pop_n2_mu5_data)/num_chrom)   # 15
+
+pop_n2_mu5_padded <- lapply(
+  pop_n2_mu5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 15,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n2_mu5_data)
+
+max(lengths(pop_n2_mu6_data)/num_chrom)   # 38
+
+pop_n2_mu6_padded <- lapply(
+  pop_n2_mu6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 38,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n2_mu6_data)
+
+# set 3
+max(lengths(pop_n3_mu1_data)/num_chrom)   # 13
+
+pop_n3_mu1_padded <- lapply(
+  pop_n3_mu1_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 13,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n3_mu1_data)
+
+max(lengths(pop_n3_mu2_data)/num_chrom)   # 33
+
+pop_n3_mu2_padded <- lapply(
+  pop_n3_mu2_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 33, 
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n3_mu2_data)
+
+max(lengths(pop_n3_mu3_data)/num_chrom)   # 62
+
+pop_n3_mu3_padded <- lapply(
+  pop_n3_mu3_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 62,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n3_mu3_data)
+
+max(lengths(pop_n3_mu4_data)/num_chrom)   # 165
+
+pop_n3_mu4_padded <- lapply(
+  pop_n3_mu4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 165,   
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n3_mu4_data)
+
+max(lengths(pop_n3_mu5_data)/num_chrom)   # 499
+
+pop_n3_mu5_padded <- lapply(
+  pop_n3_mu5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 499,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n3_mu5_data)
+
+max(lengths(pop_n3_mu6_data)/num_chrom)   # 1503
+
+pop_n3_mu6_padded <- lapply(
+  pop_n3_mu6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 1503,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_n3_mu6_data)
 
 
-#--------------- SAVE DATA SETS --------------------
+#--------------- SAVE DATA SETS - FIXED N --------------------
 
+# set 1
 save(
-  sm1_pop_padded, sm2_pop_padded, sm3_pop_padded, sm_pop_padded,
-  md1_pop_padded, md2_pop_padded, md_pop_padded, lg_pop_padded, 
-  file = glue('{path_to_data}fixed_mu_vary_n_align_processed.RData')
+  pop_n1_mu1_padded, pop_n1_mu2_padded, pop_n1_mu3_padded,
+  pop_n1_mu4_padded, pop_n1_mu5_padded, pop_n1_mu6_padded, 
+  file = file.path(
+    path_to_data, 
+    'fixed_n', 
+    'fixed_n1_vary_mu_align_processed.RData')
 )
 
+# set 2
 save(
-  lw1_mu_padded, lw2_mu_padded, lw_mu_padded, 
-  md1_mu_padded, md_mu_padded, hg_mu_padded,
-  file = glue('{path_to_data}fixed_n_vary_mu_align_processed.RData')
+  pop_n2_mu1_padded, pop_n2_mu2_padded, pop_n2_mu3_padded,
+  pop_n2_mu4_padded, pop_n2_mu5_padded, pop_n2_mu6_padded, 
+  file = file.path(
+    path_to_data, 
+    'fixed_n', 
+    'fixed_n2_vary_mu_align_processed.RData')
 )
+
+# set 3
+save(
+  pop_n3_mu1_padded, pop_n3_mu2_padded, pop_n3_mu3_padded,
+  pop_n3_mu4_padded, pop_n3_mu5_padded, pop_n3_mu6_padded, 
+  file = file.path(
+    path_to_data, 
+    'fixed_n', 
+    'fixed_n3_vary_mu_align_processed.RData')
+)
+
+# remove data sets
+rm(pop_n1_mu1_padded, pop_n1_mu2_padded, pop_n1_mu3_padded,
+   pop_n1_mu4_padded, pop_n1_mu5_padded, pop_n1_mu6_padded)
+
+rm(pop_n2_mu1_padded, pop_n2_mu2_padded, pop_n2_mu3_padded,
+   pop_n2_mu4_padded, pop_n2_mu5_padded, pop_n2_mu6_padded)
+
+rm(pop_n3_mu1_padded, pop_n3_mu2_padded, pop_n3_mu3_padded,
+   pop_n3_mu4_padded, pop_n3_mu5_padded, pop_n3_mu6_padded)
 
