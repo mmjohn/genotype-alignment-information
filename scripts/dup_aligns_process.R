@@ -1,7 +1,8 @@
 #!/stor/system/opt/R/R-3.6.1/bin/Rscript
 
 # Comparisons of msprime simulation under different parameter conditions
-# This script: pre-processing steps on alignment data and compares all alignments to find duplicates
+# This script: pre-processing steps on alignment data (sorting and padding)
+# Note that alignments are not transposed, but will be before use in CNN
 # Mackenzie M. Johnson
 # July 2021 
 
@@ -142,8 +143,7 @@ max(lengths(pop_mu1_n1_data)/num_chrom)   # 6
 pop_mu1_n1_padded <- lapply(
   pop_mu1_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 6,
-  #maxlen = max_size,   
+  maxlen = 6,  
   dtype = "float32",
   padding = "post"
 )
@@ -155,8 +155,7 @@ max(lengths(pop_mu1_n2_data)/num_chrom)   # 10
 pop_mu1_n2_padded <- lapply(
   pop_mu1_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 10,
-  #maxlen = max_size,   
+  maxlen = 10,  
   dtype = "float32",
   padding = "post"
 )
@@ -168,8 +167,7 @@ max(lengths(pop_mu1_n3_data)/num_chrom)   # 19
 pop_mu1_n3_padded <- lapply(
   pop_mu1_n3_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 19,
-  #maxlen = max_size,   
+  maxlen = 19,  
   dtype = "float32",
   padding = "post"
 )
@@ -181,8 +179,7 @@ max(lengths(pop_mu1_n4_data)/num_chrom)   # 45
 pop_mu1_n4_padded <- lapply(
   pop_mu1_n4_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 45,
-  #maxlen = max_size,   
+  maxlen = 45,  
   dtype = "float32",
   padding = "post"
 )
@@ -194,8 +191,7 @@ max(lengths(pop_mu1_n5_data)/num_chrom)   # 114
 pop_mu1_n5_padded <- lapply(
   pop_mu1_n5_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 114,
-  #maxlen = max_size,   
+  maxlen = 114,  
   dtype = "float32",
   padding = "post"
 )
@@ -207,8 +203,7 @@ max(lengths(pop_mu1_n6_data)/num_chrom)   # 266
 pop_mu1_n6_padded <- lapply(
   pop_mu1_n6_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 266,
-  #maxlen = max_size,   
+  maxlen = 266,  
   dtype = "float32",
   padding = "post"
 )
@@ -221,8 +216,7 @@ max(lengths(pop_mu2_n1_data)/num_chrom)   # 2
 pop_mu2_n1_padded <- lapply(
   pop_mu2_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 2,
-  #maxlen = max_size,   
+  maxlen = 2,  
   dtype = "float32",
   padding = "post"
 )
@@ -234,8 +228,7 @@ max(lengths(pop_mu2_n2_data)/num_chrom)   # 4
 pop_mu2_n2_padded <- lapply(
   pop_mu2_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 4,
-  #maxlen = max_size,   
+  maxlen = 4,   
   dtype = "float32",
   padding = "post"
 )
@@ -247,8 +240,7 @@ max(lengths(pop_mu2_n3_data)/num_chrom)   # 5
 pop_mu2_n3_padded <- lapply(
   pop_mu2_n3_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 5,
-  #maxlen = max_size,   
+  maxlen = 5,  
   dtype = "float32",
   padding = "post"
 )
@@ -261,7 +253,6 @@ pop_mu2_n4_padded <- lapply(
   pop_mu2_n4_data,
   function(x, ...) {pad_sequences(x, ...)}, 
   maxlen = 10,
-  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
@@ -273,8 +264,7 @@ max(lengths(pop_mu2_n5_data)/num_chrom)   # 17
 pop_mu2_n5_padded <- lapply(
   pop_mu2_n5_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 17,
-  #maxlen = max_size,   
+  maxlen = 17, 
   dtype = "float32",
   padding = "post"
 )
@@ -286,8 +276,7 @@ max(lengths(pop_mu2_n6_data)/num_chrom)   # 37
 pop_mu2_n6_padded <- lapply(
   pop_mu2_n6_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 37,
-  #maxlen = max_size,   
+  maxlen = 37,  
   dtype = "float32",
   padding = "post"
 )
@@ -301,7 +290,6 @@ pop_mu3_n1_padded <- lapply(
   pop_mu3_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
   maxlen = 19,
-  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
@@ -313,8 +301,7 @@ max(lengths(pop_mu3_n2_data)/num_chrom)   # 53
 pop_mu3_n2_padded <- lapply(
   pop_mu3_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 53,
-  #maxlen = max_size,   
+  maxlen = 53,  
   dtype = "float32",
   padding = "post"
 )
@@ -326,8 +313,7 @@ max(lengths(pop_mu3_n3_data)/num_chrom)   # 130
 pop_mu3_n3_padded <- lapply(
   pop_mu3_n3_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 130,
-  #maxlen = max_size,   
+  maxlen = 130, 
   dtype = "float32",
   padding = "post"
 )
@@ -340,7 +326,6 @@ pop_mu3_n4_padded <- lapply(
   pop_mu3_n4_data,
   function(x, ...) {pad_sequences(x, ...)}, 
   maxlen = 350,
-  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
@@ -352,8 +337,7 @@ max(lengths(pop_mu3_n5_data)/num_chrom)   # 982
 pop_mu3_n5_padded <- lapply(
   pop_mu3_n5_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 982,
-  #maxlen = max_size,   
+  maxlen = 982, 
   dtype = "float32",
   padding = "post"
 )
@@ -366,7 +350,6 @@ pop_mu3_n6_padded <- lapply(
   pop_mu3_n6_data,
   function(x, ...) {pad_sequences(x, ...)}, 
   maxlen = 2473,
-  #maxlen = max_size,   
   dtype = "float32",
   padding = "post"
 )
