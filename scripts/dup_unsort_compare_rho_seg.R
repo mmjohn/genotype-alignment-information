@@ -2,9 +2,9 @@
 
 # Comparisons of msprime simulation under different parameter conditions
 # This script: compares rho and seg sites parameter distributions between 
-# duplicates and unique alignments (after sorting and padding)
+# duplicates and unique alignments (after padding UNSORTED)
 # Mackenzie M. Johnson
-# July 2021 
+# August 2021 
 
 
 #--------------- CONFIGURE ENVIRONMENT --------------------
@@ -108,34 +108,34 @@ load(
 # fixed mu
 load(
   file = file.path(
-    path_to_results, 'fixed_mu1_align_indices.RData'
+    path_to_results, 'fixed_mu1_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_mu2_align_indices.RData'
+    path_to_results, 'fixed_mu2_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_mu3_align_indices.RData'
+    path_to_results, 'fixed_mu3_align_unsort_indices.RData'
   )
 )
 
 # fixed n
 load(
   file = file.path(
-    path_to_results, 'fixed_n1_align_indices.RData'
+    path_to_results, 'fixed_n1_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_n2_align_indices.RData'
+    path_to_results, 'fixed_n2_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_n3_align_indices.RData'
+    path_to_results, 'fixed_n3_align_unsort_indices.RData'
   )
 )
 
@@ -899,11 +899,11 @@ rho_df_fixed_mu %>%
         param_set == "pop_mu3_n6_rho" ~ 1.5e-7,
     ),
     set = "fixed_mu"
-  ) -> rho_mu_df
+  ) -> rho_mu_unsort_df
 
-rho_mu_df$param_set <- as.factor(rho_mu_df$param_set)
-rho_mu_df$set <- as.factor(rho_mu_df$set)
-rho_mu_df$status <- as.factor(rho_mu_df$status)
+rho_mu_unsort_df$param_set <- as.factor(rho_mu_unsort_df$param_set)
+rho_mu_unsort_df$set <- as.factor(rho_mu_unsort_df$set)
+rho_mu_unsort_df$status <- as.factor(rho_mu_unsort_df$status)
 
 rm(rho_df_fixed_mu)
 
@@ -950,11 +950,11 @@ rho_df_fixed_n %>%
         param_set == "pop_n3_mu6_rho" ~ 3.16e-8
     ),
     set = "fixed_n"
-  ) -> rho_n_df
+  ) -> rho_n_unsort_df
 
-rho_n_df$param_set <- as.factor(rho_n_df$param_set)
-rho_n_df$set <- as.factor(rho_n_df$set)
-rho_n_df$status <- as.factor(rho_n_df$status)
+rho_n_unsort_df$param_set <- as.factor(rho_n_unsort_df$param_set)
+rho_n_unsort_df$set <- as.factor(rho_n_unsort_df$set)
+rho_n_unsort_df$status <- as.factor(rho_n_unsort_df$status)
 
 rm(rho_df_fixed_n)
 
@@ -962,18 +962,18 @@ rm(rho_df_fixed_n)
 #--------------- SAVE RHO DATA --------------------
 
 save(
-  rho_mu_df, 
+  rho_mu_unsort_df, 
   file = file.path(
     path_to_results,
-    'dup_analysis_rho_fixed_mu_results.RData'
+    'dup_analysis_rho_fixed_mu_unsort_results.RData'
   )
 )
 
 save(
-  rho_n_df, 
+  rho_n_unsort_df, 
   file = file.path(
     path_to_results,
-    'dup_analysis_rho_fixed_n_results.RData'
+    'dup_analysis_rho_fixed_n_unsort_results.RData'
   )
 )
 
@@ -1736,11 +1736,11 @@ sites_df_fixed_mu %>%
         param_set == "pop_mu3_n6_segsites" ~ 1.5e-7
     ),
     set = "fixed_mu"
-  ) -> sites_mu_df
+  ) -> sites_mu_unsort_df
 
-sites_mu_df$param_set <- as.factor(sites_mu_df$param_set)
-sites_mu_df$set <- as.factor(sites_mu_df$set)
-sites_mu_df$status <- as.factor(sites_mu_df$status)
+sites_mu_unsort_df$param_set <- as.factor(sites_mu_unsort_df$param_set)
+sites_mu_unsort_df$set <- as.factor(sites_mu_unsort_df$set)
+sites_mu_unsort_df$status <- as.factor(sites_mu_unsort_df$status)
 
 rm(sites_df_fixed_mu)
 
@@ -1787,29 +1787,29 @@ sites_df_fixed_n %>%
         param_set == "pop_n3_mu6_segsites" ~ 3.16e-8
     ),
     set = "fixed_n"
-  ) -> sites_n_df
+  ) -> sites_n_unsort_df
 
-sites_n_df$param_set <- as.factor(sites_n_df$param_set)
-sites_n_df$set <- as.factor(sites_n_df$set)
-sites_n_df$status <- as.factor(sites_n_df$status)
+sites_n_unsort_df$param_set <- as.factor(sites_n_unsort_df$param_set)
+sites_n_unsort_df$set <- as.factor(sites_n_unsort_df$set)
+sites_n_unsort_df$status <- as.factor(sites_n_unsort_df$status)
 
 rm(sites_df_fixed_n)
 
 #--------------- SAVE SITES DATA --------------------
 
 save(
-  sites_mu_df, 
+  sites_mu_unsort_df, 
   file = file.path(
     path_to_results,
-    'dup_analysis_sites_fixed_mu_results.RData'
+    'dup_analysis_sites_fixed_mu_unsort_results.RData'
   )
 )
 
 save(
-  sites_n_df, 
+  sites_n_unsort_df, 
   file = file.path(
     path_to_results,
-    'dup_analysis_sites_fixed_n_results.RData'
+    'dup_analysis_sites_fixed_n_unsort_results.RData'
   )
 )
 
