@@ -76,19 +76,20 @@ rm(fixed_n1_vary_mu_unsort, fixed_n2_vary_mu_unsort, fixed_n3_vary_mu_unsort)
 dup_unsort_df <- full_join(dup_mu_unsort_df, dup_n_unsort_df)
 rm(dup_mu_unsort_df, dup_n_unsort_df)
 
+dup_df %>% 
+  mutate(processing = "sorted") -> dup_df
+dup_unsort_df %>% 
+  mutate(processing = "unsorted") -> dup_unsort_df
+
+full_join(dup_df, dup_unsort_df) -> dup_full_df
+
+
 #--------------- PERCENT DUPLICATE FIGURES --------------------
 
 # figures for duplicates on n vs mu parameter sets
 dup_df %>% 
   filter(set == "fixed_mu") %>% 
   ggplot(aes(x = pop_size, y = prop_dup*100)) +
-  # geom_vline(xintercept = 1000, linetype = "dashed", color = "grey") +
-  # geom_vline(xintercept = 2000, linetype = "dashed", color = "grey") +
-  # geom_vline(xintercept = 5000, linetype = "dashed", color = "grey") +
-  # geom_vline(xintercept = 10000, linetype = "dashed", color = "grey") +
-  # geom_vline(xintercept = 15000, linetype = "dashed", color = "grey") +
-  # geom_vline(xintercept = 20000, linetype = "dashed", color = "grey") +
-  # geom_vline(xintercept = 50000, linetype = "dashed", color = "grey") +
   geom_point() +
   geom_path(aes(linetype = as.factor(mut_rate))) +
   scale_x_log10() +
@@ -186,6 +187,60 @@ plot_grid(
 fig_dup_n_mu_unsort
 
 
+
+dup_full_df %>% 
+  filter(set == "fixed_mu") %>% 
+  ggplot(aes(x = pop_size, y = prop_dup*100, color = processing)) +
+  geom_point() +
+  geom_path(aes(linetype = as.factor(mut_rate))) +
+  scale_x_log10() +
+  scale_color_manual(values = c("black", "grey")) +
+  labs( 
+    x = "*N*",
+    y = "Percent duplicated (%)",
+    linetype = "&mu;",
+    color = "Processing"
+  ) +
+  theme_half_open() +
+  theme(
+    axis.title.x = element_markdown(),
+    axis.title.y = element_markdown(),
+    legend.title = element_markdown()
+  ) -> fig_dup_n_full
+
+fig_dup_n_full
+
+dup_full_df %>% 
+  filter(set == "fixed_n") %>% 
+  ggplot(aes(x = mut_rate, y = prop_dup*100, color = processing)) +
+  geom_point() +
+  geom_path(aes(linetype = as.factor(pop_size))) +
+  scale_x_log10() +
+  scale_color_manual(values = c("black", "grey")) +
+  labs(
+    x = "&mu;", 
+    y = "Percent duplicated (%)",
+    linetype = "*N*",
+    color = "Processing"
+  ) +
+  theme_half_open() +
+  theme(
+    axis.title.x = element_markdown(),
+    axis.title.y = element_markdown(),
+    legend.title = element_markdown()
+  ) -> fig_dup_mu_full
+
+fig_dup_mu_full
+
+plot_grid(
+  fig_dup_n_full, fig_dup_mu_full,
+  nrow = 2,
+  align = "v"
+) -> fig_dup_n_mu_full
+
+fig_dup_n_mu_full
+
+
 #--------------- SAVE FIGURES --------------------
 
 save_plot(
@@ -197,6 +252,12 @@ save_plot(
 save_plot(
   file.path(path_to_results, 'figures', 'fig_dup_by_param_unsort.png'),
   fig_dup_n_mu_unsort, ncol = 1, nrow = 1, base_height = 5.71,
+  base_asp = 1.618, base_width = NULL
+)
+
+save_plot(
+  file.path(path_to_results, 'figures', 'fig_dup_by_param_full.png'),
+  fig_dup_n_mu_full, ncol = 1, nrow = 1, base_height = 5.71,
   base_asp = 1.618, base_width = NULL
 )
 
