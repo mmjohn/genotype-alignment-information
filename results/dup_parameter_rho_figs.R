@@ -44,7 +44,8 @@ load(file.path(path_to_results, 'dup_analysis_rho_fixed_n_unsort_results.RData')
 # figure for rho values of parameter sets
 rho_mu_df %>% 
   ggplot(aes(x = as.factor(pop_size), y = rho, fill = factor(mut_rate))) +
-  geom_violin() +
+  #geom_violin() +
+  geom_boxplot() +
   labs(
     x = "*N*",
     y = "&rho;",
@@ -77,8 +78,8 @@ rho_mu_df %>%
     x = "&rho;",
     y = "Count"
   ) +
-  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
-  scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
+  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
   theme_bw() +
   theme(
     axis.title.x = element_markdown(),
@@ -95,13 +96,14 @@ rho_n_df %>%
   ggplot(aes(x = rho, fill = status, color = status)) +
   #geom_density(alpha = 0.5, position = "dodge") +
   geom_area(alpha = 0.5, stat = "bin", binwidth = 20) +
+  #geom_histogram(alpha = 0.5) +
   facet_wrap(vars(mut_rate), scales = "free") +
   labs(
     x = "&rho;",
     y = "Count"
   ) +
-  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
-  scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
+  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
   theme_bw() +
   theme(
     axis.title.x = element_markdown(),
@@ -122,8 +124,8 @@ rho_mu_unsort_df %>%
     x = "&rho;",
     y = "Count"
   ) +
-  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
-  scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
+  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
   theme_bw() +
   theme(
     axis.title.x = element_markdown(),
@@ -143,8 +145,8 @@ rho_n_unsort_df %>%
     x = "&rho;",
     y = "Count"
   ) +
-  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
-  scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
+  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
   theme_bw() +
   theme(
     axis.title.x = element_markdown(),
