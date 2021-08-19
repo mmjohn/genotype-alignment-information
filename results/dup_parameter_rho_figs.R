@@ -68,13 +68,14 @@ fig_rho_n
 # figure showing rho values of duplicates compared to whole data set
 rho_mu_df %>% 
   filter(mut_rate == 1.5e-8) %>% 
+  filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
   ggplot(aes(x = rho, fill = status, color = status)) +
-  geom_density(alpha = 0.5, position = "fill") +
-  #geom_histogram() +
+  #geom_density(alpha = 0.5, position = "fill") +
+  geom_area(alpha = 0.5, stat = "bin") +
   facet_wrap(vars(pop_size), scales = "free") +
   labs(
     x = "&rho;",
-    y = "Density"
+    y = "Count"
   ) +
   scale_color_manual(values = c("#1b9e77", "#7570b3")) +
   scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
@@ -82,21 +83,22 @@ rho_mu_df %>%
   theme(
     axis.title.x = element_markdown(),
     legend.title = element_blank()
-  ) -> fig_rho_dup_v_unq_fixed_mu
+  ) -> fig_rho_dup_v_unq_fixed_mu_sort
 
-fig_rho_dup_v_unq_fixed_mu
+fig_rho_dup_v_unq_fixed_mu_sort
 
 
 
 rho_n_df %>% 
   filter(pop_size == 10000) %>% 
+  filter(mut_rate == 1.0e-10 | mut_rate == 3.16e-10 | mut_rate == 1.0e-9) %>% 
   ggplot(aes(x = rho, fill = status, color = status)) +
   #geom_density(alpha = 0.5, position = "dodge") +
-  geom_bar(position = "stack") +
+  geom_area(alpha = 0.5, stat = "bin", binwidth = 20) +
   facet_wrap(vars(mut_rate), scales = "free") +
   labs(
     x = "&rho;",
-    y = "Density"
+    y = "Count"
   ) +
   scale_color_manual(values = c("#1b9e77", "#7570b3")) +
   scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
@@ -104,13 +106,71 @@ rho_n_df %>%
   theme(
     axis.title.x = element_markdown(),
     legend.title = element_blank()
-  ) -> fig_rho_dup_v_unq_fixed_n1
+  ) -> fig_rho_dup_v_unq_fixed_n_sort
  
-fig_rho_dup_v_unq_fixed_n1
+fig_rho_dup_v_unq_fixed_n_sort
 
 
+rho_mu_unsort_df %>% 
+  filter(mut_rate == 1.5e-8) %>% 
+  filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
+  ggplot(aes(x = rho, fill = status, color = status)) +
+  #geom_density(alpha = 0.5, position = "fill") +
+  geom_area(alpha = 0.5, stat = "bin") +
+  facet_wrap(vars(pop_size), scales = "free") +
+  labs(
+    x = "&rho;",
+    y = "Count"
+  ) +
+  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
+  scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_markdown(),
+    legend.title = element_blank()
+  ) -> fig_rho_dup_v_unq_fixed_mu_unsort
+
+fig_rho_dup_v_unq_fixed_mu_unsort
+
+rho_n_unsort_df %>% 
+  filter(pop_size == 10000) %>% 
+  filter(mut_rate == 1.0e-10 | mut_rate == 3.16e-10 | mut_rate == 1.0e-9) %>% 
+  ggplot(aes(x = rho, fill = status, color = status)) +
+  #geom_density(alpha = 0.5, position = "dodge") +
+  geom_area(alpha = 0.5, stat = "bin", binwidth = 20) +
+  facet_wrap(vars(mut_rate), scales = "free") +
+  labs(
+    x = "&rho;",
+    y = "Count"
+  ) +
+  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
+  scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_markdown(),
+    legend.title = element_blank()
+  ) -> fig_rho_dup_v_unq_fixed_n_unsort
+
+fig_rho_dup_v_unq_fixed_n_unsort
+
+plot_grid(
+  fig_rho_dup_v_unq_fixed_mu_sort,
+  fig_rho_dup_v_unq_fixed_mu_unsort,
+  ncol = 1,
+  align = "v"
+) -> fig_rho_dup_v_unq_fixed_mu
+
+fig_rho_dup_v_unq_fixed_mu
+
+plot_grid(
+  fig_rho_dup_v_unq_fixed_n_sort,
+  fig_rho_dup_v_unq_fixed_n_unsort,
+  ncol = 1,
+  align = "v"
+) -> fig_rho_dup_v_unq_fixed_n
 
 fig_rho_dup_v_unq_fixed_n
+
 
 
 #--------------- SAVE FIGURES --------------------
