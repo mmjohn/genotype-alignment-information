@@ -90,7 +90,7 @@ sites_mu_unsort_df %>%
 full_join(mu_df1, mu_df2) -> sites_mu_full_df
 
 sites_mu_full_df %>% 
-  filter(mut_rate == 1.5e-9 & status == "duplicate") %>% 
+  filter(mut_rate == 1.5e-8 & status == "duplicate") %>% 
   ggplot(aes(x = segsites, fill = processing)) +
   geom_bar(position = "dodge") +
   #geom_density_ridges(alpha = 0.5) +
@@ -100,6 +100,24 @@ sites_mu_full_df %>%
     y = "Count"
   ) +
   scale_fill_manual(values = c("#1b9e77", "#7570b3")) +
+  theme_bw() +
+  theme(
+    legend.title = element_blank()
+  ) -> fig_sites_sort_v_unsort_fixed_mu
+
+sites_mu_full_df %>% 
+  filter(mut_rate == 1.5e-8) %>% 
+  filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
+  ggplot(aes(x = segsites, fill = status)) +
+  geom_bar(position = "stack") +
+  #geom_density_ridges(alpha = 0.5) +
+  facet_wrap(processing ~ pop_size, scales = "free") +
+  labs(
+    x = "Number of segregating sites",
+    y = "Count",
+    fill = "Processing"
+  ) +
+  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
   theme_bw() +
   theme(
     legend.title = element_blank()
@@ -174,35 +192,55 @@ sites_n_full_df %>%
 fig_sites_sort_v_unsort_fixed_n
 
 
+sites_n_full_df %>% 
+  filter(pop_size == 10000) %>% 
+  filter(mut_rate == 1e-10 | mut_rate == 3.16e-10 | mut_rate == 1e-9) %>% 
+  ggplot(aes(x = segsites, fill = status)) +
+  geom_bar(position = "stack") +
+  #geom_density_ridges(alpha = 0.5) +
+  facet_wrap(processing ~ mut_rate, scales = "free") +
+  labs(
+    x = "Number of segregating sites",
+    y = "Count",
+    fill = "Processing"
+  ) +
+  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
+  theme_bw() +
+  theme(
+    legend.title = element_blank()
+  ) -> fig_sites_sort_v_unsort_fixed_n
+
+fig_sites_sort_v_unsort_fixed_n
+
 #--------------- SAVE FIGURES --------------------
 
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_mu.png'),
-  fig_sites_dup_v_unq_fixed_mu, 
-  ncol = 1, nrow = 1, base_height = 4.71,
-  base_asp = 1.618, base_width = NULL
-)
-
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_mu_unsort.png'),
-  fig_sites_dup_v_unq_fixed_mu_unsort, 
-  ncol = 1, nrow = 1, base_height = 4.71,
-  base_asp = 1.618, base_width = NULL
-)
-
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_n.png'),
-  fig_sites_dup_v_unq_fixed_n, 
-  ncol = 1, nrow = 1, base_height = 4.71,
-  base_asp = 1.618, base_width = NULL
-)
-
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_n_unsort.png'),
-  fig_sites_dup_v_unq_fixed_n_unsort, 
-  ncol = 1, nrow = 1, base_height = 4.71,
-  base_asp = 1.618, base_width = NULL
-)
+# save_plot(
+#   file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_mu.png'),
+#   fig_sites_dup_v_unq_fixed_mu, 
+#   ncol = 1, nrow = 1, base_height = 4.71,
+#   base_asp = 1.618, base_width = NULL
+# )
+# 
+# save_plot(
+#   file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_mu_unsort.png'),
+#   fig_sites_dup_v_unq_fixed_mu_unsort, 
+#   ncol = 1, nrow = 1, base_height = 4.71,
+#   base_asp = 1.618, base_width = NULL
+# )
+# 
+# save_plot(
+#   file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_n.png'),
+#   fig_sites_dup_v_unq_fixed_n, 
+#   ncol = 1, nrow = 1, base_height = 4.71,
+#   base_asp = 1.618, base_width = NULL
+# )
+# 
+# save_plot(
+#   file.path(path_to_results, 'figures', 'fig_sites_dup_fixed_n_unsort.png'),
+#   fig_sites_dup_v_unq_fixed_n_unsort, 
+#   ncol = 1, nrow = 1, base_height = 4.71,
+#   base_asp = 1.618, base_width = NULL
+# )
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_sites_sort_v_unsort_fixed_mu.png'),
