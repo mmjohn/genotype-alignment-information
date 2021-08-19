@@ -194,7 +194,7 @@ dup_full_df %>%
   geom_point() +
   geom_path(aes(linetype = as.factor(mut_rate))) +
   scale_x_log10() +
-  scale_color_manual(values = c("black", "grey")) +
+  scale_color_manual(values = c("grey", "black")) +
   labs( 
     x = "*N*",
     y = "Percent duplicated (%)",
