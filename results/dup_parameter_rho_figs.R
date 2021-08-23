@@ -29,6 +29,7 @@ path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
 # size of alignments
 num_chrom <- 50
 
+
 #--------------- LOAD DATA SETS --------------------
 
 # rho data - sorted alignments
@@ -82,115 +83,130 @@ fig_rho_n
 
 
 
-#--------------- DUPLICATE RHO DISTRIBUTION FIGURES --------------------
+#--------------- FIXED MU RHO DISTRIBUTION FIGURES --------------------
 
-# figure showing rho values of duplicates compared to whole data set
+# combine data sets for easy facet
 rho_mu_df %>% 
-  filter(mut_rate == 1.5e-8) %>% 
-  filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
-  ggplot(aes(x = rho, fill = status, color = status)) +
-  geom_density(aes(y = after_stat(count)), alpha = 0.5, position = "fill") +
-  #geom_area(alpha = 0.5, stat = "bin") +
-  facet_wrap(vars(pop_size), scales = "free") +
-  labs(
-    x = "&rho;",
-    y = "Count"
-  ) +
-  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
-  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
-  theme_bw() +
-  theme(
-    axis.title.x = element_markdown(),
-    legend.title = element_blank()
-  ) -> fig_rho_dup_v_unq_fixed_mu_sort
-
-fig_rho_dup_v_unq_fixed_mu_sort
-
-
-
-rho_n_df %>% 
-  filter(pop_size == 10000) %>% 
-  filter(mut_rate == 1.0e-10 | mut_rate == 3.16e-10 | mut_rate == 1.0e-9) %>% 
-  ggplot(aes(x = rho, fill = status, color = status)) +
-  #geom_density(alpha = 0.5, position = "dodge") +
-  geom_area(alpha = 0.5, stat = "bin", binwidth = 20) +
-  #geom_histogram(alpha = 0.5) +
-  facet_wrap(vars(mut_rate), scales = "free") +
-  labs(
-    x = "&rho;",
-    y = "Count"
-  ) +
-  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
-  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
-  theme_bw() +
-  theme(
-    axis.title.x = element_markdown(),
-    legend.title = element_blank()
-  ) -> fig_rho_dup_v_unq_fixed_n_sort
- 
-fig_rho_dup_v_unq_fixed_n_sort
-
+  mutate(processing = "Sorted") -> rho_mu_df
 
 rho_mu_unsort_df %>% 
+  mutate(processing = "Unsorted") -> rho_mu_unsort_df
+
+rho_mu_full <- full_join(rho_mu_df, rho_mu_unsort_df) 
+rho_mu_full$processing <- as.factor(rho_mu_full$processing)
+
+# manually set labels
+labels_n <- c(
+  "100" = "N = 100", 
+  "316" = "N = 316",
+  "1000" = "N = 1,000"
+)
+
+# figure showing rho values of duplicates compared to whole data set
+rho_mu_full %>% 
   filter(mut_rate == 1.5e-8) %>% 
   filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
-  ggplot(aes(x = rho, fill = status, color = status)) +
-  #geom_density(alpha = 0.5, position = "fill") +
-  geom_area(alpha = 0.5, stat = "bin") +
-  facet_wrap(vars(pop_size), scales = "free") +
-  labs(
-    x = "&rho;",
-    y = "Count"
+  ggplot(
+    aes(x = rho, fill = status)
   ) +
-  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
-  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
-  theme_bw() +
+  geom_density(
+    aes(y = after_stat(count)), 
+    alpha = 0.7,
+    position = "fill"
+  ) +
+  facet_grid(
+    rows = vars(processing),
+    cols = vars(pop_size),
+    scales = "free_x",
+    labeller = labeller(pop_size = labels_n)
+  ) +
+  scale_x_continuous(
+    expand = c(0 ,0),
+    name = "&rho;"
+  ) +
+  scale_y_continuous(
+    breaks = c(0.25, 0.5, 0.75, 1),
+    expand = c(0, 0),
+    name = "Density"
+  ) +
+  scale_fill_discrete_qualitative(
+    palette = "Warm",
+    name = "Identity",
+    labels = c("Duplicate", "Unique")
+  ) +
+  theme_linedraw(12) +
   theme(
     axis.title.x = element_markdown(),
-    legend.title = element_blank()
-  ) -> fig_rho_dup_v_unq_fixed_mu_unsort
-
-fig_rho_dup_v_unq_fixed_mu_unsort
-
-rho_n_unsort_df %>% 
-  filter(pop_size == 10000) %>% 
-  filter(mut_rate == 1.0e-10 | mut_rate == 3.16e-10 | mut_rate == 1.0e-9) %>% 
-  ggplot(aes(x = rho, fill = status, color = status)) +
-  #geom_density(alpha = 0.5, position = "dodge") +
-  geom_area(alpha = 0.5, stat = "bin", binwidth = 20) +
-  facet_wrap(vars(mut_rate), scales = "free") +
-  labs(
-    x = "&rho;",
-    y = "Count"
-  ) +
-  scale_color_manual(values = c("#7570b3", "#1b9e77")) +
-  scale_fill_manual(values = c("#7570b3", "#1b9e77")) +
-  theme_bw() +
-  theme(
-    axis.title.x = element_markdown(),
-    legend.title = element_blank()
-  ) -> fig_rho_dup_v_unq_fixed_n_unsort
-
-fig_rho_dup_v_unq_fixed_n_unsort
-
-plot_grid(
-  fig_rho_dup_v_unq_fixed_mu_sort,
-  fig_rho_dup_v_unq_fixed_mu_unsort,
-  ncol = 1,
-  align = "v"
-) -> fig_rho_dup_v_unq_fixed_mu
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    strip.background = element_rect(fill = "grey92"),
+    strip.text = element_markdown(color = "black")
+  ) -> fig_rho_dup_v_unq_fixed_mu
 
 fig_rho_dup_v_unq_fixed_mu
 
-plot_grid(
-  fig_rho_dup_v_unq_fixed_n_sort,
-  fig_rho_dup_v_unq_fixed_n_unsort,
-  ncol = 1,
-  align = "v"
-) -> fig_rho_dup_v_unq_fixed_n
+
+#--------------- FIXED N RHO DISTRIBUTION FIGURES --------------------
+
+# combine data sets for easy facet
+rho_n_df %>% 
+  mutate(processing = "Sorted") -> rho_n_df
+
+rho_n_unsort_df %>% 
+  mutate(processing = "Unsorted") -> rho_n_unsort_df
+
+rho_n_full <- full_join(rho_n_df, rho_n_unsort_df) 
+rho_n_full$processing <- as.factor(rho_n_full$processing)
+
+# manually set labels
+labels_mu <- c(
+  "1e-10" = "&mu; = 1.0e-10", 
+  "3.16e-10" = "&mu; = 3.16e-10",
+  "1e-09" = "&mu; = 1.0e-9"
+)
+
+# figure showing rho values of duplicates compared to whole data set
+rho_n_full %>% 
+  filter(pop_size == 10000) %>% 
+  filter(mut_rate == 1.00e-10 | mut_rate == 3.16e-10 | mut_rate == 1.00e-09) %>% 
+  ggplot(
+    aes(x = rho, fill = status)
+  ) +
+  geom_density(
+    aes(y = after_stat(count)), 
+    alpha = 0.7,
+    position = "fill"
+  ) +
+  facet_grid(
+    rows = vars(processing),
+    cols = vars(mut_rate),
+    scales = "free_x",
+    labeller = labeller(mut_rate = labels_mu)
+  ) +
+  scale_x_continuous(
+    expand = c(0 ,0),
+    name = "&rho;"
+  ) +
+  scale_y_continuous(
+    breaks = c(0.25, 0.5, 0.75, 1),
+    expand = c(0, 0),
+    name = "Density"
+  ) +
+  scale_fill_discrete_qualitative(
+    palette = "Warm",
+    name = "Identity",
+    labels = c("Duplicate", "Unique")
+  ) +
+  theme_linedraw(12) +
+  theme(
+    axis.title.x = element_markdown(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    strip.background = element_rect(fill = "grey92"),
+    strip.text = element_markdown(color = "black")
+  ) -> fig_rho_dup_v_unq_fixed_n
 
 fig_rho_dup_v_unq_fixed_n
-
 
 
 #--------------- SAVE FIGURES --------------------
