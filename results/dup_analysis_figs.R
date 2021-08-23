@@ -79,9 +79,9 @@ dup_unsort_df <- full_join(dup_mu_unsort_df, dup_n_unsort_df)
 rm(dup_mu_unsort_df, dup_n_unsort_df)
 
 dup_df %>% 
-  mutate(processing = "sorted") -> dup_df
+  mutate(processing = "Sorted") -> dup_df
 dup_unsort_df %>% 
-  mutate(processing = "unsorted") -> dup_unsort_df
+  mutate(processing = "Unsorted") -> dup_unsort_df
 
 full_join(dup_df, dup_unsort_df) -> dup_full_df
 
