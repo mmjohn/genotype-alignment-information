@@ -15,6 +15,7 @@ library(tidyr)
 library(ggplot2)
 library(cowplot)
 library(ggtext)
+library(colorspace)
 
 
 #--------------- GLOBAL PARAMETERS --------------------
@@ -43,21 +44,38 @@ load(file.path(path_to_results, 'dup_analysis_rho_fixed_n_unsort_results.RData')
 
 # figure for rho values of parameter sets
 rho_mu_df %>% 
-  ggplot(aes(x = as.factor(pop_size), y = rho, fill = factor(mut_rate))) +
-  #geom_violin() +
-  geom_boxplot() +
-  labs(
-    x = "*N*",
-    y = "&rho;",
-    fill = "&mu;"
+  ggplot(
+    aes(x = factor(pop_size), y = rho, fill = factor(mut_rate))
   ) +
-  scale_y_log10() +
-  scale_fill_manual(values = c("#a6cee3", "#1f78b4", "#b2df8a")) +
-  theme_bw() +
+  geom_boxplot() +
+  scale_x_discrete(
+    #breaks = c(100, 1000, 10000),
+    labels = scales::math_format(
+      expr = 10^.x,
+      format = function(x) round(log10(as.numeric(x)), digits = 3)
+    ),
+    name = "*N*"
+  ) +
+  scale_y_log10(
+    labels = scales::math_format(
+      format = log10
+    ),
+    name = "&rho;"
+  ) +
+  scale_fill_discrete_sequential(
+    palette = "Light Grays",
+    labels = scales::math_format(
+      expr = 1.5%*%10^.x, 
+      format = function(x) log10(as.numeric(x)/1.5)
+    ),
+    name = "&mu;"
+  ) +
+  theme_bw(12) +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
-    legend.title = element_markdown()
+    legend.title = element_markdown(),
+    legend.text = element_text(vjust = 1)
   ) -> fig_rho_n
 
 fig_rho_n
@@ -71,8 +89,8 @@ rho_mu_df %>%
   filter(mut_rate == 1.5e-8) %>% 
   filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
   ggplot(aes(x = rho, fill = status, color = status)) +
-  #geom_density(alpha = 0.5, position = "fill") +
-  geom_area(alpha = 0.5, stat = "bin") +
+  geom_density(aes(y = after_stat(count)), alpha = 0.5, position = "fill") +
+  #geom_area(alpha = 0.5, stat = "bin") +
   facet_wrap(vars(pop_size), scales = "free") +
   labs(
     x = "&rho;",
