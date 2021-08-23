@@ -15,6 +15,7 @@ library(tidyr)
 library(ggplot2)
 library(cowplot)
 library(ggtext)
+library(colorspace)
 
 
 #--------------- GLOBAL PARAMETERS --------------------
@@ -27,6 +28,7 @@ path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
 
 # size of alignments
 num_chrom <- 50
+
 
 #--------------- LOAD DATA SETS --------------------
 
@@ -86,129 +88,32 @@ full_join(dup_df, dup_unsort_df) -> dup_full_df
 
 #--------------- PERCENT DUPLICATE FIGURES --------------------
 
-# figures for duplicates on n vs mu parameter sets
-dup_df %>% 
-  filter(set == "fixed_mu") %>% 
-  ggplot(aes(x = pop_size, y = prop_dup*100)) +
-  geom_point() +
-  geom_path(aes(linetype = as.factor(mut_rate))) +
-  scale_x_log10() +
-  labs( 
-    x = "*N*",
-    y = "Percent duplicated (%)",
-    linetype = "&mu;"
-  ) +
-  theme_half_open() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown(),
-    legend.title = element_markdown()
-  ) -> fig_dup_n
-
-fig_dup_n
-
-dup_df %>% 
-  filter(set == "fixed_n") %>% 
-  ggplot(aes(x = mut_rate, y = prop_dup*100)) +
-  # geom_vline(xintercept = 1.5e-8, linetype = "dashed", color = "grey") +
-  geom_point() +
-  geom_path(aes(linetype = as.factor(pop_size))) +
-  scale_x_log10() +
-  labs(
-    x = "&mu;", 
-    y = "Percent duplicated (%)",
-    linetype = "*N*"
-  ) +
-  theme_half_open() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown(),
-    legend.title = element_markdown()
-  ) -> fig_dup_mu
-
-fig_dup_mu
-
-plot_grid(
-  fig_dup_n, fig_dup_mu,
-  nrow = 2,
-  align = "v"
-) -> fig_dup_n_mu
-
-fig_dup_n_mu
-
-
-dup_unsort_df %>% 
-  filter(set == "fixed_mu") %>% 
-  ggplot(aes(x = pop_size, y = prop_dup*100)) +
-  geom_point() +
-  geom_path(aes(linetype = as.factor(mut_rate))) +
-  scale_x_log10() +
-  labs( 
-    x = "*N*",
-    y = "Percent duplicated (%)",
-    linetype = "&mu;"
-  ) +
-  theme_half_open() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown(),
-    legend.title = element_markdown()
-  ) -> fig_dup_n_unsort
-
-fig_dup_n_unsort
-
-dup_unsort_df %>% 
-  filter(set == "fixed_n") %>% 
-  ggplot(aes(x = mut_rate, y = prop_dup*100)) +
-  # geom_vline(xintercept = 1.5e-8, linetype = "dashed", color = "grey") +
-  geom_point() +
-  geom_path(aes(linetype = as.factor(pop_size))) +
-  scale_x_log10() +
-  labs(
-    x = "&mu;", 
-    y = "Percent duplicated (%)",
-    linetype = "*N*"
-  ) +
-  theme_half_open() +
-  theme(
-    axis.title.x = element_markdown(),
-    axis.title.y = element_markdown(),
-    legend.title = element_markdown()
-  ) -> fig_dup_mu_unsort
-
-fig_dup_mu_unsort
-
-plot_grid(
-  fig_dup_n_unsort, fig_dup_mu_unsort,
-  nrow = 2,
-  align = "v"
-) -> fig_dup_n_mu_unsort
-
-fig_dup_n_mu_unsort
-
-
+# figures for duplicates for sorted vs unsorted alignments in fixed n and mu parameter sets
 
 dup_full_df %>% 
   filter(set == "fixed_mu") %>% 
-  ggplot(aes(x = pop_size, y = prop_dup, color = processing)) +
-  geom_point() +
-  geom_path(aes(linetype = as.factor(mut_rate))) +
-  scale_x_log10(labels = scales::math_format(format = log10)) +
-  scale_y_continuous(labels = scales::percent_format()) +
-  scale_color_manual(values = c("grey", "black")) +
-  scale_linetype(
+  ggplot(aes(x = pop_size, y = prop_dup, color = factor(mut_rate))) +
+  geom_point(size = 2) +
+  geom_path(size = 1.25) +
+  facet_grid(. ~ processing) +
+  scale_x_log10(
+    labels = scales::math_format(format = log10),
+    name = "*N*"
+  ) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    name = "Percent duplicated"
+  ) +
+  scale_color_discrete_sequential(
+    palette = "TealGrn",
     labels = scales::math_format(
       expr = 1.5%*%10^.x, 
       format = function(x) log10(as.numeric(x)/1.5)
-      )
-  ) +
-  labs( 
-    x = "*N*",
-    y = "Percent duplicated",
-    linetype = "&mu;",
-    color = "Processing"
+      ),
+    name = "&mu;"
   ) +
   theme_half_open() +
+  background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
@@ -220,48 +125,50 @@ fig_dup_n_full
 
 dup_full_df %>% 
   filter(set == "fixed_n") %>% 
-  ggplot(aes(x = mut_rate, y = prop_dup*100, color = processing)) +
-  geom_point() +
-  geom_path(aes(linetype = as.factor(pop_size))) +
-  scale_x_log10() +
-  scale_color_manual(values = c("grey", "black")) +
-  labs(
-    x = "&mu;", 
-    y = "Percent duplicated (%)",
-    linetype = "*N*",
-    color = "Processing"
+  ggplot(aes(x = mut_rate, y = prop_dup, color = factor(pop_size))) +
+  geom_point(size = 2) +
+  geom_path(size = 1.25) +
+  facet_grid(. ~ processing) +
+  scale_x_log10(
+    labels = scales::math_format(
+      format = log10
+    ),
+    name = "&mu;"
+  ) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    name = "Percent duplicated"
+  ) +
+  scale_color_discrete_sequential(
+    palette = "Burg",
+    labels = scales::math_format(
+      format = function(x) log10(as.numeric(x))
+    ),
+    name = "*N*"
   ) +
   theme_half_open() +
+  background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
-    legend.title = element_markdown()
+    legend.title = element_markdown(),
+    legend.text = element_text(vjust = 1)
   ) -> fig_dup_mu_full
 
 fig_dup_mu_full
 
+
 plot_grid(
   fig_dup_n_full, fig_dup_mu_full,
   nrow = 2,
-  align = "v"
+  align = "v",
+  labels = "AUTO"
 ) -> fig_dup_n_mu_full
 
 fig_dup_n_mu_full
 
 
 #--------------- SAVE FIGURES --------------------
-
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_dup_by_param.png'),
-  fig_dup_n_mu, ncol = 1, nrow = 1, base_height = 5.71,
-  base_asp = 1.618, base_width = NULL
-)
-
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_dup_by_param_unsort.png'),
-  fig_dup_n_mu_unsort, ncol = 1, nrow = 1, base_height = 5.71,
-  base_asp = 1.618, base_width = NULL
-)
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_dup_by_param_full.png'),
