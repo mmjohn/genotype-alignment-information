@@ -190,14 +190,21 @@ fig_dup_n_mu_unsort
 
 dup_full_df %>% 
   filter(set == "fixed_mu") %>% 
-  ggplot(aes(x = pop_size, y = prop_dup*100, color = processing)) +
+  ggplot(aes(x = pop_size, y = prop_dup, color = processing)) +
   geom_point() +
   geom_path(aes(linetype = as.factor(mut_rate))) +
-  scale_x_log10() +
+  scale_x_log10(labels = scales::math_format(format = log10)) +
+  scale_y_continuous(labels = scales::percent_format()) +
   scale_color_manual(values = c("grey", "black")) +
+  scale_linetype(
+    labels = scales::math_format(
+      expr = 1.5%*%10^.x, 
+      format = function(x) log10(as.numeric(x)/1.5)
+      )
+  ) +
   labs( 
     x = "*N*",
-    y = "Percent duplicated (%)",
+    y = "Percent duplicated",
     linetype = "&mu;",
     color = "Processing"
   ) +
@@ -205,7 +212,8 @@ dup_full_df %>%
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
-    legend.title = element_markdown()
+    legend.title = element_markdown(),
+    legend.text = element_text(vjust = 1)
   ) -> fig_dup_n_full
 
 fig_dup_n_full
