@@ -129,8 +129,8 @@ rho_mu_full %>%
     expand = c(0, 0),
     name = "Density"
   ) +
-  scale_fill_discrete_qualitative(
-    palette = "Warm",
+  scale_fill_discrete_sequential(
+    palette = "Purp",
     name = "Identity",
     labels = c("Duplicate", "Unique")
   ) +
@@ -192,8 +192,8 @@ rho_n_full %>%
     expand = c(0, 0),
     name = "Density"
   ) +
-  scale_fill_discrete_qualitative(
-    palette = "Warm",
+  scale_fill_discrete_sequential(
+    palette = "Purp",
     name = "Identity",
     labels = c("Duplicate", "Unique")
   ) +

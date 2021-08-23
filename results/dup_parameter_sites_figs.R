@@ -69,8 +69,8 @@ sites_mu_full_df %>%
     cols = vars(pop_size),
     labeller = labeller(pop_size = labels_n)
   ) +
-  scale_fill_discrete_qualitative(
-    palette = "Cold",
+  scale_fill_discrete_sequential(
+    palette = "Teal",
     name = "Identity",
     labels = c("Duplicate", "Unique")
   ) +
@@ -117,8 +117,8 @@ sites_n_full_df %>%
     cols = vars(mut_rate),
     labeller = labeller(mut_rate = labels_mu)
   ) +
-  scale_fill_discrete_qualitative(
-    palette = "Cold",
+  scale_fill_discrete_sequential(
+    palette = "Teal",
     name = "Identity",
     labels = c("Duplicate", "Unique")
   ) +
