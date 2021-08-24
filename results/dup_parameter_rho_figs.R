@@ -220,14 +220,14 @@ save_plot(
 save_plot( 
   file.path(path_to_results, 'figures', 'fig_rho_dup_fixed_mu.png'),
   fig_rho_dup_v_unq_fixed_mu, 
-  ncol = 1, nrow = 1, base_height = 6.71,
+  ncol = 1, nrow = 1, base_height = 3.71,
   base_asp = 1.618, base_width = NULL
 )
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_rho_dup_fixed_n.png'),
   fig_rho_dup_v_unq_fixed_n, 
-  ncol = 1, nrow = 1, base_height = 6.71,
+  ncol = 1, nrow = 1, base_height = 3.71,
   base_asp = 1.618, base_width = NULL
 )
 
