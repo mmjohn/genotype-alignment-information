@@ -1,7 +1,7 @@
 #!/stor/system/opt/R/R-3.6.1/bin/Rscript
 
 # Parse data sets for comparisons of msprime simulation under different parameter conditions
-# This script: parse and save simulation data (alignments, rhos, seg sites)
+# This script: parse and save simulation data (alignments, rhos, seg sites (# and position))
 # Mackenzie M. Johnson
 # August 2021 
 
@@ -60,14 +60,14 @@ pop_high_n3 <- readLines(
 #--------------- PARSE DATA: ALIGNMENTS, RHOS, SEG SITES --------------------
 
 # parse alignments: low proportion duplicates
-pop_low_n1_unsorted <- get_alignment_data(pop_low_n1)
-pop_low_n2_unsorted <- get_alignment_data(pop_low_n2)
-pop_low_n3_unsorted <- get_alignment_data(pop_low_n3)
+pop_low_n1_unsorted <- popgencnn::get_alignment_data(pop_low_n1)
+pop_low_n2_unsorted <- popgencnn::get_alignment_data(pop_low_n2)
+pop_low_n3_unsorted <- popgencnn::get_alignment_data(pop_low_n3)
 
 # parse alignments: high proportion duplicates
-pop_high_n1_unsorted <- get_alignment_data(pop_high_n1)
-pop_high_n2_unsorted <- get_alignment_data(pop_high_n2)
-pop_high_n3_unsorted <- get_alignment_data(pop_high_n3)
+pop_high_n1_unsorted <- popgencnn::get_alignment_data(pop_high_n1)
+pop_high_n2_unsorted <- popgencnn::get_alignment_data(pop_high_n2)
+pop_high_n3_unsorted <- popgencnn::get_alignment_data(pop_high_n3)
 
 # save alignment data
 save(
@@ -140,9 +140,9 @@ rm(pop_low_n1_rho, pop_low_n2_rho, pop_low_n3_rho)
 rm(pop_high_n1_rho, pop_high_n2_rho, pop_high_n3_rho)
 
 
-#--------------- PARSE DATA: SEG SITES --------------------
+#--------------- PARSE DATA: SEG SITES (#) --------------------
 
-# read in seg. sites
+# read in seg. sites - MOVE TO PACKAGE
 get_seg_sites <- function(all_data){
   
   # get relevant line numbers
@@ -184,6 +184,35 @@ save(
 # remove data 
 rm(pop_low_n1_sites, pop_low_n2_sites, pop_low_n3_sites)
 rm(pop_high_n1_sites, pop_high_n2_sites, pop_high_n3_sites)
+
+
+#--------------- PARSE DATA: SEG SITES (POS) --------------------
+
+# read in variable site positions
+# low dup set
+pop_low_n1_pos <- popgencnn::get_pos_data(pop_low_n1)
+pop_low_n2_pos <- popgencnn::get_pos_data(pop_low_n2)
+pop_low_n3_pos <- popgencnn::get_pos_data(pop_low_n3)
+
+# high dup set
+pop_high_n1_pos <- popgencnn::get_pos_data(pop_high_n1)
+pop_high_n2_pos <- popgencnn::get_pos_data(pop_high_n2)
+pop_high_n3_pos <- popgencnn::get_pos_data(pop_high_n3)
+
+# save position data
+save(
+  pop_low_n1_pos, pop_low_n2_pos, pop_low_n3_pos,
+  file = file.path(path_to_parsed, 'cnn_dup', 'low_dup_pos.RData')
+)
+
+save(
+  pop_high_n1_pos, pop_high_n2_pos, pop_high_n3_pos,
+  file = file.path(path_to_parsed, 'cnn_dup', 'high_dup_pos.RData')
+)
+
+# remove data
+rm(pop_low_n1_pos, pop_low_n2_pos, pop_low_n3_pos)
+rm(pop_high_n1_pos, pop_high_n2_pos, pop_high_n3_pos)
 
 rm(pop_low_n1, pop_low_n2, pop_low_n3)
 rm(pop_high_n1, pop_high_n2, pop_high_n3)
