@@ -88,30 +88,28 @@ rm(pop_high_n3_unsorted)
 # use keras built-in function to pad alignments
 
 max(lengths(pop_low_n1_data)/num_chrom)   # 20
+max(lengths(pop_low_n2_data)/num_chrom)   # 58
+max(lengths(pop_low_n3_data)/num_chrom)   # 106 - PAD
 
 pop_low_n1_padded <- lapply(
   pop_low_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 20,  
+  maxlen = 106,  
   dtype = "float32",
   padding = "post"
 )
 
 rm(pop_low_n1_data)
 
-max(lengths(pop_low_n2_data)/num_chrom)   # 58
-
 pop_low_n2_padded <- lapply(
   pop_low_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 58,  
+  maxlen = 106,  
   dtype = "float32",
   padding = "post"
 )
 
 rm(pop_low_n2_data)
-
-max(lengths(pop_low_n3_data)/num_chrom)   # 106
 
 pop_low_n3_padded <- lapply(
   pop_low_n3_data,
@@ -124,30 +122,28 @@ pop_low_n3_padded <- lapply(
 rm(pop_low_n3_data)
 
 max(lengths(pop_high_n1_data)/num_chrom)   # 6
+max(lengths(pop_high_n2_data)/num_chrom)   # 11
+max(lengths(pop_high_n3_data)/num_chrom)   # 17
 
 pop_high_n1_padded <- lapply(
   pop_high_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 6,  
+  maxlen = 17,  
   dtype = "float32",
   padding = "post"
 )
 
 rm(pop_high_n1_data)
 
-max(lengths(pop_high_n2_data)/num_chrom)   # 11
-
 pop_high_n2_padded <- lapply(
   pop_high_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 11,  
+  maxlen = 17,  
   dtype = "float32",
   padding = "post"
 )
 
 rm(pop_high_n2_data)
-
-max(lengths(pop_high_n3_data)/num_chrom)   # 17
 
 pop_high_n3_padded <- lapply(
   pop_high_n3_data,
