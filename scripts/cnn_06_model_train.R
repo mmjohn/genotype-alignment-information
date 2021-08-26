@@ -1,15 +1,13 @@
 #!/stor/system/opt/R/R-3.6.1/bin/Rscript
 
-# CNN for recombination data from msprime simulations
+# CNN for recombination rate estimation trained and tested on msprime simulations
 # Using:
 #   2 branch model from Flagel et al. (2018)
-#   200,000 simulations
-#   All functions defined in file (not calling package)
-#   Run via command or RStudio line on wilkcomp01 or wilkcomp02
+#   60,000 simulations per set
 #   Currently using tensorflow via Keras and reticulate
 # This script: defines, compiles, and trains model; saves a hdf5
 # Mackenzie M. Johnson
-# Feb 2021 - Updated May 2021 to use with msprime simulations
+# August 2021
 
 #--------------- CONFIGURE ENVIRONMENT --------------------
 Sys.time()
@@ -31,10 +29,10 @@ sessionInfo()
 #--------------- GLOBAL PARAMETERS --------------------
 
 # set the number of simulations in dataset
-num_sims <- 
+num_sims <- 60000   # for all
 
 # paths to data
-path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/"
+path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/cnn_dup/"
 path_to_results <- "/stor/home/mmj2238/bio-cnns/code/recombination/results/"
 
 # size of alignments
@@ -46,11 +44,6 @@ num_chrom <- 50
 # load data saved from 
 load(file = glue('{path_to_data}eq_alignments_training.RData'))
 
-
-#--------------- PREPARE DATA --------------------
-
-# split data into training
-# transpose
 
 #--------------- DEFINE MODEL --------------------
 
@@ -146,7 +139,7 @@ model %>%
     #y = y_train,
     y = y_train_log_centered,
     batch = 32,
-    epochs = 1000,  #16, 50, 100, 150 - for eq at 59 turns
+    epochs = 1000,  
     validation_data = list(
       list(x1_val, x2_val), 
       y_val_log_centered
