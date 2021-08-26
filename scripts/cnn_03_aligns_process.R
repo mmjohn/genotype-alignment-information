@@ -22,9 +22,6 @@ library(keras)
 library(devtools)
 devtools::load_all("/stor/home/mmj2238/popgencnn/")
 
-# check that the right environment loaded
-reticulate::py_config()
-
 # record session info
 sessionInfo()
 
@@ -57,6 +54,23 @@ load(
     path_to_data, 
     'cnn_dup',
     'high_dup_align.RData'
+  )
+)
+
+# load rho values
+load(
+  file = file.path(
+    path_to_data, 
+    'cnn_dup',
+    'low_dup_pos.RData'
+  )
+)
+
+load(
+  file = file.path(
+    path_to_data, 
+    'cnn_dup',
+    'high_dup_pos.RData'
   )
 )
 
@@ -123,7 +137,7 @@ rm(pop_low_n3_data)
 
 max(lengths(pop_high_n1_data)/num_chrom)   # 6
 max(lengths(pop_high_n2_data)/num_chrom)   # 11
-max(lengths(pop_high_n3_data)/num_chrom)   # 17
+max(lengths(pop_high_n3_data)/num_chrom)   # 17 - PAD
 
 pop_high_n1_padded <- lapply(
   pop_high_n1_data,
@@ -156,6 +170,59 @@ pop_high_n3_padded <- lapply(
 rm(pop_high_n3_data)
 
 
+#--------------- PAD ALIGNMENTS --------------------
+
+# pad position vectors to match alignments
+
+pop_low_n1_pos_padded <- pad_sequences(
+  pop_low_n1_pos,
+  maxlen = 106,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_low_n2_pos_padded <- pad_sequences(
+  pop_low_n2_pos,
+  maxlen = 106,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_low_n3_pos_padded <- pad_sequences(
+  pop_low_n3_pos,
+  maxlen = 106,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_high_n1_pos_padded <- pad_sequences(
+  pop_high_n1_pos,
+  maxlen = 17,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_high_n2_pos_padded <- pad_sequences(
+  pop_high_n2_pos,
+  maxlen = 17,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_high_n3_pos_padded <- pad_sequences(
+  pop_high_n3_pos,
+  maxlen = 17,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+
 #--------------- SAVE DATA SETS --------------------
 
 save(
@@ -167,6 +234,14 @@ save(
 )
 
 save(
+  pop_low_n1_pos_padded, pop_low_n2_pos_padded, pop_low_n3_pos_padded, 
+  file = file.path(
+    path_to_data, 
+    'cnn_dup', 
+    'low_dup_pos_processed.RData')
+)
+
+save(
   pop_high_n1_padded, pop_high_n2_padded, pop_high_n3_padded, 
   file = file.path(
     path_to_data, 
@@ -174,9 +249,11 @@ save(
     'high_dup_align_processed.RData')
 )
 
-
-# rm data sets
-rm(pop_low_n1_padded, pop_low_n2_padded, pop_low_n3_padded)
-rm(pop_high_n1_padded, pop_high_n2_padded, pop_high_n3_padded)
-
+save(
+  pop_high_n1_pos_padded, pop_high_n2_pos_padded, pop_high_n3_pos_padded, 
+  file = file.path(
+    path_to_data, 
+    'cnn_dup', 
+    'high_dup_pos_processed.RData')
+)
 
