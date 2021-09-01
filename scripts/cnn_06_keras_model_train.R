@@ -4,7 +4,8 @@
 # Using:
 #   2 branch model from Flagel et al. (2018)
 #   60,000 simulations per set
-#   Currently using tensorflow via Keras and reticulate
+#   Currently using tensorflow via Keras and reticulate 
+# ISSUE: Cannot reload saved hdf5 models or weights
 # This script: defines, compiles, and trains model; saves a hdf5
 # Mackenzie M. Johnson
 # August 2021
