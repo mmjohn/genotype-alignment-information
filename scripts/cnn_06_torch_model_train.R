@@ -55,17 +55,17 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # error messages should clearly state if this is an issue
 
 # alignments
-low_align_all_train_tensor <- torch_tensor(
+align_train_tensor <- torch_tensor(
   low_align_all_train,
   requires_grad = TRUE # this is required for nn training; tracks computations to calc. deriv.
 )
 
-low_align_all_val_tensor <- torch_tensor(
+align_val_tensor <- torch_tensor(
   low_align_all_val,
   requires_grad = TRUE 
 )
 
-low_align_all_test_tensor <- torch_tensor(
+align_test_tensor <- torch_tensor(
   low_align_all_test,
   requires_grad = TRUE 
 )
@@ -73,17 +73,17 @@ low_align_all_test_tensor <- torch_tensor(
 rm(low_align_all_train, low_align_all_val, low_align_all_test)
 
 # positions
-low_pos_all_train_tensor <- torch_tensor(
+pos_train_tensor <- torch_tensor(
   low_pos_all_train,
   requires_grad = TRUE 
 )
 
-low_pos_all_val_tensor <- torch_tensor(
+pos_val_tensor <- torch_tensor(
   low_pos_all_val,
   requires_grad = TRUE 
 )
 
-low_pos_all_test_tensor <- torch_tensor(
+pos_test_tensor <- torch_tensor(
   low_pos_all_test,
   requires_grad = TRUE 
 )
@@ -91,17 +91,17 @@ low_pos_all_test_tensor <- torch_tensor(
 rm(low_pos_all_train, low_pos_all_val, low_pos_all_test)
 
 # rhos
-low_rho_all_train_tensor <- torch_tensor(
+rho_train_tensor <- torch_tensor(
   low_rho_all_train_centered,
   requires_grad = TRUE
 )
 
-low_rho_all_val_tensor <- torch_tensor(
+rho_val_tensor <- torch_tensor(
   low_rho_all_val_centered,
   requires_grad = TRUE
 )
 
-low_rho_all_test_tensor <- torch_tensor(
+rho_test_tensor <- torch_tensor(
   low_rho_all_test_centered,
   requires_grad = TRUE
 )
@@ -153,7 +153,7 @@ flagel_cnn <- nn_module(
 
     # full model (fc)
     self$fc2 <- nn_linear(
-      in_features = 64 + 256,                 # CHECK
+      in_features = 1344,                 # CHECK
       out_features = 256
     ) 
     self$fc3 <- nn_linear(
@@ -179,7 +179,7 @@ flagel_cnn <- nn_module(
       nnf_relu() %>%
       nnf_avg_pool1d(kernel_size = 2) %>%
       self$dropout3() %>%
-      torch_flatten(start_dim = 2)                       # ISSUE??
+      torch_flatten(start_dim = 2) 
 
     # branch 2 (position fc)
     branch2 <- data_pos %>% 
@@ -187,7 +187,7 @@ flagel_cnn <- nn_module(
       self$dropout3()
 
     # full model (fc)
-    full_model <- torch_cat(list(branch1, branch2), dim = 2)  # ISSUE??
+    full_model <- torch_cat(list(branch1, branch2), dim = 2)
     
     full_model %>% 
       self$fc2() %>% 
@@ -198,7 +198,7 @@ flagel_cnn <- nn_module(
 
 model <- flagel_cnn()
 
-model$forward(low_align_all_train_tensor, low_pos_all_train_tensor)
+model$forward(align_train_tensor, pos_train_tensor)
 
 
 #--------------- NETWORK PARAMETERS --------------------
