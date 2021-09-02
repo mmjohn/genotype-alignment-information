@@ -178,8 +178,8 @@ flagel_cnn <- nn_module(
       self$conv3() %>%
       nnf_relu() %>%
       nnf_avg_pool1d(kernel_size = 2) %>%
-      self$dropout3() #%>%
-      #torch_flatten()                       # ISSUE??
+      self$dropout3() %>%
+      torch_flatten(start_dim = 2)                       # ISSUE??
 
     # branch 2 (position fc)
     branch2 <- data_pos %>% 
@@ -187,7 +187,7 @@ flagel_cnn <- nn_module(
       self$dropout3()
 
     # full model (fc)
-    full_model <- torch_cat(list(branch1, branch2))
+    full_model <- torch_cat(list(branch1, branch2), dim = 2)  # ISSUE??
     
     full_model %>% 
       self$fc2() %>% 
