@@ -203,17 +203,59 @@ model$forward(align_train_tensor, pos_train_tensor)
 
 #--------------- NETWORK PARAMETERS --------------------
 
+# set l2 regularization parameter - WHERE DOES THIS GO?
+l2_lambda <- 0.0001
+
+# set learning rate for optimizer
+learning_rate <- 0.000001        #0.08
+
+# define optimizer
+optimizer <- optim_adam(model$parameters, lr = learning_rate)
+
+# define number of epochs for training
+epochs <- 10
+
+# NEED TO ADD BATCHES AND VALIDATION
 
 
 #--------------- TRAIN MODEL --------------------
 
-# forward pass
+# Using a target size (36000) that is different to the input size (36000,1). 
+# This will likely lead to incorrect results due to broadcasting. 
+# Please ensure they have the same size. 
+# > y_pred$shape
+# [1] 36000     1
+# > rho_train_tensor$shape
+# [1] 36000
+# likely need to reshape??
+# https://stackoverflow.com/questions/65219569/pytorch-gives-incorrect-results-due-to-broadcasting
 
-# compute loss
+# training loop
+for (t in 1:epochs) {
+  
+  # forward pass -------- 
+  
+  y_pred <- model(align_train_tensor, pos_train_tensor)
+  
+  # compute loss -------- 
+  loss <- nnf_mse_loss(y_pred, rho_train_tensor)
+  if (t %% 1 == 0)
+    cat("Epoch: ", t, "   Loss: ", loss$item(), "\n")
+  
+  # backpropagation -------- 
+  
+  # zero out the gradients before the backward pass
+  optimizer$zero_grad()
+  
+  # gradients are still computed on the loss tensor
+  loss$backward()
+  
+  # update weights -------- 
+  
+  # use the optimizer to update model parameters
+  optimizer$step()
 
-# backpropagation
-
-# update weights
+}
 
 
 #--------------- SAVE MODEL --------------------
