@@ -33,9 +33,9 @@ sessionInfo()
 #--------------- GLOBAL PARAMETERS --------------------
 
 # set the number of simulations in dataset
-num_sims <- 60000   # for all
-# num_sims <- 60000   # for low unq
-# num_sims <- 60000   # for high unq
+# num_sims <- 60000   # for all
+# num_sims <- 58532   # for low unq
+# num_sims <- 32714   # for high unq
 
 # paths to data
 path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/cnn_dup/"
@@ -48,10 +48,10 @@ num_chrom <- 50
 #--------------- LOAD IN DATA --------------------
 
 # load data saved from cnn_05_model_data_prep.R
-load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
+# load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
-# load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
+load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
 #--------------- DEFINE MODEL --------------------
@@ -61,7 +61,7 @@ l2_lambda <- 0.0001
 
 # define the inputs
 genotype_input <- layer_input(
-  shape = c(106, 50),               # 106 for low, 17 for high
+  shape = c(17, 50),               # 106 for low, 17 for high
   dtype = 'float32',
   name = 'genotype_input'
 )
@@ -94,7 +94,7 @@ genotype_output <-  genotype_input %>%
   layer_flatten()
 
 position_input <- layer_input(
-  shape = c(106),                # 106 for low, 17 for high
+  shape = c(17),                # 106 for low, 17 for high
   dtype = 'float32',
   name = 'position_input'
 )
@@ -129,6 +129,7 @@ model <- keras_model(
 
 summary(model)
 
+
 #--------------- COMPILE MODEL --------------------
 
 model %>%
@@ -139,90 +140,107 @@ model %>%
     metrics = metric_mean_squared_error
   )
 
+
 #--------------- TRAIN MODEL --------------------
 
 model %>%
   fit(
-    x = list(low_align_all_train, low_pos_all_train),
-    y = low_rho_all_train_centered,
+    x = list(high_align_unq_train, high_pos_unq_train),
+    y = high_rho_unq_train_centered,
     batch = 32,
-    epochs = 10,  
+    epochs = 60,  
     validation_data = list(
-      list(low_align_all_val, low_pos_all_val), 
-      low_rho_all_val_centered
+      list(high_align_unq_val, high_pos_unq_val), 
+      high_rho_unq_val_centered
     )
   ) -> history
 
 #plot(history)
 
 
-#--------------- SAVE MODEL --------------------
+#--------------- TEST AND SAVE DATA FOR EXAMPLE FIGS --------------------
 
-# UNCOMMENT AFTER DEBUGGING
-# # save training history 
-# save(
-#   history, 
-#   file = file.path(path_to_results, 'models', 'cnn_model_hist_low_dup_all_60.RData')
-# )
-
-# save the model 
-
-setwd("/stor/work/Wilke/mmj2238/trained_models/dup_analysis")
-
-# save full model without optimizer
-save_model_hdf5(
-  model, 
-  "cnn_model_full.h5", 
-  overwrite = TRUE, 
-  include_optimizer = FALSE
-)
-
-# save JSON config to disk
-json_config <- model_to_json(model)
-writeLines(
-  json_config, 
-  "cnn_model_config_low_dup_all_10.json"
-)
-
-# save weights to disk
-save_model_weights_hdf5(
-  model, 
-  "cnn_model_weights_low_dup_all_10.h5"
-)
-
-
-
-
-# TEST THAT MODEL SAVES CORRECTLY
-
-# predictions on original model
+# make predictions
 model %>% 
   predict(
-    list(low_align_all_test, low_pos_all_test)
-  ) -> model_predictions
+    list(high_align_unq_test, high_pos_unq_test)
+  ) -> predictions
 
-# reload the model from the 2 files we saved
-json_config_2 <- readLines(
-  "cnn_model_config_low_dup_all_60.json"
-)
-
-new_model <- model_from_json(json_config_2)
-load_model_weights_hdf5(
-  new_model, 
-  "cnn_model_weights_low_dup_all_60.h5"
-)
-
-# Check that the state is preserved
-new_predictions <- predict(new_model, list(low_align_all_test, low_pos_all_test))
-all.equal(predictions, new_predictions)
+save(
+    history, predictions, high_rho_unq_test_centered,
+    file = file.path(
+      path_to_results, 'models', 
+      'keras_results_high_dup_unq_60.RData')
+  )
 
 
-# reload the model from the 1 hdf5 file
-new_model_2 <- load_model_hdf5("cnn_model_full.h5", compile = FALSE)
-
-# Check that the state is preserved
-new_predictions_2 <- predict(new_model_2, list(low_align_all_test, low_pos_all_test))
-all.equal(predictions, new_predictions_2)
-
+# #--------------- SAVE MODEL --------------------
+# 
+# # UNCOMMENT AFTER DEBUGGING
+# # # save training history 
+# # save(
+# #   history, 
+# #   file = file.path(path_to_results, 'models', 'cnn_model_hist_low_dup_all_60.RData')
+# # )
+# 
+# # save the model 
+# 
+# setwd("/stor/work/Wilke/mmj2238/trained_models/dup_analysis")
+# 
+# # save full model without optimizer
+# save_model_hdf5(
+#   model, 
+#   "cnn_model_full.h5", 
+#   overwrite = TRUE, 
+#   include_optimizer = FALSE
+# )
+# 
+# # save JSON config to disk
+# json_config <- model_to_json(model)
+# writeLines(
+#   json_config, 
+#   "cnn_model_config_low_dup_all_10.json"
+# )
+# 
+# # save weights to disk
+# save_model_weights_hdf5(
+#   model, 
+#   "cnn_model_weights_low_dup_all_10.h5"
+# )
+# 
+# 
+# 
+# 
+# # TEST THAT MODEL SAVES CORRECTLY
+# 
+# # predictions on original model
+# model %>% 
+#   predict(
+#     list(low_align_all_test, low_pos_all_test)
+#   ) -> model_predictions
+# 
+# # reload the model from the 2 files we saved
+# json_config_2 <- readLines(
+#   "cnn_model_config_low_dup_all_60.json"
+# )
+# 
+# new_model <- model_from_json(json_config_2)
+# load_model_weights_hdf5(
+#   new_model, 
+#   "cnn_model_weights_low_dup_all_60.h5"
+# )
+# 
+# # Check that the state is preserved
+# new_predictions <- predict(new_model, list(low_align_all_test, low_pos_all_test))
+# all.equal(predictions, new_predictions)
+# 
+# 
+# # reload the model from the 1 hdf5 file
+# new_model_2 <- load_model_hdf5("cnn_model_full.h5", compile = FALSE)
+# 
+# # Check that the state is preserved
+# new_predictions_2 <- predict(new_model_2, list(low_align_all_test, low_pos_all_test))
+# all.equal(predictions, new_predictions_2)
+# 
 
 
