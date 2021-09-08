@@ -126,7 +126,7 @@ flagel_cnn <- nn_module(
 
     #branch 1 (alignment CNN)
     self$conv1 <- nn_conv1d(
-      in_channels = 106,                    
+      in_channels = 106,            # max number of sites        
       out_channels = 1250,
       kernel_size = 2
     )
@@ -146,14 +146,14 @@ flagel_cnn <- nn_module(
 
     # branch 2 (position fc)
     self$fc1 <- nn_linear(
-      in_features = 106,
+      in_features = 106,          # max number of sites
       out_features = 64
-    ) # dense in keras = linear in torch
+    )                             # dense in keras = linear in torch
     self$dropout3 <- nn_dropout(0.1)
 
     # full model (fc)
     self$fc2 <- nn_linear(
-      in_features = 1344,                 # CHECK
+      in_features = 1344,             
       out_features = 256
     ) 
     self$fc3 <- nn_linear(
@@ -198,7 +198,7 @@ flagel_cnn <- nn_module(
 
 model <- flagel_cnn()
 
-model$forward(align_train_tensor, pos_train_tensor)
+#model$forward(align_train_tensor, pos_train_tensor)
 
 
 #--------------- NETWORK PARAMETERS --------------------
@@ -220,37 +220,35 @@ epochs <- 10
 
 #--------------- TRAIN MODEL --------------------
 
-# Using a target size (36000) that is different to the input size (36000,1). 
-# This will likely lead to incorrect results due to broadcasting. 
-# Please ensure they have the same size. 
-# > y_pred$shape
-# [1] 36000     1
-# > rho_train_tensor$shape
-# [1] 36000
-# likely need to reshape??
-# https://stackoverflow.com/questions/65219569/pytorch-gives-incorrect-results-due-to-broadcasting
-
 # training loop
 for (t in 1:epochs) {
   
-  # forward pass -------- 
+  # -------- forward pass -------- 
   
-  y_pred <- model(align_train_tensor, pos_train_tensor)
+  # make prediction in current model state
+  rho_pred <- model(align_train_tensor, pos_train_tensor)
   
-  # compute loss -------- 
-  loss <- nnf_mse_loss(y_pred, rho_train_tensor)
+  # reshape to match dimensions of target data
+  rho_pred <- torch_squeeze(rho_pred, 2)
+  
+  # -------- compute loss -------- 
+  
+  # use mse loss to evaluation model predition
+  loss <- nnf_mse_loss(rho_pred, rho_train_tensor)
+  
+  # output results
   if (t %% 1 == 0)
     cat("Epoch: ", t, "   Loss: ", loss$item(), "\n")
   
-  # backpropagation -------- 
+  #-------- backpropagation -------- 
   
   # zero out the gradients before the backward pass
   optimizer$zero_grad()
   
-  # gradients are still computed on the loss tensor
+  # gradients are computed on the loss tensor
   loss$backward()
   
-  # update weights -------- 
+  #-------- update weights -------- 
   
   # use the optimizer to update model parameters
   optimizer$step()
