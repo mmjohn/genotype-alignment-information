@@ -17,26 +17,15 @@ cat("\nConfiguring environment.....\n")
 library(purrr)
 library(dplyr)
 library(tidyr)
-#library(glue)
 library(torch)
 
 # record session info
 sessionInfo()
 
-#--------------- GLOBAL PARAMETERS --------------------
-
-# set the number of simulations in dataset
-num_sims <- 60000   # for all
-# num_sims <- 60000   # for low unq
-# num_sims <- 60000   # for high unq
-
-# paths for script
+# set paths
 path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/cnn_dup/"
 path_to_results <- "/stor/home/mmj2238/genotype-alignment-information/results/"
 path_to_models <- "/stor/work/Wilke/mmj2238/trained_models/dup_analysis"
-
-# size of alignments
-num_chrom <- 50
 
 
 #--------------- LOAD IN DATA --------------------
@@ -46,6 +35,22 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
+
+
+#--------------- GLOBAL PARAMETERS --------------------
+
+# number of simulations in data set
+num_sims <- 60000   # for all
+# num_sims <- 60000   # for low unq
+# num_sims <- 60000   # for high unq
+
+# size of alignments
+# number of samples
+num_chrom <- 50
+
+# number of sites
+max_size <- 106   # for low
+# max_size <- 17    # for high
 
 
 #--------------- DATA TO TENSORS --------------------
@@ -126,7 +131,7 @@ flagel_cnn <- nn_module(
 
     #branch 1 (alignment CNN)
     self$conv1 <- nn_conv1d(
-      in_channels = 106,            # max number of sites        
+      in_channels =  106, #max_size,            # max number of sites        
       out_channels = 1250,
       kernel_size = 2
     )
@@ -146,7 +151,7 @@ flagel_cnn <- nn_module(
 
     # branch 2 (position fc)
     self$fc1 <- nn_linear(
-      in_features = 106,          # max number of sites
+      in_features = 106, #max_size,          # max number of sites
       out_features = 64
     )                             # dense in keras = linear in torch
     self$dropout3 <- nn_dropout(0.1)
@@ -203,19 +208,23 @@ model <- flagel_cnn()
 
 #--------------- NETWORK PARAMETERS --------------------
 
-# set l2 regularization parameter - WHERE DOES THIS GO?
+# set l2 regularization parameter
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.000001        #0.08
+learning_rate <- 0.0001        #0.08
 
 # define optimizer
-optimizer <- optim_adam(model$parameters, lr = learning_rate)
+optimizer <- optim_adam(
+  model$parameters, 
+  lr = learning_rate,
+  weight_decay = l2_lambda
+)
 
 # define number of epochs for training
 epochs <- 10
 
-# NEED TO ADD BATCHES AND VALIDATION
+# NEED TO ADD BATCHES
 
 
 #--------------- TRAIN MODEL --------------------
@@ -224,13 +233,15 @@ epochs <- 10
 # https://blogs.rstudio.com/ai/posts/2020-11-03-torch-tabular/
 # https://blogs.rstudio.com/ai/posts/2020-10-19-torch-image-classification/
 
+train_losses <- c()
+valid_losses <- c()
+
 # training loop w validation
 for (t in 1:epochs) {
   
   # -------- TRAIN --------
   
   model$train()
-  train_losses <- c()
   
   # -------- forward pass -------- 
   
@@ -264,7 +275,6 @@ for (t in 1:epochs) {
   # -------- VALIDATE --------
   
   model$eval()
-  valid_losses <- c()
   
   # -------- forward pass -------- 
   
