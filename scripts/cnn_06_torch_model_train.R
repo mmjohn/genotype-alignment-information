@@ -18,6 +18,7 @@ library(purrr)
 library(dplyr)
 library(tidyr)
 library(torch)
+library(ggplot2)
 
 # record session info
 sessionInfo()
@@ -131,7 +132,7 @@ flagel_cnn <- nn_module(
 
     #branch 1 (alignment CNN)
     self$conv1 <- nn_conv1d(
-      in_channels =  106, #max_size,            # max number of sites        
+      in_channels =  max_size,            # max number of sites        
       out_channels = 1250,
       kernel_size = 2
     )
@@ -151,7 +152,7 @@ flagel_cnn <- nn_module(
 
     # branch 2 (position fc)
     self$fc1 <- nn_linear(
-      in_features = 106, #max_size,          # max number of sites
+      in_features = max_size,          # max number of sites
       out_features = 64
     )                             # dense in keras = linear in torch
     self$dropout3 <- nn_dropout(0.1)
@@ -222,7 +223,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 10
+epochs <- 150
 
 # NEED TO ADD BATCHES
 
@@ -230,6 +231,7 @@ epochs <- 10
 #--------------- TRAIN MODEL --------------------
 
 # examples: 
+# https://anderfernandez.com/en/blog/how-to-create-neural-networks-with-torch-in-r/
 # https://blogs.rstudio.com/ai/posts/2020-11-03-torch-tabular/
 # https://blogs.rstudio.com/ai/posts/2020-10-19-torch-image-classification/
 
@@ -302,15 +304,44 @@ for (t in 1:epochs) {
 }
 
 
+#--------------- VISUALIZE TRAINING --------------------
+
+history <- tibble(
+  epochs = seq(1:150),
+  train_losses,
+  valid_losses
+) 
+
+history %>% 
+  ggplot2::ggplot(aes(x = epochs)) +
+  geom_point(aes(y = train_losses), color = "purple") +
+  geom_point(aes(y = valid_losses), color = "orange") +
+  theme_bw() +
+  ylab("Loss (MSE)")
+
+
 #--------------- SAVE MODEL --------------------
 
 # save training history
 save(
   history,
-  #file = file.path(path_to_results, 'models', 'cnn_model_hist_low_dup_all_60.RData')
+  file = file.path(
+    path_to_results, 
+    'models', 
+    'torch_model_hist_low_dup_all_150.RData')
 )
 
 # save the model 
+torch_save(
+  model, 
+  file.path(
+    path_to_models,
+    "torch_model_hist_low_dup_all_150.rt"
+  )
+)
 
 
-
+# 
+# reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
+# 
+# reload_model(align_test_tensor, pos_test_tensor)
