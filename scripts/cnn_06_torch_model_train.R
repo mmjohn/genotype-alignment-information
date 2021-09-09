@@ -340,8 +340,38 @@ torch_save(
   )
 )
 
-
 # 
 # reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
 # 
 # reload_model(align_test_tensor, pos_test_tensor)
+
+
+#--------------- SAVE MODEL --------------------
+
+rho_train_prediction <- rho_pred %>% as_array()
+rho_actual <- rho_train_tensor %>% as_array()
+
+performance_rho <- tibble(
+  sample = seq(1:36000),
+  rho_train_prediction,
+  rho_actual
+)
+
+performance_rho %>% 
+  ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
+  geom_point()
+
+performance_rho %>% 
+  ggplot(aes(x = rho_actual, y = rho_actual)) +
+  geom_point()
+
+performance_rho %>% 
+  ggplot(aes(x = rho_actual)) +
+  geom_density()
+
+library(caret)
+caret::postResample(
+  pred = rho_train_prediction, 
+  obs = rho_actual
+)
+
