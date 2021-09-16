@@ -64,7 +64,7 @@ msp_params <- function(index, sim_ne, sim_mu, filename, ...){
 # simulations for duplicate CNN analysis
 # parameters used:
 # fixed mu: 1.5e-8 or 1.5e-9 (low vs high duplicate range)
-# N used: 1,000, 5,000, and 10,000
+# N used: 1,000, 2,000, 5,000, 10,000, 15,000, 20,000 (increase range to improve model training)
 
 
 # generate script for low duplicate range
@@ -104,6 +104,45 @@ low_dup_n3_set <- tibble(
       sim_ne = 10000, 
       sim_mu = 1.5e-8,
       filename = 'n_10000_low_dup' 
+    )
+  )
+
+low_dup_n4_set <- tibble(
+  sim_num = seq(1:20000)  
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 2000, 
+      sim_mu = 1.5e-8,
+      filename = 'n_2000_low_dup' 
+    )
+  )
+
+low_dup_n5_set <- tibble(
+  sim_num = seq(1:20000)  
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 15000, 
+      sim_mu = 1.5e-8,
+      filename = 'n_15000_low_dup' 
+    )
+  )
+
+low_dup_n6_set <- tibble(
+  sim_num = seq(1:20000)  
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 20000, 
+      sim_mu = 1.5e-8,
+      filename = 'n_20000_low_dup' 
     )
   )
 
@@ -147,6 +186,44 @@ high_dup_n3_set <- tibble(
     )
   )
 
+high_dup_n4_set <- tibble(
+  sim_num = seq(1:20000)
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 2000, 
+      sim_mu = 1.5e-9,
+      filename = 'n_2000_high_dup' 
+    )
+  )
+
+high_dup_n5_set <- tibble(
+  sim_num = seq(1:20000)
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 15000, 
+      sim_mu = 1.5e-9,
+      filename = 'n_15000_high_dup' 
+    )
+  )
+
+high_dup_n6_set <- tibble(
+  sim_num = seq(1:20000)
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 20000, 
+      sim_mu = 1.5e-9,
+      filename = 'n_20000_high_dup' 
+    )
+  )
 
 #--------------- WRITE TO FILE --------------------
 
@@ -196,6 +273,51 @@ low_dup_n3_set %>%
     eol = '\n'
   )
 
+low_dup_n4_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_low_n2000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+low_dup_n5_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_low_n15000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+low_dup_n6_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_low_n20000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
 high_dup_n1_set %>% 
   select(call) %>% 
   readr::write_delim(
@@ -234,6 +356,51 @@ high_dup_n3_set %>%
       'scripts',
       'msprime_simulations', 
       'msprime_cnn_high_n10000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+high_dup_n4_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_high_n2000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+high_dup_n5_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_high_n15000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
+high_dup_n6_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_high_n20000.sh'
     ),
     delim = "",
     col_names = FALSE,
