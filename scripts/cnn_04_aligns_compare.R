@@ -95,7 +95,7 @@ for (i in 1:20000) {
   }
 }
 
-num_dupl_low_n2 <- length(low_n2_index)     # 0
+num_dupl_low_n2 <- length(low_n2_index)     # 20
 
 rm(does_match, i, j, has_duplicate)
 rm(pop_low_n2_padded)
@@ -124,6 +124,82 @@ num_dupl_low_n3 <- length(low_n3_index)     # 0
 
 rm(does_match, i, j, has_duplicate)
 rm(pop_low_n3_padded)
+
+low_n4_index <- c()
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i < j) {
+      does_match <- identical(
+        pop_low_n4_padded[[i]],
+        pop_low_n4_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    low_n4_index <- c(low_n4_index, i)
+  }
+}
+
+num_dupl_low_n4 <- length(low_n4_index)     # 0
+
+rm(does_match, i, j, has_duplicate)
+rm(pop_low_n4_padded)
+
+low_n5_index <- c()
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i < j) {
+      does_match <- identical(
+        pop_low_n5_padded[[i]],
+        pop_low_n5_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    low_n5_index <- c(low_n5_index, i)
+  }
+}
+
+num_dupl_low_n5 <- length(low_n5_index)     # 0
+
+rm(does_match, i, j, has_duplicate)
+rm(pop_low_n5_padded)
+
+low_n6_index <- c()
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i < j) {
+      does_match <- identical(
+        pop_low_n6_padded[[i]],
+        pop_low_n6_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    low_n6_index <- c(low_n6_index, i)
+  }
+}
+
+num_dupl_low_n6 <- length(low_n6_index)     # 0
+
+rm(does_match, i, j, has_duplicate)
+rm(pop_low_n6_padded)
+
 
 # compare each parameter set - high duplicate set
 high_n1_index <- c()
@@ -171,7 +247,7 @@ for (i in 1:20000) {
   }
 }
 
-num_dupl_high_n2 <- length(high_n2_index)     # 7,670
+num_dupl_high_n2 <- length(high_n2_index)     # 15,951
 
 rm(does_match, i, j, has_duplicate)
 rm(pop_high_n2_padded)
@@ -196,18 +272,95 @@ for (i in 1:20000) {
   }
 }
 
-num_dupl_high_n3 <- length(high_n3_index)     # 1,151
+num_dupl_high_n3 <- length(high_n3_index)     # 7,670
 
 rm(does_match, i, j, has_duplicate)
 rm(pop_high_n3_padded)
+
+high_n4_index <- c()
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i < j) {
+      does_match <- identical(
+        pop_high_n4_padded[[i]],
+        pop_high_n4_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    high_n4_index <- c(high_n4_index, i)
+  }
+}
+
+num_dupl_high_n4 <- length(high_n4_index)     # 1,151
+
+rm(does_match, i, j, has_duplicate)
+rm(pop_high_n4_padded)
+
+high_n5_index <- c()
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i < j) {
+      does_match <- identical(
+        pop_high_n5_padded[[i]],
+        pop_high_n5_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    high_n5_index <- c(high_n5_index, i)
+  }
+}
+
+num_dupl_high_n5 <- length(high_n5_index)     # 113
+
+rm(does_match, i, j, has_duplicate)
+rm(pop_high_n5_padded)
+
+high_n6_index <- c()
+
+for (i in 1:20000) {
+  has_duplicate <- FALSE
+  for (j in 1:20000) {
+    if (i < j) {
+      does_match <- identical(
+        pop_high_n6_padded[[i]],
+        pop_high_n6_padded[[j]]
+      )
+      if (does_match == TRUE){ 
+        has_duplicate <- TRUE
+      }
+    }
+  }
+  if (has_duplicate == TRUE) {
+    high_n6_index <- c(high_n6_index, i)
+  }
+}
+
+num_dupl_high_n6 <- length(high_n6_index)     # 5
+
+rm(does_match, i, j, has_duplicate)
+rm(pop_high_n6_padded)
+
 
 
 #--------------- TIDY ALIGN DATA --------------------
 
 low_dup_set <- tibble(
-  mut_rate = c(1.5e-8, 1.5e-8, 1.5e-8),
-  pop_size = c(1000, 5000, 10000),
-  total_dupl = c(num_dupl_low_n1, num_dupl_low_n2, num_dupl_low_n3)
+  mut_rate = c(1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8, 1.5e-8),
+  pop_size = c(1000, 2000, 5000, 10000, 15000, 20000),
+  total_dupl = c(num_dupl_low_n1, num_dupl_low_n2, num_dupl_low_n3,
+                 num_dupl_low_n4, num_dupl_low_n5, num_dupl_low_n6)
 )
 
 low_dup_set %>% 
@@ -217,9 +370,10 @@ low_dup_set %>%
   ) -> low_dup_set
 
 high_dup_set <- tibble(
-  mut_rate = c(1.5e-9, 1.5e-9, 1.5e-9),
-  pop_size = c(1000, 5000, 10000),
-  total_dupl = c(num_dupl_high_n1, num_dupl_high_n2, num_dupl_high_n3)
+  mut_rate = c(1.5e-9, 1.5e-9, 1.5e-9, 1.5e-9, 1.5e-9, 1.5e-9),
+  pop_size = c(1000, 2000, 5000, 10000, 15000, 20000),
+  total_dupl = c(num_dupl_high_n1, num_dupl_high_n2, num_dupl_high_n3,
+                 num_dupl_high_n4, num_dupl_high_n5, num_dupl_high_n6)
 )
 
 high_dup_set %>% 
@@ -251,6 +405,7 @@ save(
 # save duplicate indices to compare parameter spaces
 save(
   low_n1_index, low_n2_index, low_n3_index,
+  low_n4_index, low_n5_index, low_n6_index,
   file = file.path(
     path_to_results,
     'low_dup_align_indices.RData'
@@ -259,6 +414,7 @@ save(
 
 save(
   high_n1_index, high_n2_index, high_n3_index,
+  high_n4_index, high_n5_index, high_n6_index,
   file = file.path(
     path_to_results,
     'high_dup_align_indices.RData'
