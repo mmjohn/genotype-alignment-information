@@ -81,6 +81,19 @@ low_dup_n1_set <- tibble(
     )
   )
 
+low_dup_n4_set <- tibble(
+  sim_num = seq(1:20000)  
+) %>% 
+  dplyr::mutate(
+    call = purrr::map_chr(
+      .$sim_num, 
+      msp_params, 
+      sim_ne = 2000, 
+      sim_mu = 1.5e-8,
+      filename = 'n_2000_low_dup' 
+    )
+  )
+
 low_dup_n2_set <- tibble(
   sim_num = seq(1:20000)
 ) %>% 
@@ -104,19 +117,6 @@ low_dup_n3_set <- tibble(
       sim_ne = 10000, 
       sim_mu = 1.5e-8,
       filename = 'n_10000_low_dup' 
-    )
-  )
-
-low_dup_n4_set <- tibble(
-  sim_num = seq(1:20000)  
-) %>% 
-  dplyr::mutate(
-    call = purrr::map_chr(
-      .$sim_num, 
-      msp_params, 
-      sim_ne = 2000, 
-      sim_mu = 1.5e-8,
-      filename = 'n_2000_low_dup' 
     )
   )
 
@@ -167,9 +167,9 @@ high_dup_n2_set <- tibble(
     call = purrr::map_chr(
       .$sim_num, 
       msp_params, 
-      sim_ne = 5000, 
+      sim_ne = 2000, 
       sim_mu = 1.5e-9,
-      filename = 'n_5000_high_dup' 
+      filename = 'n_2000_high_dup' 
     )
   )
 
@@ -180,9 +180,9 @@ high_dup_n3_set <- tibble(
     call = purrr::map_chr(
       .$sim_num, 
       msp_params, 
-      sim_ne = 10000, 
+      sim_ne = 5000, 
       sim_mu = 1.5e-9,
-      filename = 'n_10000_high_dup' 
+      filename = 'n_5000_high_dup' 
     )
   )
 
@@ -193,9 +193,9 @@ high_dup_n4_set <- tibble(
     call = purrr::map_chr(
       .$sim_num, 
       msp_params, 
-      sim_ne = 2000, 
+      sim_ne = 10000, 
       sim_mu = 1.5e-9,
-      filename = 'n_2000_high_dup' 
+      filename = 'n_10000_high_dup' 
     )
   )
 
@@ -243,6 +243,21 @@ low_dup_n1_set %>%
     eol = '\n'
   )
 
+low_dup_n4_set %>% 
+  select(call) %>% 
+  readr::write_delim(
+    .,
+    file.path(
+      'scripts',
+      'msprime_simulations', 
+      'msprime_cnn_low_n2000.sh'
+    ),
+    delim = "",
+    col_names = FALSE,
+    quote_escape = FALSE,
+    eol = '\n'
+  )
+
 low_dup_n2_set %>% 
   select(call) %>% 
   readr::write_delim(
@@ -266,21 +281,6 @@ low_dup_n3_set %>%
       'scripts',
       'msprime_simulations', 
       'msprime_cnn_low_n10000.sh'
-    ),
-    delim = "",
-    col_names = FALSE,
-    quote_escape = FALSE,
-    eol = '\n'
-  )
-
-low_dup_n4_set %>% 
-  select(call) %>% 
-  readr::write_delim(
-    .,
-    file.path(
-      'scripts',
-      'msprime_simulations', 
-      'msprime_cnn_low_n2000.sh'
     ),
     delim = "",
     col_names = FALSE,
@@ -340,7 +340,7 @@ high_dup_n2_set %>%
     file.path(
       'scripts',
       'msprime_simulations', 
-      'msprime_cnn_high_n5000.sh'
+      'msprime_cnn_high_n2000.sh'
     ),
     delim = "",
     col_names = FALSE,
@@ -355,7 +355,7 @@ high_dup_n3_set %>%
     file.path(
       'scripts',
       'msprime_simulations', 
-      'msprime_cnn_high_n10000.sh'
+      'msprime_cnn_high_n5000.sh'
     ),
     delim = "",
     col_names = FALSE,
@@ -370,7 +370,7 @@ high_dup_n4_set %>%
     file.path(
       'scripts',
       'msprime_simulations', 
-      'msprime_cnn_high_n2000.sh'
+      'msprime_cnn_high_n10000.sh'
     ),
     delim = "",
     col_names = FALSE,
