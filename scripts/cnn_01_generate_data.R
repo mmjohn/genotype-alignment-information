@@ -81,7 +81,7 @@ low_dup_n1_set <- tibble(
     )
   )
 
-low_dup_n4_set <- tibble(
+low_dup_n2_set <- tibble(
   sim_num = seq(1:20000)  
 ) %>% 
   dplyr::mutate(
@@ -94,7 +94,7 @@ low_dup_n4_set <- tibble(
     )
   )
 
-low_dup_n2_set <- tibble(
+low_dup_n3_set <- tibble(
   sim_num = seq(1:20000)
 ) %>% 
   dplyr::mutate(
@@ -107,7 +107,7 @@ low_dup_n2_set <- tibble(
     )
   )
 
-low_dup_n3_set <- tibble(
+low_dup_n4_set <- tibble(
   sim_num = seq(1:20000)
 ) %>% 
   dplyr::mutate(
@@ -243,7 +243,7 @@ low_dup_n1_set %>%
     eol = '\n'
   )
 
-low_dup_n4_set %>% 
+low_dup_n2_set %>% 
   select(call) %>% 
   readr::write_delim(
     .,
@@ -258,7 +258,7 @@ low_dup_n4_set %>%
     eol = '\n'
   )
 
-low_dup_n2_set %>% 
+low_dup_n3_set %>% 
   select(call) %>% 
   readr::write_delim(
     .,
@@ -273,7 +273,7 @@ low_dup_n2_set %>%
     eol = '\n'
   )
 
-low_dup_n3_set %>% 
+low_dup_n4_set %>% 
   select(call) %>% 
   readr::write_delim(
     .,
