@@ -87,6 +87,16 @@ rm(pop_low_n2_unsorted)
 pop_low_n3_data <- lapply(pop_low_n3_unsorted, sort_align)
 rm(pop_low_n3_unsorted)
 
+pop_low_n4_data <- lapply(pop_low_n4_unsorted, sort_align)
+rm(pop_low_n4_unsorted)
+
+pop_low_n5_data <- lapply(pop_low_n5_unsorted, sort_align)
+rm(pop_low_n5_unsorted)
+
+pop_low_n6_data <- lapply(pop_low_n6_unsorted, sort_align)
+rm(pop_low_n6_unsorted)
+
+
 pop_high_n1_data <- lapply(pop_high_n1_unsorted, sort_align)
 rm(pop_high_n1_unsorted)
 
@@ -96,19 +106,31 @@ rm(pop_high_n2_unsorted)
 pop_high_n3_data <- lapply(pop_high_n3_unsorted, sort_align)
 rm(pop_high_n3_unsorted)
 
+pop_high_n4_data <- lapply(pop_high_n4_unsorted, sort_align)
+rm(pop_high_n4_unsorted)
+
+pop_high_n5_data <- lapply(pop_high_n5_unsorted, sort_align)
+rm(pop_high_n5_unsorted)
+
+pop_high_n6_data <- lapply(pop_high_n6_unsorted, sort_align)
+rm(pop_high_n6_unsorted)
+
 
 #--------------- PAD ALIGNMENTS --------------------
 
 # use keras built-in function to pad alignments
 
 max(lengths(pop_low_n1_data)/num_chrom)   # 20
-max(lengths(pop_low_n2_data)/num_chrom)   # 58
-max(lengths(pop_low_n3_data)/num_chrom)   # 106 - PAD
+max(lengths(pop_low_n2_data)/num_chrom)   # 31
+max(lengths(pop_low_n3_data)/num_chrom)   # 58
+max(lengths(pop_low_n4_data)/num_chrom)   # 106
+max(lengths(pop_low_n5_data)/num_chrom)   # 134
+max(lengths(pop_low_n6_data)/num_chrom)   # 174 - PAD
 
 pop_low_n1_padded <- lapply(
   pop_low_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 106,  
+  maxlen = 174,  
   dtype = "float32",
   padding = "post"
 )
@@ -118,7 +140,7 @@ rm(pop_low_n1_data)
 pop_low_n2_padded <- lapply(
   pop_low_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 106,  
+  maxlen = 174,  
   dtype = "float32",
   padding = "post"
 )
@@ -128,21 +150,54 @@ rm(pop_low_n2_data)
 pop_low_n3_padded <- lapply(
   pop_low_n3_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 106,  
+  maxlen = 174,  
   dtype = "float32",
   padding = "post"
 )
 
 rm(pop_low_n3_data)
 
+pop_low_n4_padded <- lapply(
+  pop_low_n4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 174,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_low_n4_data)
+
+pop_low_n5_padded <- lapply(
+  pop_low_n5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 174,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_low_n5_data)
+
+pop_low_n6_padded <- lapply(
+  pop_low_n6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 174,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_low_n6_data)
+
 max(lengths(pop_high_n1_data)/num_chrom)   # 6
-max(lengths(pop_high_n2_data)/num_chrom)   # 11
-max(lengths(pop_high_n3_data)/num_chrom)   # 17 - PAD
+max(lengths(pop_high_n2_data)/num_chrom)   # 8
+max(lengths(pop_high_n3_data)/num_chrom)   # 11
+max(lengths(pop_high_n4_data)/num_chrom)   # 17
+max(lengths(pop_high_n5_data)/num_chrom)   # 24
+max(lengths(pop_high_n6_data)/num_chrom)   # 27 - PAD
 
 pop_high_n1_padded <- lapply(
   pop_high_n1_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 17,  
+  maxlen = 27,  
   dtype = "float32",
   padding = "post"
 )
@@ -152,7 +207,7 @@ rm(pop_high_n1_data)
 pop_high_n2_padded <- lapply(
   pop_high_n2_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 17,  
+  maxlen = 27,  
   dtype = "float32",
   padding = "post"
 )
@@ -162,21 +217,51 @@ rm(pop_high_n2_data)
 pop_high_n3_padded <- lapply(
   pop_high_n3_data,
   function(x, ...) {pad_sequences(x, ...)}, 
-  maxlen = 17,  
+  maxlen = 27,  
   dtype = "float32",
   padding = "post"
 )
 
 rm(pop_high_n3_data)
 
+pop_high_n4_padded <- lapply(
+  pop_high_n4_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 27,  
+  dtype = "float32",
+  padding = "post"
+)
 
-#--------------- PAD ALIGNMENTS --------------------
+rm(pop_high_n4_data)
+
+pop_high_n5_padded <- lapply(
+  pop_high_n5_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 27,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_high_n5_data)
+
+pop_high_n6_padded <- lapply(
+  pop_high_n6_data,
+  function(x, ...) {pad_sequences(x, ...)}, 
+  maxlen = 27,  
+  dtype = "float32",
+  padding = "post"
+)
+
+rm(pop_high_n6_data)
+
+
+#--------------- PAD POSITIONS --------------------
 
 # pad position vectors to match alignments
 
 pop_low_n1_pos_padded <- pad_sequences(
   pop_low_n1_pos,
-  maxlen = 106,
+  maxlen = 174,
   dtype = "float32",
   padding = "post",
   value = -1.0
@@ -184,7 +269,7 @@ pop_low_n1_pos_padded <- pad_sequences(
 
 pop_low_n2_pos_padded <- pad_sequences(
   pop_low_n2_pos,
-  maxlen = 106,
+  maxlen = 174,
   dtype = "float32",
   padding = "post",
   value = -1.0
@@ -192,15 +277,40 @@ pop_low_n2_pos_padded <- pad_sequences(
 
 pop_low_n3_pos_padded <- pad_sequences(
   pop_low_n3_pos,
-  maxlen = 106,
+  maxlen = 174,
   dtype = "float32",
   padding = "post",
   value = -1.0
 )
 
+pop_low_n4_pos_padded <- pad_sequences(
+  pop_low_n4_pos,
+  maxlen = 174,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_low_n5_pos_padded <- pad_sequences(
+  pop_low_n5_pos,
+  maxlen = 174,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_low_n6_pos_padded <- pad_sequences(
+  pop_low_n6_pos,
+  maxlen = 174,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+
 pop_high_n1_pos_padded <- pad_sequences(
   pop_high_n1_pos,
-  maxlen = 17,
+  maxlen = 27,
   dtype = "float32",
   padding = "post",
   value = -1.0
@@ -208,7 +318,7 @@ pop_high_n1_pos_padded <- pad_sequences(
 
 pop_high_n2_pos_padded <- pad_sequences(
   pop_high_n2_pos,
-  maxlen = 17,
+  maxlen = 27,
   dtype = "float32",
   padding = "post",
   value = -1.0
@@ -216,7 +326,31 @@ pop_high_n2_pos_padded <- pad_sequences(
 
 pop_high_n3_pos_padded <- pad_sequences(
   pop_high_n3_pos,
-  maxlen = 17,
+  maxlen = 27,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_high_n4_pos_padded <- pad_sequences(
+  pop_high_n4_pos,
+  maxlen = 27,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_high_n5_pos_padded <- pad_sequences(
+  pop_high_n5_pos,
+  maxlen = 27,
+  dtype = "float32",
+  padding = "post",
+  value = -1.0
+)
+
+pop_high_n6_pos_padded <- pad_sequences(
+  pop_high_n6_pos,
+  maxlen = 27,
   dtype = "float32",
   padding = "post",
   value = -1.0
@@ -227,6 +361,7 @@ pop_high_n3_pos_padded <- pad_sequences(
 
 save(
   pop_low_n1_padded, pop_low_n2_padded, pop_low_n3_padded, 
+  pop_low_n4_padded, pop_low_n5_padded, pop_low_n6_padded,
   file = file.path(
     path_to_data, 
     'cnn_dup', 
@@ -234,7 +369,8 @@ save(
 )
 
 save(
-  pop_low_n1_pos_padded, pop_low_n2_pos_padded, pop_low_n3_pos_padded, 
+  pop_low_n1_pos_padded, pop_low_n2_pos_padded, pop_low_n3_pos_padded,
+  pop_low_n4_pos_padded, pop_low_n5_pos_padded, pop_low_n6_pos_padded,
   file = file.path(
     path_to_data, 
     'cnn_dup', 
@@ -242,7 +378,8 @@ save(
 )
 
 save(
-  pop_high_n1_padded, pop_high_n2_padded, pop_high_n3_padded, 
+  pop_high_n1_padded, pop_high_n2_padded, pop_high_n3_padded,
+  pop_high_n4_padded, pop_high_n5_padded, pop_high_n6_padded,
   file = file.path(
     path_to_data, 
     'cnn_dup', 
@@ -251,6 +388,7 @@ save(
 
 save(
   pop_high_n1_pos_padded, pop_high_n2_pos_padded, pop_high_n3_pos_padded, 
+  pop_high_n4_pos_padded, pop_high_n5_pos_padded, pop_high_n6_pos_padded,
   file = file.path(
     path_to_data, 
     'cnn_dup', 
