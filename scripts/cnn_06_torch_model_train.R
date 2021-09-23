@@ -3,7 +3,7 @@
 # CNN for recombination rate estimation trained and tested on msprime simulations
 # Using:
 #   2 branch model from Flagel et al. (2018)
-#   60,000 simulations per set
+#   120,000 simulations per set (high/low)
 #   Currently using PyTorch via torch 0.5.0
 # This script: defines, compiles, trains, and saves model
 # Mackenzie M. Johnson
@@ -41,7 +41,7 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 #--------------- GLOBAL PARAMETERS --------------------
 
 # number of simulations in data set
-num_sims <- 60000   # for all
+num_sims <- 120000   # for all
 # num_sims <- 60000   # for low unq
 # num_sims <- 60000   # for high unq
 
@@ -50,8 +50,8 @@ num_sims <- 60000   # for all
 num_chrom <- 50
 
 # number of sites
-max_size <- 106   # for low
-# max_size <- 17    # for high
+max_size <- 174   # for low
+# max_size <- 27    # for high
 
 
 #--------------- DATA TO TENSORS --------------------
@@ -122,8 +122,6 @@ rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_cente
 
 # Flagel model:
 # NOTE: in Flagel code, first set of avg pooling and dropout is missing, but it's reported in paper
-
-# need to add regularizers
 
 flagel_cnn <- nn_module(
   "class_net",
@@ -213,7 +211,7 @@ model <- flagel_cnn()
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.0001        #0.08
+learning_rate <- 0.00001        #0.08
 
 # define optimizer
 optimizer <- optim_adam(
@@ -328,17 +326,17 @@ save(
   file = file.path(
     path_to_results, 
     'models', 
-    'torch_model_hist_low_dup_all_150.RData')
+    'torch_model_hist_low_dup_all_150_epoch_1e-5_lr.RData')
 )
 
-# save the model 
-torch_save(
-  model, 
-  file.path(
-    path_to_models,
-    "torch_model_hist_low_dup_all_150.rt"
-  )
-)
+# # save the model 
+# torch_save(
+#   model, 
+#   file.path(
+#     path_to_models,
+#     "torch_model_hist_low_dup_all_150_epoch_1e-2_lr.rt"
+#   )
+# )
 
 # 
 # reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
@@ -352,7 +350,7 @@ rho_train_prediction <- rho_pred %>% as_array()
 rho_actual <- rho_train_tensor %>% as_array()
 
 performance_rho <- tibble(
-  sample = seq(1:36000),
+  sample = seq(1:72000),
   rho_train_prediction,
   rho_actual
 )
