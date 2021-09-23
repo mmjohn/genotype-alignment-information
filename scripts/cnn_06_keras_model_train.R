@@ -48,10 +48,10 @@ num_chrom <- 50
 #--------------- LOAD IN DATA --------------------
 
 # load data saved from cnn_05_model_data_prep.R
-# load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
+load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
-load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
+# load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
 #--------------- DEFINE MODEL --------------------
@@ -61,7 +61,7 @@ l2_lambda <- 0.0001
 
 # define the inputs
 genotype_input <- layer_input(
-  shape = c(17, 50),               # 106 for low, 17 for high
+  shape = c(174, 50),               # 174 for low, 27 for high
   dtype = 'float32',
   name = 'genotype_input'
 )
@@ -94,7 +94,7 @@ genotype_output <-  genotype_input %>%
   layer_flatten()
 
 position_input <- layer_input(
-  shape = c(17),                # 106 for low, 17 for high
+  shape = c(174),                # 174 for low, 27 for high
   dtype = 'float32',
   name = 'position_input'
 )
@@ -136,7 +136,7 @@ model %>%
   compile(
     loss = 'mean_squared_error',
     #optimizer = 'adam',
-    optimizer = optimizer_adam(lr = 0.000001),       # LOOK
+    optimizer = optimizer_adam(lr = 0.0001),       #  0.000001
     metrics = metric_mean_squared_error
   )
 
@@ -145,13 +145,13 @@ model %>%
 
 model %>%
   fit(
-    x = list(high_align_unq_train, high_pos_unq_train),
-    y = high_rho_unq_train_centered,
+    x = list(low_align_all_train, low_pos_all_train),
+    y = low_rho_all_train_centered,
     batch = 32,
-    epochs = 60,  
+    epochs = 25,  
     validation_data = list(
-      list(high_align_unq_val, high_pos_unq_val), 
-      high_rho_unq_val_centered
+      list(low_align_all_val, low_pos_all_val), 
+      low_rho_all_val_centered
     )
   ) -> history
 
@@ -163,14 +163,20 @@ model %>%
 # make predictions
 model %>% 
   predict(
-    list(high_align_unq_test, high_pos_unq_test)
+    list(low_align_all_test, low_pos_all_test)
   ) -> predictions
 
+performance_keras <- tibble(
+  sample = seq(1:length(low_rho_all_test_centered)),
+  estimate = predictions,
+  actual = low_rho_all_test_centered
+)
+
 save(
-    history, predictions, high_rho_unq_test_centered,
+    history, performance_keras,
     file = file.path(
       path_to_results, 'models', 
-      'keras_results_high_dup_unq_60.RData')
+      'keras_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
   )
 
 

@@ -211,7 +211,7 @@ model <- flagel_cnn()
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.00001        #0.08
+learning_rate <- 0.0001        #0.08
 
 # define optimizer
 optimizer <- optim_adam(
@@ -221,7 +221,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 150
+epochs <- 25
 
 # NEED TO ADD BATCHES
 
@@ -305,7 +305,7 @@ for (t in 1:epochs) {
 #--------------- VISUALIZE TRAINING --------------------
 
 history <- tibble(
-  epochs = seq(1:150),
+  epochs = seq(1:length(train_losses)),
   train_losses,
   valid_losses
 ) 
@@ -326,17 +326,17 @@ save(
   file = file.path(
     path_to_results, 
     'models', 
-    'torch_model_hist_low_dup_all_150_epoch_1e-5_lr.RData')
+    'torch_model_hist_low_dup_all_25_epoch_1e-4_lr.RData')
 )
 
-# # save the model 
-# torch_save(
-#   model, 
-#   file.path(
-#     path_to_models,
-#     "torch_model_hist_low_dup_all_150_epoch_1e-2_lr.rt"
-#   )
-# )
+# save the model
+torch_save(
+  model,
+  file.path(
+    path_to_models,
+    "torch_model_hist_low_dup_all_25_epoch_1e-4_lr.rt"
+  )
+)
 
 # 
 # reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
@@ -344,7 +344,7 @@ save(
 # reload_model(align_test_tensor, pos_test_tensor)
 
 
-#--------------- SAVE MODEL --------------------
+#--------------- SAVE MODEL PERFORMANCE --------------------
 
 rho_train_prediction <- rho_pred %>% as_array()
 rho_actual <- rho_train_tensor %>% as_array()
@@ -359,9 +359,9 @@ performance_rho %>%
   ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
   geom_point()
 
-performance_rho %>% 
-  ggplot(aes(x = rho_actual, y = rho_actual)) +
-  geom_point()
+# performance_rho %>% 
+#   ggplot(aes(x = rho_actual, y = rho_actual)) +
+#   geom_point()
 
 performance_rho %>% 
   ggplot(aes(x = rho_actual)) +
@@ -371,5 +371,14 @@ library(caret)
 caret::postResample(
   pred = rho_train_prediction, 
   obs = rho_actual
+)
+
+# save training history
+save(
+  performance_rho,
+  file = file.path(
+    path_to_results, 
+    'models', 
+    'torch_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
 )
 
