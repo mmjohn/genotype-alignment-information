@@ -18,6 +18,7 @@ library(purrr)
 library(dplyr)
 library(tidyr)
 library(torch)
+library(coro)
 library(ggplot2)
 
 # record session info
@@ -143,7 +144,7 @@ test_ds <- tensor_dataset(
 # need to transform data sets to loaders for use in batches
 train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
-
+test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
 #--------------- DEFINE MODEL --------------------
 
@@ -252,7 +253,9 @@ optimizer <- optim_adam(
 # define number of epochs for training
 epochs <- 25
 
-# NEED TO ADD BATCHES
+# number of batches
+train_dl$.length() # 2250
+validation_dl$.length() # 750
 
 
 #--------------- TRAIN MODEL --------------------
@@ -261,73 +264,106 @@ epochs <- 25
 # https://anderfernandez.com/en/blog/how-to-create-neural-networks-with-torch-in-r/
 # https://blogs.rstudio.com/ai/posts/2020-11-03-torch-tabular/
 # https://blogs.rstudio.com/ai/posts/2020-10-19-torch-image-classification/
+# https://cran.r-project.org/web/packages/torch/vignettes/loading-data.html
 
-train_losses <- c()
-valid_losses <- c()
+# train_losses <- c()
+# valid_losses <- c()
+# 
+# # training loop w validation
+# for (t in 1:epochs) {
+#   
+#   # -------- TRAIN --------
+#   
+#   model$train()
+#   
+#   # -------- forward pass -------- 
+#   
+#   # make prediction in current model state
+#   rho_pred <- model(align_train_tensor, pos_train_tensor)
+#   # reshape to match dimensions of target data
+#   rho_pred <- torch_squeeze(rho_pred, 2)
+#   
+#   # -------- compute loss -------- 
+#   
+#   # use mse loss to evaluation model prediction
+#   loss <- nnf_mse_loss(rho_pred, rho_train_tensor)
+#   
+#   #-------- backpropagation -------- 
+#   
+#   # zero out the gradients before the backward pass - move up???
+#   optimizer$zero_grad()
+#   
+#   # gradients are computed on the loss tensor
+#   loss$backward()
+#   
+#   #-------- update weights and record loss -------- 
+#   
+#   # # not sure
+#   # loss$backward()
+#   # use the optimizer to update model parameters
+#   optimizer$step()
+#   # record mse on training set
+#   train_losses <- c(train_losses, loss$item())
+#   
+#   # -------- VALIDATE --------
+#   
+#   model$eval()
+#   
+#   # -------- forward pass -------- 
+#   
+#   # make prediction in current model state
+#   rho_pred_v <- model(align_val_tensor, pos_val_tensor)
+#   # reshape to match dimensions of target data
+#   rho_pred_v <- torch_squeeze(rho_pred_v, 2)
+#   
+#   # -------- compute and record loss -------- 
+#   
+#   # use mse loss to evaluation model prediction
+#   loss_v <- nnf_mse_loss(rho_pred_v, rho_val_tensor)
+#   valid_losses <- c(valid_losses, loss_v$item())
+#   
+#   # -------- OUTPUT UPDATE --------
+#   cat(
+#     sprintf(
+#       "Loss at epoch %d: training: %3f, validation: %3f\n", 
+#       t, 
+#       loss$item(), #mean(train_losses), 
+#       loss_v$item() #mean(valid_losses)
+#     )
+#   )
+#   
+# }
 
-# training loop w validation
+# training loop w validation and batches
 for (t in 1:epochs) {
   
-  # -------- TRAIN --------
-  
+  # -------- model training -------- 
   model$train()
+  train_losses <- c()  
   
-  # -------- forward pass -------- 
+  coro::loop(for (b in train_dl) {
+    optimizer$zero_grad()
+    rho_pred <- model(b[[1]], b[[2]])
+    rho_pred <- torch_squeeze(rho_pred, 2)
+    loss <- nnf_mse_loss(rho_pred, b[[3]])
+    loss$backward()
+    optimizer$step()
+    train_losses <- c(train_losses, loss$item())
+  })
   
-  # make prediction in current model state
-  rho_pred <- model(align_train_tensor, pos_train_tensor)
-  # reshape to match dimensions of target data
-  rho_pred <- torch_squeeze(rho_pred, 2)
-  
-  # -------- compute loss -------- 
-  
-  # use mse loss to evaluation model prediction
-  loss <- nnf_mse_loss(rho_pred, rho_train_tensor)
-  
-  #-------- backpropagation -------- 
-  
-  # zero out the gradients before the backward pass - move up???
-  optimizer$zero_grad()
-  
-  # gradients are computed on the loss tensor
-  loss$backward()
-  
-  #-------- update weights and record loss -------- 
-  
-  # # not sure
-  # loss$backward()
-  # use the optimizer to update model parameters
-  optimizer$step()
-  # record mse on training set
-  train_losses <- c(train_losses, loss$item())
-  
-  # -------- VALIDATE --------
-  
+  # -------- model validation --------
   model$eval()
+  valid_losses <- c()
   
-  # -------- forward pass -------- 
+  coro::loop(for (b in validation_dl) {
+    rho_pred_val <- model(b[[1]], b[[2]])
+    rho_pred_v <- torch_squeeze(rho_pred_v, 2)
+    loss_val <- nnf_mse_loss(rho_pred_val, b[[3]])
+    valid_losses <- c(valid_losses, loss_val$item())
+  })
   
-  # make prediction in current model state
-  rho_pred_v <- model(align_val_tensor, pos_val_tensor)
-  # reshape to match dimensions of target data
-  rho_pred_v <- torch_squeeze(rho_pred_v, 2)
-  
-  # -------- compute and record loss -------- 
-  
-  # use mse loss to evaluation model prediction
-  loss_v <- nnf_mse_loss(rho_pred_v, rho_val_tensor)
-  valid_losses <- c(valid_losses, loss_v$item())
-  
-  # -------- OUTPUT UPDATE --------
-  cat(
-    sprintf(
-      "Loss at epoch %d: training: %3f, validation: %3f\n", 
-      t, 
-      loss$item(), #mean(train_losses), 
-      loss_v$item() #mean(valid_losses)
-    )
-  )
-  
+  cat(sprintf("Loss at epoch %d: training: %3f, validation: %3f\n", epoch, mean(train_losses), mean(valid_losses)))
+ 
 }
 
 
