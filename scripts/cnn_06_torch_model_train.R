@@ -118,22 +118,31 @@ rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_cente
 
 #--------------- DATA TENSORS TO DATA SETS --------------------
 
+# data need to be combined into datasets for use with dataloaders
+train_ds <- tensor_dataset(
+  data_align = align_train_tensor, 
+  data_pos = pos_train_tensor, 
+  data_rho = rho_train_tensor
+)
+validation_ds <- tensor_dataset(
+  data_align = align_val_tensor, 
+  data_pos = pos_val_tensor, 
+  data_rho = rho_val_tensor
+)
+test_ds <- tensor_dataset(
+  data_align = align_test_tensor, 
+  data_pos = pos_test_tensor, 
+  data_rho = rho_test_tensor
+)
 
+#train_ds$.getitem(1)
+#train_ds$.getitem(1)$data_align
 
 #--------------- DATA SETS TO DATA LOADERS --------------------
 
 # need to transform data sets to loaders for use in batches
-align_train_dl <- align_train_tensor %>% dataloader(batch_size = 32, shuffle = FALSE)
-align_val_dl
-align_test_dl
-
-pos_train_dl
-pos_val_dl
-pos_test_dl
-
-rho_train_dl
-rho_val_dl
-rho_test_dl
+train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
+validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
 
 #--------------- DEFINE MODEL --------------------
