@@ -116,6 +116,22 @@ rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_cente
    low_rho_all_val_centered, low_rho_all_test_centered)
 
 
+#--------------- DATA SETS TO DATA LOADERS --------------------
+
+# need to transform data sets to loaders for use in batches
+align_train_dl <- align_train_tensor %>% dataloader(batch_size = 32, shuffle = FALSE)
+align_val_dl
+align_test_dl
+
+pos_train_dl
+pos_val_dl
+pos_test_dl
+
+rho_train_dl
+rho_val_dl
+rho_test_dl
+
+
 #--------------- DEFINE MODEL --------------------
 
 # create model with nn_module()
@@ -326,7 +342,7 @@ save(
   file = file.path(
     path_to_results, 
     'models', 
-    'torch_model_hist_low_dup_all_25_epoch_1e-4_lr.RData')
+    #'torch_model_hist_low_dup_all_25_epoch_1e-4_lr.RData')
 )
 
 # save the model
@@ -334,7 +350,7 @@ torch_save(
   model,
   file.path(
     path_to_models,
-    "torch_model_hist_low_dup_all_25_epoch_1e-4_lr.rt"
+    #"torch_model_hist_low_dup_all_25_epoch_1e-4_lr.rt"
   )
 )
 
@@ -379,6 +395,6 @@ save(
   file = file.path(
     path_to_results, 
     'models', 
-    'torch_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
+    #'torch_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
 )
 
