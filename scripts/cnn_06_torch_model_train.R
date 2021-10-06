@@ -10,8 +10,6 @@
 # August 2021
 
 #--------------- CONFIGURE ENVIRONMENT --------------------
-Sys.time()
-cat("\nConfiguring environment.....\n")
 
 # load libraries
 library(purrr)
@@ -357,12 +355,12 @@ for (t in 1:epochs) {
   
   coro::loop(for (b in validation_dl) {
     rho_pred_val <- model(b[[1]], b[[2]])
-    rho_pred_v <- torch_squeeze(rho_pred_v, 2)
+    rho_pred_val <- torch_squeeze(rho_pred_val, 2)
     loss_val <- nnf_mse_loss(rho_pred_val, b[[3]])
     valid_losses <- c(valid_losses, loss_val$item())
   })
   
-  cat(sprintf("Loss at epoch %d: training: %3f, validation: %3f\n", epoch, mean(train_losses), mean(valid_losses)))
+  cat(sprintf("Loss at epoch %d: training: %3f, validation: %3f\n", t, mean(train_losses), mean(valid_losses)))
  
 }
 
