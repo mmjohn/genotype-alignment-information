@@ -3,7 +3,7 @@
 # CNN for recombination rate estimation trained and tested on msprime simulations
 # Using:
 #   2 branch model from Flagel et al. (2018)
-#   60,000 simulations per set
+#   120,000 simulations per set
 #   Currently using tensorflow via Keras and reticulate 
 # ISSUE: Cannot reload saved hdf5 models or weights
 # This script: defines, compiles, and trains model; saves a hdf5
@@ -33,9 +33,9 @@ sessionInfo()
 #--------------- GLOBAL PARAMETERS --------------------
 
 # set the number of simulations in dataset
-# num_sims <- 60000   # for all
-# num_sims <- 58532   # for low unq
-# num_sims <- 32714   # for high unq
+# num_sims <- 60000   # for all - old
+# num_sims <- 58532   # for low unq - old
+# num_sims <- 32714   # for high unq - old
 
 # paths to data
 path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/cnn_dup/"
@@ -53,6 +53,21 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
+
+#--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
+
+rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+
+low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
+low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+
+low_rho_all_val <- low_rho_all_val[1:8000]
+low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
+low_rho_all_train <- low_rho_all_train[1:24000]
+low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+
+low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
+low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
 
 #--------------- DEFINE MODEL --------------------
 
@@ -136,7 +151,7 @@ model %>%
   compile(
     loss = 'mean_squared_error',
     #optimizer = 'adam',
-    optimizer = optimizer_adam(lr = 0.0001),       #  0.000001
+    optimizer = optimizer_adam(lr = 0.000001),       #  0.000001
     metrics = metric_mean_squared_error
   )
 
@@ -179,6 +194,12 @@ save(
       'keras_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
   )
 
+save(
+  history,
+  file = file.path(
+    path_to_results, 'models', 
+    'keras_model_history_low_dup_all_subset_25_epoch_1e-4_lr.RData')
+)
 
 # #--------------- SAVE MODEL --------------------
 # 

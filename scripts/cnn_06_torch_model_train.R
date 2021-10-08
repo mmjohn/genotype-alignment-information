@@ -37,6 +37,22 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
+#--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
+
+rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+
+low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
+low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+
+low_rho_all_val <- low_rho_all_val[1:8000]
+low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
+low_rho_all_train <- low_rho_all_train[1:24000]
+low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+
+low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
+low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
+
+
 #--------------- GLOBAL PARAMETERS --------------------
 
 # number of simulations in data set
@@ -140,7 +156,7 @@ test_ds <- tensor_dataset(
 #--------------- DATA SETS TO DATA LOADERS --------------------
 
 # need to transform data sets to loaders for use in batches
-train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
+train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
 validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
@@ -239,7 +255,7 @@ model <- flagel_cnn()
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.0001        #0.08
+learning_rate <- 0.000001        #0.08
 
 # define optimizer
 optimizer <- optim_adam(
@@ -367,18 +383,38 @@ for (t in 1:epochs) {
 
 #--------------- VISUALIZE TRAINING --------------------
 
+# 25 epoch, lr = 1e-4
+train_mean_losses <- c(1.82, 1.79, 1.79, 1.80, 1.81, 1.81, 1.82, 1.82, 1.83, 1.83, 1.83, 
+                       1.84, 1.84, 1.84, 1.85, 1.85, 1.85, 1.86, 1.87, 1.88, 1.90, 1.91, 
+                       1.92, 1.93, 1.94)
+valid_mean_losses <- c(1.95, 2.04, 2.25, 2.48, 2.60, 2.73, 2.99, 3.07, 3.14, 3.04,
+                       3.31, 3.24, 3.25, 3.34, 3.61, 3.66, 3.26, 3.41, 4.02, 5.04,
+                       5.46, 5.65, 5.73, 5.94, 5.80)
+
+# 25 epoch, lr = 1-6
+train_mean_losses <- c(3.30, 2.56, 2.07, 1.95, 1.92, 1.90, 1.89, 1.88, 1.87, 1.86,
+                       1.86, 1.85, 1.85, 1.85, 1.84, 1.84, 1.84, 1.84, 1.84, 1.84, 
+                       1.84, 1.83, 1.83, 1.83, 1.83)
+
+valid_mean_losses <- c(2.95, 2.25, 2.02, 1.97, 1.95, 1.94, 1.93, 1.92, 1.91, 1.91, 
+                       1.90, 1.89, 1.89, 1.89, 1.88, 1.88, 1.88, 1.88, 1.87, 1.87,
+                       1.87, 1.87, 1.87, 1.87, 1.87)
+
+# 25 epoch, lr = 1-6 - shuffle = TRUE
+
+
 history <- tibble(
-  epochs = seq(1:length(train_losses)),
-  train_losses,
-  valid_losses
+  epochs = seq(1:length(train_mean_losses)),
+  train_mean_losses,
+  valid_mean_losses
 ) 
 
 history %>% 
   ggplot2::ggplot(aes(x = epochs)) +
-  geom_point(aes(y = train_losses), color = "purple") +
-  geom_point(aes(y = valid_losses), color = "orange") +
+  geom_point(aes(y = sqrt(train_mean_losses)), color = "purple") +
+  geom_point(aes(y = sqrt(valid_mean_losses)), color = "orange") +
   theme_bw() +
-  ylab("Loss (MSE)")
+  ylab("Loss (RMSE)")
 
 
 #--------------- SAVE MODEL --------------------
