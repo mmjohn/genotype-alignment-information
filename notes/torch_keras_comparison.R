@@ -1,6 +1,10 @@
 
 library(tidyverse)
+library(cowplot)
 
+
+
+########### TRAINING LEARNING RATE ANALYSIS ###############
 # keras models
 
 # 25 epoch, lr = 1e-4
@@ -209,6 +213,42 @@ history_all %>%
 
 fig_torch_keras
 
-save_plot("torch_keras_comparison.png", fig_torch_keras,
+save_plot("notes/torch_keras_comparison.png", fig_torch_keras,
+          ncol = 1, nrow = 1, base_height = 5.71,
+          base_asp = 1.618, base_width = NULL)
+
+
+
+########### MODEL PERFORMANCE ANALYSIS ###############
+
+load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_subset_5_epoch_1e-6_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_subset_5_epoch_1e-6_lr.RData')
+
+r2_results_keras
+r2_results_torch
+
+performance_torch %>% 
+  mutate(
+    estimate = rho_train_prediction,
+    actual = rho_actual,
+    software = "torch"
+  ) %>% 
+  select(sample, actual, estimate, software) -> performance_torch
+
+performance_keras %>% 
+  mutate(software = "keras") -> performance_keras
+
+full_join(performance_torch, performance_keras) -> performance_all
+
+performance_all %>% 
+  ggplot(aes(x = estimate, y = actual)) +
+  geom_point(alpha = 0.2) +
+  facet_grid(rows = vars(software)) -> fig_torch_keras_performance
+
+save_plot("notes/torch_keras_performance.png", fig_torch_keras_performance,
           ncol = 1, nrow = 1, base_height = 3.71,
           base_asp = 1.618, base_width = NULL)
+
+
+
+
