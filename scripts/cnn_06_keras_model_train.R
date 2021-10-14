@@ -151,7 +151,7 @@ model %>%
   compile(
     loss = 'mean_squared_error',
     #optimizer = 'adam',
-    optimizer = optimizer_adam(lr = 0.000001),       #  0.000001
+    optimizer = optimizer_adam(lr = 0.0000001),       #  0.000001
     metrics = metric_mean_squared_error
   )
 
