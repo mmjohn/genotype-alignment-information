@@ -39,18 +39,22 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 
 #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
 
-rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+#rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
 
 low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
 low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
 
 low_rho_all_val <- low_rho_all_val[1:8000]
 low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
 low_rho_all_train <- low_rho_all_train[1:24000]
 low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+low_rho_all_test <- low_rho_all_test[1:8000]
+low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
 
 low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
 low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
+low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
 
 
 #--------------- GLOBAL PARAMETERS --------------------
@@ -158,7 +162,7 @@ test_ds <- tensor_dataset(
 # need to transform data sets to loaders for use in batches
 train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
 validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
-test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
+#test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
 #--------------- DEFINE MODEL --------------------
 
@@ -178,7 +182,7 @@ flagel_cnn <- nn_module(
       out_channels = 1250,
       kernel_size = 2
     )
-    self$dropout1 <- nn_dropout(0.25)
+    # self$dropout1 <- nn_dropout(0.25)
     self$conv2 <- nn_conv1d(
       in_channels = 1250,
       out_channels = 256,                  
@@ -201,7 +205,7 @@ flagel_cnn <- nn_module(
 
     # full model (fc)
     self$fc2 <- nn_linear(
-      in_features = 1344,             
+      in_features = 2880,        # 1344 with first pooling     
       out_features = 256
     ) 
     self$fc3 <- nn_linear(
@@ -217,8 +221,8 @@ flagel_cnn <- nn_module(
     branch1 <- data_align %>%
       self$conv1() %>%
       nnf_relu() %>%
-      nnf_avg_pool1d(kernel_size = 2) %>%   # MISSING IN FLAGEL CODE
-      self$dropout1() %>%                   # MISSING IN FLAGEL CODE
+      # nnf_avg_pool1d(kernel_size = 2) %>%   # MISSING IN FLAGEL CODE
+      # self$dropout1() %>%                   # MISSING IN FLAGEL CODE
       self$conv2() %>%
       nnf_relu() %>%
       nnf_avg_pool1d(kernel_size = 2) %>%
@@ -255,7 +259,7 @@ model <- flagel_cnn()
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.0000001        #0.08
+learning_rate <- 0.0001        #0.08
 
 # define optimizer
 optimizer <- optim_adam(
@@ -279,74 +283,6 @@ validation_dl$.length() # 750
 # https://blogs.rstudio.com/ai/posts/2020-11-03-torch-tabular/
 # https://blogs.rstudio.com/ai/posts/2020-10-19-torch-image-classification/
 # https://cran.r-project.org/web/packages/torch/vignettes/loading-data.html
-
-# train_losses <- c()
-# valid_losses <- c()
-# 
-# # training loop w validation
-# for (t in 1:epochs) {
-#   
-#   # -------- TRAIN --------
-#   
-#   model$train()
-#   
-#   # -------- forward pass -------- 
-#   
-#   # make prediction in current model state
-#   rho_pred <- model(align_train_tensor, pos_train_tensor)
-#   # reshape to match dimensions of target data
-#   rho_pred <- torch_squeeze(rho_pred, 2)
-#   
-#   # -------- compute loss -------- 
-#   
-#   # use mse loss to evaluation model prediction
-#   loss <- nnf_mse_loss(rho_pred, rho_train_tensor)
-#   
-#   #-------- backpropagation -------- 
-#   
-#   # zero out the gradients before the backward pass - move up???
-#   optimizer$zero_grad()
-#   
-#   # gradients are computed on the loss tensor
-#   loss$backward()
-#   
-#   #-------- update weights and record loss -------- 
-#   
-#   # # not sure
-#   # loss$backward()
-#   # use the optimizer to update model parameters
-#   optimizer$step()
-#   # record mse on training set
-#   train_losses <- c(train_losses, loss$item())
-#   
-#   # -------- VALIDATE --------
-#   
-#   model$eval()
-#   
-#   # -------- forward pass -------- 
-#   
-#   # make prediction in current model state
-#   rho_pred_v <- model(align_val_tensor, pos_val_tensor)
-#   # reshape to match dimensions of target data
-#   rho_pred_v <- torch_squeeze(rho_pred_v, 2)
-#   
-#   # -------- compute and record loss -------- 
-#   
-#   # use mse loss to evaluation model prediction
-#   loss_v <- nnf_mse_loss(rho_pred_v, rho_val_tensor)
-#   valid_losses <- c(valid_losses, loss_v$item())
-#   
-#   # -------- OUTPUT UPDATE --------
-#   cat(
-#     sprintf(
-#       "Loss at epoch %d: training: %3f, validation: %3f\n", 
-#       t, 
-#       loss$item(), #mean(train_losses), 
-#       loss_v$item() #mean(valid_losses)
-#     )
-#   )
-#   
-# }
 
 # training loop w validation and batches
 for (t in 1:epochs) {
@@ -383,15 +319,9 @@ for (t in 1:epochs) {
 
 #--------------- VISUALIZE TRAINING --------------------
 
-# 25 epoch, lr = 1e-4
-train_mean_losses <- c(1.82, 1.79, 1.79, 1.80, 1.81, 1.81, 1.82, 1.82, 1.83, 1.83, 1.83, 
-                       1.84, 1.84, 1.84, 1.85, 1.85, 1.85, 1.86, 1.87, 1.88, 1.90, 1.91, 
-                       1.92, 1.93, 1.94)
-valid_mean_losses <- c(1.95, 2.04, 2.25, 2.48, 2.60, 2.73, 2.99, 3.07, 3.14, 3.04,
-                       3.31, 3.24, 3.25, 3.34, 3.61, 3.66, 3.26, 3.41, 4.02, 5.04,
-                       5.46, 5.65, 5.73, 5.94, 5.80)
-
-
+# 5 epoch, lr = 1e-6
+train_mean_losses <- c(3.274, 2.364, 1.966, 1.916, 1.898)
+valid_mean_losses <- c(2.803, 2.062, 1.942, 1.921, 1.906)
 
 history <- tibble(
   epochs = seq(1:length(train_mean_losses)),
@@ -407,30 +337,105 @@ history %>%
   ylab("Loss (RMSE)")
 
 
+#--------------- EVALUATE MODEL --------------------
+
+model$eval()
+
+test_dl <- test_ds %>% dataloader(batch_size = test_ds$.length(), shuffle = FALSE)
+iter <- test_dl$.iter()
+b <- iter$.next()
+test_loss <- c()
+
+output <- model(b[[1]], b[[2]])
+output <- torch_squeeze(output, 2)
+test_loss <- nnf_mse_loss(output, b[[3]])
+test_loss <- c(test_loss, test_loss$item())
+preds <- output %>% as.array()
+
+actual <- test_ds$tensors$data_rho %>% as_array()
+
+performance_rho <- tibble(
+  sample = seq(1:length(actual)),
+  rho_train_prediction = preds,
+  rho_actual = actual
+)
+
+performance_rho %>% 
+  ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
+  geom_point()
+
+
+library(caret)
+caret::postResample(
+  pred = preds, 
+  obs = actual
+) -> r2_results_torch
+
+# RMSE           Rsquared       MAE 
+# 1.3724337982   0.0002485918   1.1756240924 
+
+performance_rho -> performance_torch
+history -> history_torch
+save(
+  history_torch, performance_torch,
+  r2_results_torch,
+  file = file.path(
+    '/stor/home/mmj2238/genotype-alignment-information/notes', 
+    'torch_subset_5_epoch_1e-6_lr.RData')
+)
+
+
+# test_batch <- function(b) {
+#   
+#   output <- model(b[[1]], b[[2]])
+#   output <- torch_squeeze(output, 2)
+#   labels <- b[[3]]
+#   loss <- nnf_mse_loss(output, labels)
+#   
+#   test_losses <<- c(test_losses, loss$item())
+#   # torch_max returns a list, with position 1 containing the values
+#   # and position 2 containing the respective indices
+#   predicted <- output %>% as_array()
+#   
+# }
+# 
+# test_losses <- c()
+# 
+# for (b in enumerate(test_dl)) {
+#   test_batch(b)
+# }
+# 
+# # warning message from above
+# # The `enumerate` construct is deprecated in favor of the `coro::loop` syntax.
+# # * See https://github.com/mlverse/torch/issues/558 for more information. 
+# 
+# mean(test_losses) #1.883575
+
+
 #--------------- SAVE MODEL --------------------
 
-# save training history
-save(
-  history,
-  file = file.path(
-    path_to_results, 
-    'models', 
-    #'torch_model_hist_low_dup_all_25_epoch_1e-4_lr.RData')
-)
-
-# save the model
-torch_save(
-  model,
-  file.path(
-    path_to_models,
-    #"torch_model_hist_low_dup_all_25_epoch_1e-4_lr.rt"
-  )
-)
-
-# 
-# reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
-# 
-# reload_model(align_test_tensor, pos_test_tensor)
+#' # save training history
+#' save(
+#'   history,
+#'   file = file.path(
+#'     path_to_results, 
+#'     'models', 
+#'     #'torch_model_hist_low_dup_all_25_epoch_1e-4_lr.RData')
+#' )
+#' 
+#' # save the model
+#' torch_save(
+#'   model,
+#'   file.path(
+#'     path_to_models,
+#'     #"torch_model_hist_low_dup_all_25_epoch_1e-4_lr.rt"
+#'   )
+#' )
+#' 
+#' # 
+#' # reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
+#' # 
+#' # reload_model(align_test_tensor, pos_test_tensor)
 
 
 #--------------- SAVE MODEL PERFORMANCE --------------------
