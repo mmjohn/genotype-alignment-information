@@ -259,7 +259,7 @@ model <- flagel_cnn()
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.0001        #0.08
+learning_rate <- 0.0000001        #0.08
 
 # define optimizer
 optimizer <- optim_adam(
