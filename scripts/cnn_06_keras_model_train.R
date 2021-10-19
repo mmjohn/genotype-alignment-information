@@ -140,6 +140,7 @@ full_output <- layer_concatenate(
     kernel_initializer = 'normal'
   )
 
+
 # define the full model
 model <- keras_model(
   inputs = c(genotype_input, position_input),
@@ -155,7 +156,7 @@ model %>%
   compile(
     loss = 'mean_squared_error',
     #optimizer = 'adam',
-    optimizer = optimizer_adam(lr = 0.000001),       #  0.000001
+    optimizer = optimizer_adam(lr = 0.00001),       #  0.000001
     metrics = metric_mean_squared_error
   )
 
@@ -167,7 +168,7 @@ model %>%
     x = list(low_align_all_train, low_pos_all_train),
     y = low_rho_all_train_centered,
     batch = 32,
-    epochs = 5,  
+    epochs = 20,  
     validation_data = list(
       list(low_align_all_val, low_pos_all_val), 
       low_rho_all_val_centered
@@ -203,14 +204,14 @@ caret::postResample(
 ) -> r2_results_keras
 
 # RMSE           Rsquared       MAE 
-# 1.3709199795   0.0009230179   1.1742961743 
+# 1.1177772      0.3402778      0.9109416
 
 save(
   history, performance_keras,
   r2_results_keras,
   file = file.path(
     '/stor/home/mmj2238/genotype-alignment-information/notes', 
-    'keras_subset_5_epoch_1e-6_lr.RData')
+    'keras_subset_20_epoch_1e-5_lr.RData')
 )
 
 

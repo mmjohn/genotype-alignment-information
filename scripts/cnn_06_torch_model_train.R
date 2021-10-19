@@ -259,7 +259,7 @@ model <- flagel_cnn()
 l2_lambda <- 0.0001
 
 # set learning rate for optimizer
-learning_rate <- 0.0000001        #0.08
+learning_rate <- 0.00001        #0.08
 
 # define optimizer
 optimizer <- optim_adam(
@@ -269,7 +269,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 25
+epochs <- 20
 
 # number of batches
 train_dl$.length() # 2250
@@ -283,6 +283,9 @@ validation_dl$.length() # 750
 # https://blogs.rstudio.com/ai/posts/2020-11-03-torch-tabular/
 # https://blogs.rstudio.com/ai/posts/2020-10-19-torch-image-classification/
 # https://cran.r-project.org/web/packages/torch/vignettes/loading-data.html
+
+train_mean_losses <- c()
+valid_mean_losses <- c()
 
 # training loop w validation and batches
 for (t in 1:epochs) {
@@ -313,15 +316,13 @@ for (t in 1:epochs) {
   })
   
   cat(sprintf("Loss at epoch %d: training: %3f, validation: %3f\n", t, mean(train_losses), mean(valid_losses)))
+  train_mean_losses <- c(train_mean_losses, mean(train_losses))
+  valid_mean_losses <- c(valid_mean_losses, mean(valid_losses))
  
 }
 
 
 #--------------- VISUALIZE TRAINING --------------------
-
-# 5 epoch, lr = 1e-6
-train_mean_losses <- c(3.274, 2.364, 1.966, 1.916, 1.898)
-valid_mean_losses <- c(2.803, 2.062, 1.942, 1.921, 1.906)
 
 history <- tibble(
   epochs = seq(1:length(train_mean_losses)),
@@ -372,7 +373,7 @@ caret::postResample(
 ) -> r2_results_torch
 
 # RMSE           Rsquared       MAE 
-# 1.3724337982   0.0002485918   1.1756240924 
+# 1.1862567      0.2599198      0.9844219 
 
 performance_rho -> performance_torch
 history -> history_torch
@@ -381,7 +382,7 @@ save(
   r2_results_torch,
   file = file.path(
     '/stor/home/mmj2238/genotype-alignment-information/notes', 
-    'torch_subset_5_epoch_1e-6_lr.RData')
+    'torch_subset_20_epoch_1e-5_lr.RData')
 )
 
 

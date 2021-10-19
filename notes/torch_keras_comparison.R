@@ -244,11 +244,31 @@ save_plot("notes/torch_keras_comparison.png", fig_torch_keras,
 
 ########### MODEL PERFORMANCE ANALYSIS ###############
 
-load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_subset_5_epoch_1e-6_lr.RData')
-load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_subset_5_epoch_1e-6_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_subset_20_epoch_1e-5_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_subset_20_epoch_1e-5_lr.RData')
 
 r2_results_keras
 r2_results_torch
+
+history_full <- tibble(
+  epoch = seq(1:20),
+  keras_train_loss = history$metrics$loss,
+  keras_val_loss = history$metrics$val_loss,
+  torch_train_loss = history_torch$train_mean_losses,
+  torch_val_loss = history_torch$valid_mean_losses
+) %>% 
+  pivot_longer(-epoch, names_to = "set", values_to = "mse") %>% 
+  mutate(software = case_when(set %in% c("keras_train_loss", "keras_val_loss") ~ "keras",
+                              TRUE ~ "torch"),
+         data = case_when(set %in% c("keras_train_loss", "torch_train_loss") ~ "train",
+                          TRUE ~ "validation"))
+
+history_full %>% 
+  ggplot(aes(x = epoch, y = sqrt(mse), color = data)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(rows = vars(software)) + 
+  theme_bw()
 
 performance_torch %>% 
   mutate(
@@ -267,6 +287,8 @@ performance_all %>%
   ggplot(aes(x = estimate, y = actual)) +
   geom_point(alpha = 0.2) +
   facet_grid(rows = vars(software)) -> fig_torch_keras_performance
+
+fig_torch_keras_performance
 
 save_plot("notes/torch_keras_performance.png", fig_torch_keras_performance,
           ncol = 1, nrow = 1, base_height = 3.71,
