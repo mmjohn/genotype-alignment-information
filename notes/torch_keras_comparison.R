@@ -245,7 +245,7 @@ save_plot("notes/torch_keras_comparison.png", fig_torch_keras,
 ########### MODEL PERFORMANCE ANALYSIS ###############
 
 load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_subset_20_epoch_1e-5_lr.RData')
-load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_subset_20_epoch_1e-5_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_subset_25_epoch_1e-5_lr.RData')
 
 r2_results_keras
 r2_results_torch
@@ -283,10 +283,25 @@ performance_keras %>%
 
 full_join(performance_torch, performance_keras) -> performance_all
 
-performance_all %>% 
-  ggplot(aes(x = estimate, y = actual)) +
-  geom_point(alpha = 0.2) +
-  facet_grid(rows = vars(software)) -> fig_torch_keras_performance
+r2_text <- data.frame(
+  label = c("*R*<sup>2</sup> = 0.3403", 
+            "*R*<sup>2</sup> = 0.3436"),
+  software = c("keras", "torch"),
+  x = c(2, 2),
+  y = c(-3, -3)
+)
+
+ggplot() +
+  geom_point(data = performance_all, aes(x = estimate, y = actual), alpha = 0.2) +
+  geom_abline(slope = 1, intercept = 0, color = "darkgreen", size = 1.5) +
+  facet_grid(rows = vars(software)) +
+  geom_richtext(
+    data = r2_text, 
+    aes(x = x, y = y,label = label),
+    label.color = NA,
+    inherit.aes = FALSE
+  ) +
+  theme_bw() -> fig_torch_keras_performance
 
 fig_torch_keras_performance
 

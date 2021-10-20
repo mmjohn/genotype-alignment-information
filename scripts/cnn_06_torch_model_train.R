@@ -269,7 +269,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 20
+epochs <- 25
 
 # number of batches
 train_dl$.length() # 2250
@@ -373,7 +373,7 @@ caret::postResample(
 ) -> r2_results_torch
 
 # RMSE           Rsquared       MAE 
-# 1.1862567      0.2599198      0.9844219 
+# 1.1105597      0.3436091      0.9062051
 
 performance_rho -> performance_torch
 history -> history_torch
@@ -382,7 +382,7 @@ save(
   r2_results_torch,
   file = file.path(
     '/stor/home/mmj2238/genotype-alignment-information/notes', 
-    'torch_subset_20_epoch_1e-5_lr.RData')
+    'torch_subset_25_epoch_1e-5_lr.RData')
 )
 
 
