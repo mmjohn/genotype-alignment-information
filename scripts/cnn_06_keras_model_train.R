@@ -54,24 +54,24 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
-#--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
-
-#rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
-
-low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
-low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
-low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
-
-low_rho_all_val <- low_rho_all_val[1:8000]
-low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
-low_rho_all_train <- low_rho_all_train[1:24000]
-low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
-low_rho_all_test <- low_rho_all_test[1:8000]
-low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
-
-low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
-low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
-low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
+# #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
+# 
+# #rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+# 
+# low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
+# low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+# low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
+# 
+# low_rho_all_val <- low_rho_all_val[1:8000]
+# low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
+# low_rho_all_train <- low_rho_all_train[1:24000]
+# low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+# low_rho_all_test <- low_rho_all_test[1:8000]
+# low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
+# 
+# low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
+# low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
+# low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
 
 #--------------- DEFINE MODEL --------------------
 
@@ -168,7 +168,7 @@ model %>%
     x = list(low_align_all_train, low_pos_all_train),
     y = low_rho_all_train_centered,
     batch = 32,
-    epochs = 20,  
+    epochs = 29,  
     validation_data = list(
       list(low_align_all_val, low_pos_all_val), 
       low_rho_all_val_centered
@@ -180,38 +180,40 @@ model %>%
 
 #--------------- TEST AND SAVE DATA FOR EXAMPLE FIGS --------------------
 
-# make predictions
-model %>% 
-  predict(
-    list(low_align_all_test, low_pos_all_test)
-  ) -> predictions
+# # make predictions
+# model %>% 
+#   predict(
+#     list(low_align_all_test, low_pos_all_test)
+#   ) -> predictions
+# 
+# performance_keras <- tibble(
+#   sample = seq(1:length(low_rho_all_test_centered)),
+#   estimate = predictions,
+#   actual = low_rho_all_test_centered
+# )
+# 
+# performance_keras %>% 
+#   ggplot(aes(x = estimate, y = actual)) +
+#   geom_point()
+# 
+# 
+# library(caret)
+# caret::postResample(
+#   pred = performance_keras$estimate, 
+#   obs = performance_keras$actual
+# ) -> r2_results_keras
+# 
+# # RMSE           Rsquared       MAE 
+# # 1.1177772      0.3402778      0.9109416
 
-performance_keras <- tibble(
-  sample = seq(1:length(low_rho_all_test_centered)),
-  estimate = predictions,
-  actual = low_rho_all_test_centered
-)
-
-performance_keras %>% 
-  ggplot(aes(x = estimate, y = actual)) +
-  geom_point()
-
-
-library(caret)
-caret::postResample(
-  pred = performance_keras$estimate, 
-  obs = performance_keras$actual
-) -> r2_results_keras
-
-# RMSE           Rsquared       MAE 
-# 1.1177772      0.3402778      0.9109416
-
+history -> history_keras
 save(
-  history, performance_keras,
-  r2_results_keras,
+  history, 
+  # performance_keras,
+  # r2_results_keras,
   file = file.path(
     '/stor/home/mmj2238/genotype-alignment-information/notes', 
-    'keras_subset_20_epoch_1e-5_lr.RData')
+    'keras_all_29_epoch_1e-5_lr.RData')
 )
 
 
@@ -221,19 +223,19 @@ save(
 
 
 
-save(
-    history, performance_keras,
-    file = file.path(
-      path_to_results, 'models', 
-      'keras_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
-  )
-
-save(
-  history,
-  file = file.path(
-    path_to_results, 'models', 
-    'keras_model_history_low_dup_all_subset_25_epoch_1e-4_lr.RData')
-)
+# save(
+#     history, performance_keras,
+#     file = file.path(
+#       path_to_results, 'models', 
+#       'keras_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
+#   )
+# 
+# save(
+#   history,
+#   file = file.path(
+#     path_to_results, 'models', 
+#     'keras_model_history_low_dup_all_subset_25_epoch_1e-4_lr.RData')
+# )
 
 # #--------------- SAVE MODEL --------------------
 # 

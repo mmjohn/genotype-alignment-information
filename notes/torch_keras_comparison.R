@@ -244,14 +244,14 @@ save_plot("notes/torch_keras_comparison.png", fig_torch_keras,
 
 ########### MODEL PERFORMANCE ANALYSIS ###############
 
-load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_subset_20_epoch_1e-5_lr.RData')
-load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_subset_25_epoch_1e-5_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_all_29_epoch_1e-5_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_full_29_epoch_1e-5_lr.RData')
 
-r2_results_keras
-r2_results_torch
+# r2_results_keras
+# r2_results_torch
 
 history_full <- tibble(
-  epoch = seq(1:20),
+  epoch = seq(1:29),
   keras_train_loss = history$metrics$loss,
   keras_val_loss = history$metrics$val_loss,
   torch_train_loss = history_torch$train_mean_losses,
@@ -268,7 +268,14 @@ history_full %>%
   geom_point() +
   geom_line() +
   facet_grid(rows = vars(software)) + 
-  theme_bw()
+  theme_bw() -> fig_torch_keras_hist_full
+
+fig_torch_keras_hist_full
+
+save_plot("notes/torch_keras_hist_full.png", fig_torch_keras_hist_full,
+          ncol = 1, nrow = 1, base_height = 3.71,
+          base_asp = 1.618, base_width = NULL)
+
 
 performance_torch %>% 
   mutate(

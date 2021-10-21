@@ -37,25 +37,25 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
-#--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
-
-#rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
-
-low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
-low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
-low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
-
-low_rho_all_val <- low_rho_all_val[1:8000]
-low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
-low_rho_all_train <- low_rho_all_train[1:24000]
-low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
-low_rho_all_test <- low_rho_all_test[1:8000]
-low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
-
-low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
-low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
-low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
-
+# #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
+# 
+# #rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+# 
+# low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
+# low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+# low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
+# 
+# low_rho_all_val <- low_rho_all_val[1:8000]
+# low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
+# low_rho_all_train <- low_rho_all_train[1:24000]
+# low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+# low_rho_all_test <- low_rho_all_test[1:8000]
+# low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
+# 
+# low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
+# low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
+# low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
+# 
 
 #--------------- GLOBAL PARAMETERS --------------------
 
@@ -269,7 +269,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 25
+epochs <- 80
 
 # number of batches
 train_dl$.length() # 2250
@@ -324,13 +324,13 @@ for (t in 1:epochs) {
 
 #--------------- VISUALIZE TRAINING --------------------
 
-history <- tibble(
+history_torch <- tibble(
   epochs = seq(1:length(train_mean_losses)),
   train_mean_losses,
   valid_mean_losses
 ) 
 
-history %>% 
+history_torch %>% 
   ggplot2::ggplot(aes(x = epochs)) +
   geom_point(aes(y = sqrt(train_mean_losses)), color = "purple") +
   geom_point(aes(y = sqrt(valid_mean_losses)), color = "orange") +
@@ -338,52 +338,52 @@ history %>%
   ylab("Loss (RMSE)")
 
 
-#--------------- EVALUATE MODEL --------------------
-
-model$eval()
-
-test_dl <- test_ds %>% dataloader(batch_size = test_ds$.length(), shuffle = FALSE)
-iter <- test_dl$.iter()
-b <- iter$.next()
-test_loss <- c()
-
-output <- model(b[[1]], b[[2]])
-output <- torch_squeeze(output, 2)
-test_loss <- nnf_mse_loss(output, b[[3]])
-test_loss <- c(test_loss, test_loss$item())
-preds <- output %>% as.array()
-
-actual <- test_ds$tensors$data_rho %>% as_array()
-
-performance_rho <- tibble(
-  sample = seq(1:length(actual)),
-  rho_train_prediction = preds,
-  rho_actual = actual
-)
-
-performance_rho %>% 
-  ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
-  geom_point()
-
-
-library(caret)
-caret::postResample(
-  pred = preds, 
-  obs = actual
-) -> r2_results_torch
-
-# RMSE           Rsquared       MAE 
-# 1.1105597      0.3436091      0.9062051
-
-performance_rho -> performance_torch
-history -> history_torch
-save(
-  history_torch, performance_torch,
-  r2_results_torch,
-  file = file.path(
-    '/stor/home/mmj2238/genotype-alignment-information/notes', 
-    'torch_subset_25_epoch_1e-5_lr.RData')
-)
+# #--------------- EVALUATE MODEL --------------------
+# 
+# model$eval()
+# 
+# test_dl <- test_ds %>% dataloader(batch_size = test_ds$.length(), shuffle = FALSE)
+# iter <- test_dl$.iter()
+# b <- iter$.next()
+# test_loss <- c()
+# 
+# output <- model(b[[1]], b[[2]])
+# output <- torch_squeeze(output, 2)
+# test_loss <- nnf_mse_loss(output, b[[3]])
+# test_loss <- c(test_loss, test_loss$item())
+# preds <- output %>% as.array()
+# 
+# actual <- test_ds$tensors$data_rho %>% as_array()
+# 
+# performance_rho <- tibble(
+#   sample = seq(1:length(actual)),
+#   rho_train_prediction = preds,
+#   rho_actual = actual
+# )
+# 
+# performance_rho %>% 
+#   ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
+#   geom_point()
+# 
+# 
+# library(caret)
+# caret::postResample(
+#   pred = preds, 
+#   obs = actual
+# ) -> r2_results_torch
+# 
+# # RMSE           Rsquared       MAE 
+# # 1.1105597      0.3436091      0.9062051
+# 
+# performance_rho -> performance_torch
+# history -> history_torch
+# save(
+#   history_torch, performance_torch,
+#   r2_results_torch,
+#   file = file.path(
+#     '/stor/home/mmj2238/genotype-alignment-information/notes', 
+#     'torch_subset_25_epoch_1e-5_lr.RData')
+# )
 
 
 # test_batch <- function(b) {
@@ -414,6 +414,13 @@ save(
 
 
 #--------------- SAVE MODEL --------------------
+
+save(
+    history_torch, 
+    file = file.path(
+      '/stor/home/mmj2238/genotype-alignment-information/notes',
+      'torch_full_29_epoch_1e-5_lr.RData')
+  )
 
 #' # save training history
 #' save(
