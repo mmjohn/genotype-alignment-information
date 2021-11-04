@@ -37,25 +37,25 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
-# #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
-# 
-# #rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
-# 
-# low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
-# low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
-# low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
-# 
-# low_rho_all_val <- low_rho_all_val[1:8000]
-# low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
-# low_rho_all_train <- low_rho_all_train[1:24000]
-# low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
-# low_rho_all_test <- low_rho_all_test[1:8000]
-# low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
-# 
-# low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
-# low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
-# low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
-# 
+#--------------- USE SUBSET OF DATA FOR TORCH ADAPTIVE LEARNING RATE --------------------
+
+#rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+
+low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
+low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
+
+low_rho_all_val <- low_rho_all_val[1:8000]
+low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
+low_rho_all_train <- low_rho_all_train[1:24000]
+low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+low_rho_all_test <- low_rho_all_test[1:8000]
+low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
+
+low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
+low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
+low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
+
 
 #--------------- GLOBAL PARAMETERS --------------------
 
@@ -269,7 +269,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 80
+epochs <- 29
 
 # number of batches
 train_dl$.length() # 2250
@@ -334,6 +334,8 @@ history_torch %>%
   ggplot2::ggplot(aes(x = epochs)) +
   geom_point(aes(y = sqrt(train_mean_losses)), color = "purple") +
   geom_point(aes(y = sqrt(valid_mean_losses)), color = "orange") +
+  geom_path(aes(y = sqrt(train_mean_losses)), color = "purple") +
+  geom_path(aes(y = sqrt(valid_mean_losses)), color = "orange") +
   theme_bw() +
   ylab("Loss (RMSE)")
 
