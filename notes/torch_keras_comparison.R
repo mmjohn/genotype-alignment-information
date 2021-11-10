@@ -317,5 +317,134 @@ save_plot("notes/torch_keras_performance.png", fig_torch_keras_performance,
           base_asp = 1.618, base_width = NULL)
 
 
+########### TRAINING L2 REGULARIZATION ANALYSIS ###############
+
+# 25 epoch, lr = 1e-5, keras
+train_mean_losses_k_reg <- c(
+  2.13, 1.84, 1.82, 1.76, 1.62, 1.50, 1.45, 1.42, 1.40, 1.38, 
+  1.36, 1.35, 1.33, 1.32, 1.31, 1.30, 1.29, 1.27, 1.26, 1.25, 
+  1.24, 1.24, 1.23, 1.22, 1.21
+)
+
+valid_mean_losses_k_reg <- c(
+  1.88, 1.85, 1.82, 1.72, 1.55, 1.47, 1.43, 1.41, 1.38, 1.37, 
+  1.35, 1.35, 1.34, 1.31, 1.30, 1.29, 1.29, 1.28, 1.27, 1.26, 
+  1.25, 1.24, 1.24, 1.23, 1.22
+)
+
+history_k_reg <- tibble(
+  epochs = seq(1:length(train_mean_losses_k_reg)),
+  train_mean_loss = train_mean_losses_k_reg,
+  valid_mean_loss = valid_mean_losses_k_reg,
+  lr = rep(1e-5, length(train_mean_losses_k_reg)),
+  software = "keras 1"
+)
+
+train_mean_losses_k_no <- c(
+  2.12, 1.84, 1.81, 1.71, 1.56, 1.48, 1.43, 1.40, 1.38, 1.35, 
+  1.34, 1.33, 1.31, 1.29, 1.28, 1.27, 1.26, 1.24, 1.24, 1.23, 
+  1.22, 1.21, 1.20, 1.19, 1.18
+)
+
+valid_mean_losses_k_no <- c(
+  1.87, 1.85, 1.79, 1.63, 1.50, 1.44, 1.41, 1.37, 1.35, 1.34, 
+  1.32, 1.32, 1.29, 1.28, 1.27, 1.26, 1.25, 1.24, 1.24, 1.23, 
+  1.22, 1.23, 1.21, 1.20, 1.20
+)
+
+history_k_no <- tibble(
+  epochs = seq(1:length(train_mean_losses_k_no)),
+  train_mean_loss = train_mean_losses_k_no,
+  valid_mean_loss = valid_mean_losses_k_no,
+  lr = rep(1e-5, length(train_mean_losses_k_no)),
+  software = "keras 2"
+)
+
+# 25 epoch, lr = 1e-5, torch 
+train_mean_losses_t_reg <- c(
+  2.069, 1.840, 1.833, 1.832, 1.826, 1.824,
+  1.823, 1.815, 1.813, 1.800, 1.792, 1.774,
+  1.756, 1.726, 1.677, 1.622, 1.5463, 1.474,
+  1.419, 1.380, 1.343, 1.322, 1.309, 1.295, 
+  1.288
+)
+valid_mean_losses_t_reg <- c(
+  1.870, 1.855, 1.851, 1.847, 1.845, 1.841,
+  1.838, 1.832, 1.824, 1.828, 1.799, 1.781, 
+  1.756, 1.719, 1.678, 1.605, 1.515, 1.445,
+  1.408, 1.343, 1.332, 1.299, 1.295, 1.272, 
+  1.273
+)
+
+history_t_reg <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_reg)),
+  train_mean_loss = train_mean_losses_t_reg,
+  valid_mean_loss = valid_mean_losses_t_reg,
+  lr = rep(1e-5, length(train_mean_losses_t_reg)),
+  software = "torch 1"
+) 
+
+train_mean_losses_t_no <- c(
+  2.034, 1.828, 1.815, 1.806, 1.794, 1.783,
+  1.760, 1.721, 1.663, 1.583, 1.500, 1.424,
+  1.351, 1.306, 1.277, 1.254, 1.234, 1.226,
+  1.219, 1.205, 1.202, 1.199, 1.195, 1.183, 
+  1.181
+)
+
+valid_mean_losses_t_no <- c(
+  1.859, 1.855, 1.836, 1.826, 1.814, 1.797,
+  1.772, 1.726, 1.679, 1.597, 1.560, 1.426,
+  1.370, 1.326, 1.296, 1.310, 1.256, 1.245,
+  1.245, 1.257, 1.237, 1.222, 1.203, 1.233, 
+  1.222
+)
+
+history_t_no <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_no)),
+  train_mean_loss = train_mean_losses_t_no,
+  valid_mean_loss = valid_mean_losses_t_no,
+  lr = rep(1e-5, length(train_mean_losses_t_no)),
+  software = "torch 2"
+)
+
+
+full_join(history_k_reg, history_k_no) %>% 
+  full_join(., history_t_reg) %>% 
+  full_join(., history_t_no) %>% 
+  pivot_longer(
+    c(train_mean_loss, valid_mean_loss), 
+    names_to = "set",
+    values_to = "mse"
+  ) -> comparison_df
+
+
+library(ggtext)
+
+labels_software <- c(
+  "keras 1" = "Keras w/ L2 reg", 
+  "keras 2" = "Keras w/o L2 reg",
+  "torch 1" = "Torch w/ weight decay = 1e-4",
+  "torch 2" = "Torch w/ weight decay = 0"
+)
+
+comparison_df %>% 
+  ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
+  geom_point(size = 1.5, alpha = 0.5) +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_grid(
+    cols = vars(software),
+    scales = "free_y",
+    labeller = labeller(software = labels_software)
+  ) +
+  scale_color_viridis_d(
+    begin = 0.25, 
+    name = "Set",
+    labels = c("Train", "Validation")
+  ) +
+  scale_x_continuous(name = "Epochs") +
+  scale_y_continuous(name = "Error (RMSE)") +
+  theme_bw() +
+  theme(strip.text = element_markdown())
 
 
