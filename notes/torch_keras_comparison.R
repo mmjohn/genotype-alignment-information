@@ -337,7 +337,8 @@ history_k_reg <- tibble(
   train_mean_loss = train_mean_losses_k_reg,
   valid_mean_loss = valid_mean_losses_k_reg,
   lr = rep(1e-5, length(train_mean_losses_k_reg)),
-  software = "keras 1"
+  software = "keras 1",
+  weight_decay = NULL
 )
 
 train_mean_losses_k_no <- c(
@@ -357,7 +358,8 @@ history_k_no <- tibble(
   train_mean_loss = train_mean_losses_k_no,
   valid_mean_loss = valid_mean_losses_k_no,
   lr = rep(1e-5, length(train_mean_losses_k_no)),
-  software = "keras 2"
+  software = "keras 2",
+  weight_decay = NULL
 )
 
 # 25 epoch, lr = 1e-5, torch 
@@ -381,7 +383,8 @@ history_t_reg <- tibble(
   train_mean_loss = train_mean_losses_t_reg,
   valid_mean_loss = valid_mean_losses_t_reg,
   lr = rep(1e-5, length(train_mean_losses_t_reg)),
-  software = "torch 1"
+  software = "torch 1",
+  weight_decay = 1e-4
 ) 
 
 train_mean_losses_t_no <- c(
@@ -405,13 +408,158 @@ history_t_no <- tibble(
   train_mean_loss = train_mean_losses_t_no,
   valid_mean_loss = valid_mean_losses_t_no,
   lr = rep(1e-5, length(train_mean_losses_t_no)),
-  software = "torch 2"
+  software = "torch 2",
+  weight_decay = -99
 )
 
+train_mean_losses_t_mid <- c(
+  2.598, 1.879, 1.882, 1.889, 1.900, 1.913, 1.919, 
+  1.924, 1.929, 1.920, 1.914, 1.909, 1.914, 1.907, 
+  1.912, 1.914, 1.909, 1.919, 1.905, 1.927, 1.919, 
+  1.924, 1.936, 1.928, 1.930
+)
 
-full_join(history_k_reg, history_k_no) %>% 
+valid_mean_losses_t_mid <-c(
+  1.901, 1.893, 1.890, 1.891, 1.888, 1.886, 1.887, 
+  1.899, 1.900, 1.889, 1.937, 1.933, 1.889, 1.923, 
+  1.901, 1.890, 1.942, 1.916, 1.907, 1.921, 1.892, 
+  1.901, 1.892, 1.974, 1.923
+)
+
+history_t_mid <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_mid)),
+  train_mean_loss = train_mean_losses_t_mid,
+  valid_mean_loss = valid_mean_losses_t_mid,
+  lr = rep(1e-5, length(train_mean_losses_t_mid)),
+  software = "torch 3",
+  weight_decay = 1e-2
+)
+
+train_mean_losses_t_low <- c(
+  2.026, 1.830, 1.817, 1.807, 1.796, 1.781, 1.758, 
+  1.720, 1.659, 1.587, 1.496, 1.424, 1.359, 1.322, 
+  1.295, 1.268, 1.254, 1.245, 1.234, 1.236, 1.219, 
+  1.219, 1.212, 1.209, 1.203
+)
+
+valid_mean_losses_t_low <- c(
+  1.860, 1.845, 1.837, 1.824, 1.813, 1.801, 1.771, 
+  1.734, 1.648, 1.573, 1.505, 1.426, 1.360, 1.319, 
+  1.307, 1.296, 1.264, 1.307, 1.240, 1.346, 1.234, 
+  1.224, 1.227, 1.223, 1.215
+)
+
+history_t_low <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_low)),
+  train_mean_loss = train_mean_losses_t_low,
+  valid_mean_loss = valid_mean_losses_t_low,
+  lr = rep(1e-5, length(train_mean_losses_t_low)),
+  software = "torch 4",
+  weight_decay = 1e-6
+)
+
+train_mean_losses_t_zero <- c(
+  2.006, 1.830, 1.818, 1.807, 1.798, 1.781, 1.762, 
+  1.719, 1.663, 1.580, 1.491, 1.406, 1.342, 1.296, 
+  1.262, 1.249, 1.228, 1.222, 1.213, 1.199, 1.194, 
+  1.193, 1.186, 1.184, 1.174
+)
+
+valid_mean_losses_t_zero <- c(
+  1.857, 1.848, 1.834, 1.852, 1.819, 1.809, 1.789, 
+  1.823, 1.647, 1.569, 1.475, 1.413, 1.357, 1.302, 
+  1.384, 1.327, 1.257, 1.231, 1.231, 1.246, 1.244, 
+  1.223, 1.330, 1.205, 1.229
+)
+
+history_t_zero <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_zero)),
+  train_mean_loss = train_mean_losses_t_zero,
+  valid_mean_loss = valid_mean_losses_t_zero,
+  lr = rep(1e-5, length(train_mean_losses_t_zero)),
+  software = "torch 5",
+  weight_decay = 0
+)
+
+train_mean_losses_t_3 <- c(
+  2.213, 1.870, 1.864, 1.867, 1.865, 1.867, 1.876, 
+  1.872, 1.881, 1.883, 1.886, 1.879, 1.883, 1.881, 
+  1.892, 1.892, 1.896, 1.892, 1.892, 1.900, 1.889, 
+  1.908, 1.891, 1.912, 1.904
+)
+
+valid_mean_losses_t_3 <- c(
+  1.892, 1.880, 1.878, 1.873, 1.889, 1.872, 1.876, 
+  1.867, 1.885, 1.889, 1.867, 1.868, 1.870, 1.924, 
+  1.879, 1.899, 1.877, 1.983, 1.935, 1.900, 1.956, 
+  1.880, 1.892, 1.925, 1.962
+)
+
+history_t_3 <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_3)),
+  train_mean_loss = train_mean_losses_t_3,
+  valid_mean_loss = valid_mean_losses_t_3,
+  lr = rep(1e-5, length(train_mean_losses_t_3)),
+  software = "torch 6",
+  weight_decay = 1e-3
+)
+
+train_mean_losses_t_5 <- c(
+  1.992, 1.833, 1.825, 1.819, 1.814, 1.805, 1.796, 
+  1.784, 1.767, 1.744, 1.710, 1.665, 1.612, 1.550, 
+  1.489, 1.427, 1.378, 1.330, 1.296, 1.269, 1.251, 
+  1.234, 1.220, 1.215, 1.207
+)
+
+valid_mean_losses_t_5 <- c(
+  1.877, 1.853, 1.855, 1.840, 1.835, 1.827, 1.817, 
+  1.806, 1.786, 1.760, 1.746, 1.678, 1.627, 1.564, 
+  1.502, 1.433, 1.386, 1.345, 1.315, 1.301, 1.278, 
+  1.254, 1.258, 1.264, 1.219
+)
+
+history_t_5 <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_5)),
+  train_mean_loss = train_mean_losses_t_5,
+  valid_mean_loss = valid_mean_losses_t_5,
+  lr = rep(1e-5, length(train_mean_losses_t_5)),
+  software = "torch 7",
+  weight_decay = 1e-5
+)
+
+train_mean_losses_t_8 <- c(
+  2.020, 1.832, 1.825, 1.824, 1.822, 1.820, 1.818, 
+  1.813, 1.808, 1.801, 1.792, 1.781, 1.766, 1.745, 
+  1.724, 1.695, 1.662, 1.619, 1.575, 1.527, 1.471, 
+  1.434, 1.393, 1.357, 1.335
+)
+
+valid_mean_losses_t_8 <- c(
+  1.861, 1.850, 1.852, 1.846, 1.845, 1.847, 1.840, 
+  1.837, 1.830, 1.822, 1.817, 1.802, 1.793, 1.779, 
+  1.744, 1.715, 1.678, 1.635, 1.587, 1.539, 1.485, 
+  1.450, 1.385, 1.349, 1.339
+)
+
+history_t_8 <- tibble(
+  epochs = seq(1:length(train_mean_losses_t_8)),
+  train_mean_loss = train_mean_losses_t_8,
+  valid_mean_loss = valid_mean_losses_t_8,
+  lr = rep(1e-5, length(train_mean_losses_t_8)),
+  software = "torch 8",
+  weight_decay = 5e-5
+)
+
+#full_join(history_k_reg, history_k_no) %>% 
+#  full_join(., history_t_reg) %>%
+full_join(history_k_reg, history_t_no) %>% 
+  full_join(., history_t_zero) %>% 
   full_join(., history_t_reg) %>% 
-  full_join(., history_t_no) %>% 
+  full_join(., history_t_mid) %>% 
+  full_join(., history_t_low) %>% 
+  full_join(., history_t_3) %>% 
+  full_join(., history_t_5) %>% 
+  full_join(., history_t_8) %>% 
   pivot_longer(
     c(train_mean_loss, valid_mean_loss), 
     names_to = "set",
@@ -419,23 +567,50 @@ full_join(history_k_reg, history_k_no) %>%
   ) -> comparison_df
 
 
+# library(ggtext)
+# 
+# labels_software <- c(
+#   #"keras 1" = "Keras w/ L2 reg", 
+#   #"keras 2" = "Keras w/o L2 reg",
+#   "torch 2" = "Torch w/o weight decay",
+#   "torch 5" = "Torch w/ weight decay = 0",
+#   "torch 3" = "Torch w/ weight decay = 1e-2",
+#   "torch 1" = "Torch w/ weight decay = 1e-4",
+#   "torch 4" = "Torch w/ weight decay = 1e-6"
+# )
+
+library(cowplot)
 library(ggtext)
 
-labels_software <- c(
-  "keras 1" = "Keras w/ L2 reg", 
-  "keras 2" = "Keras w/o L2 reg",
-  "torch 1" = "Torch w/ weight decay = 1e-4",
-  "torch 2" = "Torch w/ weight decay = 0"
-)
+comparison_df %>% 
+  filter(software == "keras 1") %>% 
+  ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
+  geom_point(size = 1.5, alpha = 0.5) +
+  geom_line(size = 1, alpha = 0.5) +
+  scale_color_viridis_d(
+    begin = 0.25, 
+    name = "Set",
+    labels = c("Train", "Validation")
+  ) +
+  scale_x_continuous(name = "Epochs") +
+  scale_y_continuous(name = "Error (RMSE)", limits = c(1.05, 1.65)) +
+  theme_bw() +
+  theme(strip.text = element_markdown(), legend.position = "none") +
+  ggtitle("Keras w L2 regularization") -> plot_keras
+
+plot_keras
 
 comparison_df %>% 
+  filter(software %in% c("torch 1", "torch 2", "torch 3", 
+                         "torch 4", "torch 5", "torch 6", 
+                         "torch 7", "torch 8")) %>% 
   ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
   geom_point(size = 1.5, alpha = 0.5) +
   geom_line(size = 1, alpha = 0.5) +
   facet_grid(
-    cols = vars(software),
-    scales = "free_y",
-    labeller = labeller(software = labels_software)
+    cols = vars(weight_decay),
+    scales = "free_y"#,
+    #labeller = labeller(software = labels_software)
   ) +
   scale_color_viridis_d(
     begin = 0.25, 
@@ -443,8 +618,11 @@ comparison_df %>%
     labels = c("Train", "Validation")
   ) +
   scale_x_continuous(name = "Epochs") +
-  scale_y_continuous(name = "Error (RMSE)") +
+  scale_y_continuous(name = "Error (RMSE)", limits = c(1.05, 1.65)) +
   theme_bw() +
-  theme(strip.text = element_markdown())
+  theme(strip.text = element_markdown()) +
+  ggtitle("Torch w weight decay") -> plot_torch
 
+plot_torch
 
+plot_grid(plot_keras, plot_torch, nrow = 1, rel_widths = c(1, 3))

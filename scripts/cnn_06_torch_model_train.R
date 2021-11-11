@@ -256,7 +256,7 @@ model <- flagel_cnn()
 #--------------- NETWORK PARAMETERS --------------------
 
 # set l2 regularization parameter
-l2_lambda <- 0.0001
+l2_lambda <- 0.00005
 
 # set learning rate for optimizer
 learning_rate <- 0.00001        #0.08
@@ -264,12 +264,12 @@ learning_rate <- 0.00001        #0.08
 # define optimizer
 optimizer <- optim_adam(
   model$parameters, 
-  lr = learning_rate,
+  lr = learning_rate ,
   weight_decay = l2_lambda
 )
 
 # define number of epochs for training
-epochs <- 29
+epochs <- 25
 
 # number of batches
 train_dl$.length() # 2250
