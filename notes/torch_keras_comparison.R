@@ -550,9 +550,9 @@ history_t_8 <- tibble(
   weight_decay = 5e-5
 )
 
-#full_join(history_k_reg, history_k_no) %>% 
-#  full_join(., history_t_reg) %>%
-full_join(history_k_reg, history_t_no) %>% 
+full_join(history_k_reg, history_k_no) %>%
+ full_join(., history_t_reg) %>%
+  full_join(., history_t_no) %>% 
   full_join(., history_t_zero) %>% 
   full_join(., history_t_reg) %>% 
   full_join(., history_t_mid) %>% 
@@ -582,11 +582,21 @@ full_join(history_k_reg, history_t_no) %>%
 library(cowplot)
 library(ggtext)
 
+labels_keras <- c(
+  "keras 1" = "1e-4",
+  "keras 2" = " "
+)
+
 comparison_df %>% 
-  filter(software == "keras 1") %>% 
+  filter(software %in% c("keras 1", "keras 2")) %>% 
   ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
   geom_point(size = 1.5, alpha = 0.5) +
   geom_line(size = 1, alpha = 0.5) +
+  facet_grid(
+    cols = vars(software),
+    scales = "free_y",
+    labeller = labeller(software = labels_keras)
+  ) +
   scale_color_viridis_d(
     begin = 0.25, 
     name = "Set",
@@ -599,6 +609,11 @@ comparison_df %>%
   ggtitle("Keras w L2 regularization") -> plot_keras
 
 plot_keras
+
+save_plot("notes/keras_l2_reg.png", plot_keras,
+          ncol = 1, nrow = 1, base_height = 3.71,
+          base_asp = 1.618, base_width = NULL)
+
 
 comparison_df %>% 
   filter(software %in% c("torch 1", "torch 2", "torch 3", 
@@ -620,9 +635,113 @@ comparison_df %>%
   scale_x_continuous(name = "Epochs") +
   scale_y_continuous(name = "Error (RMSE)", limits = c(1.05, 1.65)) +
   theme_bw() +
-  theme(strip.text = element_markdown()) +
+  theme(strip.text = element_markdown(),
+        legend.position = "top") +
   ggtitle("Torch w weight decay") -> plot_torch
 
 plot_torch
 
-plot_grid(plot_keras, plot_torch, nrow = 1, rel_widths = c(1, 3))
+save_plot("notes/torch_weight_decay.png", plot_torch,
+          ncol = 1, nrow = 1, base_height = 5.71,
+          base_asp = 1.618, base_width = NULL)
+
+comparison_df %>% 
+  filter(software == "keras 1") %>% 
+  ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
+  geom_point(size = 1.5, alpha = 0.5) +
+  geom_line(size = 1, alpha = 0.5) +
+  scale_color_viridis_d(
+    begin = 0.25, 
+    name = "Set",
+    labels = c("Train", "Validation")
+  ) +
+  scale_x_continuous(name = "Epochs") +
+  scale_y_continuous(name = "Error (RMSE)", limits = c(1.05, 1.65)) +
+  theme_bw() +
+  theme(strip.text = element_markdown(), legend.position = "none") +
+  ggtitle("Keras") -> plot_keras_min
+
+plot_keras_min
+
+comparison_df %>% 
+  filter(software %in% c("torch 1", 
+                         "torch 4", "torch 5", 
+                         "torch 7", "torch 8")) %>% 
+  ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
+  geom_point(size = 1.5, alpha = 0.5) +
+  geom_line(size = 1, alpha = 0.5) +
+  facet_grid(
+    cols = vars(weight_decay),
+    scales = "free_y"#,
+    #labeller = labeller(software = labels_software)
+  ) +
+  scale_color_viridis_d(
+    begin = 0.25, 
+    name = "Set",
+    labels = c("Train", "Validation")
+  ) +
+  scale_x_continuous(name = "Epochs") +
+  scale_y_continuous(name = "Error (RMSE)", limits = c(1.05, 1.65)) +
+  theme_bw() +
+  theme(strip.text = element_markdown()) +
+  ggtitle("Torch") -> plot_torch_min
+
+plot_torch_min
+
+plot_grid(plot_keras_min, plot_torch_min, nrow = 1, rel_widths = c(1, 5)) -> plot_l2_weight
+
+save_plot("notes/l2_vs_weight.png", plot_l2_weight,
+          ncol = 1, nrow = 1, base_height = 5.71,
+          base_asp = 1.618, base_width = NULL)
+
+######### TRAINING ON FULL DATA W VARIABLE WEIGHT DECAY #########
+
+load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_all_29_epoch_1e-5_lr.RData')
+load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_full_29_epoch_1e-5_lr.RData')
+
+history_full <- tibble(
+  epoch = seq(1:29),
+  keras_train_loss = history$metrics$loss,
+  keras_val_loss = history$metrics$val_loss,
+  torch_train_loss = history_torch$train_mean_losses,
+  torch_val_loss = history_torch$valid_mean_losses,
+  torch_2_train_loss = c(1.8589, 1.7543, 1.5239, 1.0378, 0.8158, 0.7219, 0.6702, 
+                         0.6372, 0.6160, 0.5981, 0.5864, 0.5779, 0.5696, 0.5623, 
+                         0.5559, 0.5502, 0.5465, 0.5409, 0.5365, 0.5314, 0.5289, 
+                         0.5226, 0.5170, 0.5144, 0.5109, 0.5085, 0.5054, 0.5004, 0.4970),
+  torch_2_val_loss = c(1.8160, 1.7333, 1.4647, 1.2428, 0.9275, 0.7822, 0.7139, 
+                       0.6754, 0.6967, 0.6972, 0.7413, 0.7495, 0.6575, 0.6579, 
+                       0.6369, 0.6364, 0.6176, 0.6156, 0.6114, 0.5919, 0.5912, 
+                       0.6149, 0.6166, 0.6476, 0.6002, 0.6045, 0.5995, 0.5777, 0.6180)
+) %>% 
+  pivot_longer(-epoch, names_to = "set", values_to = "mse") %>% 
+  mutate(software = case_when(set %in% c("keras_train_loss", "keras_val_loss") ~ "keras",
+                              set %in% c("torch_train_loss", "torch_val_loss") ~ "torch",
+                              TRUE ~ "torch 2"),
+         data = case_when(set %in% c("keras_train_loss", "torch_train_loss",
+                                     "torch_2_train_loss") ~ "train",
+                          TRUE ~ "validation"))
+
+labels_weight <- c(
+  "keras" = "Keras w/ L2 reg",
+  "torch" = "Torch w/ w = 1e-4",
+  "torch 2" = "Torch w/ w = 1e-5"
+)
+
+
+history_full %>% 
+  ggplot(aes(x = epoch, y = sqrt(mse), color = data)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(
+    rows = vars(software),
+    labeller = labeller(software = labels_weight)
+  ) + 
+  theme_bw() -> fig_torch_keras_hist_full
+
+fig_torch_keras_hist_full
+
+save_plot("notes/torch_keras_hist_full.png", fig_torch_keras_hist_full,
+          ncol = 1, nrow = 1, base_height = 3.71,
+          base_asp = 1.618, base_width = NULL)
+
