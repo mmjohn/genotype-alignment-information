@@ -161,7 +161,7 @@ test_ds <- tensor_dataset(
 
 # need to transform data sets to loaders for use in batches
 train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
-validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
+validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
 #test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
 #--------------- DEFINE MODEL --------------------
@@ -336,6 +336,15 @@ history_torch %>%
   geom_point(aes(y = sqrt(valid_mean_losses)), color = "orange") +
   geom_path(aes(y = sqrt(train_mean_losses)), color = "purple") +
   geom_path(aes(y = sqrt(valid_mean_losses)), color = "orange") +
+  theme_bw() +
+  ylab("Loss (RMSE)")
+
+history_torch %>% 
+  ggplot2::ggplot() +
+  geom_point(aes(x = epochs, y = sqrt(train_mean_losses)), color = "purple") +
+  geom_point(aes(x = epochs+0.5, y = sqrt(valid_mean_losses)), color = "orange") +
+  geom_path(aes(x = epochs, y = sqrt(train_mean_losses)), color = "purple") +
+  geom_path(aes(x = epochs+0.5, y = sqrt(valid_mean_losses)), color = "orange") +
   theme_bw() +
   ylab("Loss (RMSE)")
 

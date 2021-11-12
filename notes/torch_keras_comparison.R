@@ -694,7 +694,18 @@ save_plot("notes/l2_vs_weight.png", plot_l2_weight,
           ncol = 1, nrow = 1, base_height = 5.71,
           base_asp = 1.618, base_width = NULL)
 
+
 ######### TRAINING ON FULL DATA W VARIABLE WEIGHT DECAY #########
+
+# with shuffling val.
+> round(train_mean_losses, 4)
+[1] 1.8663 1.7513 1.4770 1.0004 0.7968 0.7120 0.6649 0.6353 0.6135 0.6002 0.5859 0.5767
+[13] 0.5668 0.5626 0.5553 0.5500 0.5426 0.5413 0.5352 0.5309 0.5271 0.5220 0.5187 0.5150
+[25] 0.5100 0.5077 0.5034 0.5003 0.4975
+> round(valid_mean_losses, 4)
+[1] 1.8088 1.7037 1.2180 0.9762 0.7754 0.7330 0.6848 0.7007 0.6576 0.6491 0.6792 0.6358
+[13] 0.6217 0.6023 0.6153 0.6972 0.6383 0.6272 0.6047 0.6010 0.6061 0.6104 0.6416 0.6012
+[25] 0.5887 0.5933 0.5732 0.5893 0.5936
 
 load('/stor/home/mmj2238/genotype-alignment-information/notes/keras_all_29_epoch_1e-5_lr.RData')
 load('/stor/home/mmj2238/genotype-alignment-information/notes/torch_full_29_epoch_1e-5_lr.RData')
