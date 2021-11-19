@@ -31,8 +31,8 @@ path_to_models <- "/stor/work/Wilke/mmj2238/trained_models/dup_analysis"
 #--------------- LOAD IN DATA --------------------
 
 # load data saved from cnn_05_model_data_prep.R
-load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
-# load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
+# load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
+load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
@@ -60,8 +60,8 @@ load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 #--------------- GLOBAL PARAMETERS --------------------
 
 # number of simulations in data set
-num_sims <- 120000   # for all
-# num_sims <- 60000   # for low unq
+# num_sims <- 120000   # for all
+num_sims <- 118512   # for low unq
 # num_sims <- 60000   # for high unq
 
 # size of alignments
@@ -81,58 +81,58 @@ max_size <- 174   # for low
 
 # alignments
 align_train_tensor <- torch_tensor(
-  low_align_all_train,
+  low_align_unq_train,
   requires_grad = TRUE # this is required for nn training; tracks computations to calc. deriv.
 )
 
 align_val_tensor <- torch_tensor(
-  low_align_all_val,
+  low_align_unq_val,
   requires_grad = TRUE 
 )
 
 align_test_tensor <- torch_tensor(
-  low_align_all_test,
+  low_align_unq_test,
   requires_grad = TRUE 
 )
 
-rm(low_align_all_train, low_align_all_val, low_align_all_test)
+rm(low_align_unq_train, low_align_unq_val, low_align_unq_test)
 
 # positions
 pos_train_tensor <- torch_tensor(
-  low_pos_all_train,
+  low_pos_unq_train,
   requires_grad = TRUE 
 )
 
 pos_val_tensor <- torch_tensor(
-  low_pos_all_val,
+  low_pos_unq_val,
   requires_grad = TRUE 
 )
 
 pos_test_tensor <- torch_tensor(
-  low_pos_all_test,
+  low_pos_unq_test,
   requires_grad = TRUE 
 )
 
-rm(low_pos_all_train, low_pos_all_val, low_pos_all_test)
+rm(low_pos_unq_train, low_pos_unq_val, low_pos_unq_test)
 
 # rhos
 rho_train_tensor <- torch_tensor(
-  low_rho_all_train_centered,
+  low_rho_unq_train_centered,
   requires_grad = TRUE
 )
 
 rho_val_tensor <- torch_tensor(
-  low_rho_all_val_centered,
+  low_rho_unq_val_centered,
   requires_grad = TRUE
 )
 
 rho_test_tensor <- torch_tensor(
-  low_rho_all_test_centered,
+  low_rho_unq_test_centered,
   requires_grad = TRUE
 )
 
-rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_centered, 
-   low_rho_all_val_centered, low_rho_all_test_centered)
+rm(low_rho_unq_train, low_rho_unq_val, low_rho_unq_test, low_rho_unq_train_centered, 
+   low_rho_unq_val_centered, low_rho_unq_test_centered)
 
 
 #--------------- DATA TENSORS TO DATA SETS --------------------
@@ -161,7 +161,7 @@ test_ds <- tensor_dataset(
 
 # need to transform data sets to loaders for use in batches
 train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
-validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
+validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 #test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
 #--------------- DEFINE MODEL --------------------
@@ -256,7 +256,7 @@ model <- flagel_cnn()
 #--------------- NETWORK PARAMETERS --------------------
 
 # set l2 regularization parameter
-l2_lambda <- 0.00001
+l2_lambda <- 0.0001
 
 # set learning rate for optimizer
 learning_rate <- 0.00001        #0.08
@@ -269,11 +269,11 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 29
+epochs <- 18
 
 # number of batches
-train_dl$.length() # 2250
-validation_dl$.length() # 750
+train_dl$.length() # 2250, 2223
+validation_dl$.length() # 750, 741
 
 
 #--------------- TRAIN MODEL --------------------
@@ -426,30 +426,25 @@ history_torch %>%
 
 #--------------- SAVE MODEL --------------------
 
+# save training history
 save(
-    history_torch, 
+    history_torch,
     file = file.path(
-      '/stor/home/mmj2238/genotype-alignment-information/notes',
-      'torch_full_29_epoch_1e-5_lr.RData')
+      path_to_results, 'models',
+      'torch_cnn_hist_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData')
   )
 
-#' # save training history
-#' save(
-#'   history,
-#'   file = file.path(
-#'     path_to_results, 
-#'     'models', 
-#'     #'torch_model_hist_low_dup_all_25_epoch_1e-4_lr.RData')
-#' )
-#' 
-#' # save the model
-#' torch_save(
-#'   model,
-#'   file.path(
-#'     path_to_models,
-#'     #"torch_model_hist_low_dup_all_25_epoch_1e-4_lr.rt"
-#'   )
-#' )
+# save the model
+model$eval()
+
+torch_save(
+  model,
+  file.path(
+    path_to_models,
+    "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
+  )
+)
+
 #' 
 #' # 
 #' # reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
@@ -457,41 +452,41 @@ save(
 #' # reload_model(align_test_tensor, pos_test_tensor)
 
 
-#--------------- SAVE MODEL PERFORMANCE --------------------
-
-rho_train_prediction <- rho_pred %>% as_array()
-rho_actual <- rho_train_tensor %>% as_array()
-
-performance_rho <- tibble(
-  sample = seq(1:72000),
-  rho_train_prediction,
-  rho_actual
-)
-
-performance_rho %>% 
-  ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
-  geom_point()
-
-# performance_rho %>% 
-#   ggplot(aes(x = rho_actual, y = rho_actual)) +
-#   geom_point()
-
-performance_rho %>% 
-  ggplot(aes(x = rho_actual)) +
-  geom_density()
-
-library(caret)
-caret::postResample(
-  pred = rho_train_prediction, 
-  obs = rho_actual
-)
-
-# save training history
-save(
-  performance_rho,
-  file = file.path(
-    path_to_results, 
-    'models', 
-    #'torch_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
-)
+#' #--------------- SAVE MODEL PERFORMANCE --------------------
+#' 
+#' rho_train_prediction <- rho_pred %>% as_array()
+#' rho_actual <- rho_train_tensor %>% as_array()
+#' 
+#' performance_rho <- tibble(
+#'   sample = seq(1:72000),
+#'   rho_train_prediction,
+#'   rho_actual
+#' )
+#' 
+#' performance_rho %>% 
+#'   ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
+#'   geom_point()
+#' 
+#' # performance_rho %>% 
+#' #   ggplot(aes(x = rho_actual, y = rho_actual)) +
+#' #   geom_point()
+#' 
+#' performance_rho %>% 
+#'   ggplot(aes(x = rho_actual)) +
+#'   geom_density()
+#' 
+#' library(caret)
+#' caret::postResample(
+#'   pred = rho_train_prediction, 
+#'   obs = rho_actual
+#' )
+#' 
+#' # save training history
+#' save(
+#'   performance_rho,
+#'   file = file.path(
+#'     path_to_results, 
+#'     'models', 
+#'     #'torch_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
+#' )
 
