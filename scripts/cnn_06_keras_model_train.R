@@ -48,30 +48,30 @@ num_chrom <- 50
 #--------------- LOAD IN DATA --------------------
 
 # load data saved from cnn_05_model_data_prep.R
-load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
-# load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
+# load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
+load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
-# #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
+# # #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
+# # 
+# # #rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+# # 
+# low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
+# low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
+# low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
 # 
-# #rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
+# low_rho_all_val <- low_rho_all_val[1:8000]
+# low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
+# low_rho_all_train <- low_rho_all_train[1:24000]
+# low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
+# low_rho_all_test <- low_rho_all_test[1:8000]
+# low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
 # 
-low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
-low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
-low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
-
-low_rho_all_val <- low_rho_all_val[1:8000]
-low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
-low_rho_all_train <- low_rho_all_train[1:24000]
-low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
-low_rho_all_test <- low_rho_all_test[1:8000]
-low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
-
-low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
-low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
-low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
+# low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
+# low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
+# low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
 
 #--------------- DEFINE MODEL --------------------
 
@@ -165,13 +165,13 @@ model %>%
 
 model %>%
   fit(
-    x = list(low_align_all_train, low_pos_all_train),
-    y = low_rho_all_train_centered,
+    x = list(low_align_unq_train, low_pos_unq_train),
+    y = low_rho_unq_train_centered,
     batch = 32,
-    epochs = 25,  
+    epochs = 18,  
     validation_data = list(
-      list(low_align_all_val, low_pos_all_val), 
-      low_rho_all_val_centered
+      list(low_align_unq_val, low_pos_unq_val), 
+      low_rho_unq_val_centered
     )
   ) -> history
 
