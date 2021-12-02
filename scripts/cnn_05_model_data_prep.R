@@ -355,7 +355,7 @@ low_align_unq_val <- low_dup_unq_align[sampled_unq_index[[2]], 1:174, 1:50]
 low_pos_all_val <- low_dup_pos_all[sampled_all_index[[2]], 1:174]
 low_pos_unq_val <- low_dup_pos_unq[sampled_unq_index[[2]], 1:174]
 low_rho_all_val <- low_dup_rho_all[sampled_all_index[[2]]]
-low_rho_unq_val <- low_dup_pos_unq[sampled_unq_index[[2]]]
+low_rho_unq_val <- low_dup_rho_unq[sampled_unq_index[[2]]]
 
 low_align_all_test <- low_dup_all_align[sampled_all_index[[3]], 1:174, 1:50]
 low_align_unq_test <- low_dup_unq_align[sampled_unq_index[[3]], 1:174, 1:50]
