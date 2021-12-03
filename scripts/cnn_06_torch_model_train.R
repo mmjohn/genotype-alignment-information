@@ -431,7 +431,7 @@ save(
     history_torch,
     file = file.path(
       path_to_results, 'models',
-      'torch_cnn_hist_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData')
+      'torch_cnn_hist_low_dup_unq_18_epoch_1e-5_lr_1e-4_l2.RData')
   )
 
 # save the model
@@ -441,7 +441,7 @@ torch_save(
   model,
   file.path(
     path_to_models,
-    "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
+    "torch_cnn_low_dup_unq_18_epoch_1e-5_lr_1e-4_l2.rt"
   )
 )
 

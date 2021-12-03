@@ -53,18 +53,6 @@ load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
-summary(low_rho_unq_train)
-summary(low_rho_unq_val)
-summary(low_rho_unq_test)
-
-summary(low_rho_unq_train_centered)
-summary(low_rho_unq_val_centered)
-summary(low_rho_unq_test_centered)
-
-hist(low_rho_unq_train)
-hist(low_rho_unq_val)
-hist(low_rho_unq_test)
-
 
 # # #--------------- USE SUBSET OF DATA FOR TORCH DEBUG --------------------
 # # 
