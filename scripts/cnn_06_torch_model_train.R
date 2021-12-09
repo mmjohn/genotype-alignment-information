@@ -37,26 +37,6 @@ load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
-# #--------------- USE SUBSET OF DATA FOR TORCH ADAPTIVE LEARNING RATE --------------------
-#
-# #rm(low_pos_all_test, low_rho_all_test, low_rho_all_test_centered, low_align_all_test)
-# 
-# low_pos_all_val <- low_pos_all_val[1:8000, 1:174]
-# low_pos_all_train <- low_pos_all_train[1:24000, 1:174]
-# low_pos_all_test <- low_pos_all_test[1:8000, 1:174]
-# 
-# low_rho_all_val <- low_rho_all_val[1:8000]
-# low_rho_all_val_centered <- low_rho_all_val_centered[1:8000]
-# low_rho_all_train <- low_rho_all_train[1:24000]
-# low_rho_all_train_centered <- low_rho_all_train_centered[1:24000]
-# low_rho_all_test <- low_rho_all_test[1:8000]
-# low_rho_all_test_centered <- low_rho_all_test_centered[1:8000]
-# 
-# low_align_all_val <- low_align_all_val[1:8000, 1:174, 1:50]
-# low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
-# low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
-
-
 #--------------- GLOBAL PARAMETERS --------------------
 
 # number of simulations in data set
@@ -90,11 +70,6 @@ align_val_tensor <- torch_tensor(
   requires_grad = TRUE 
 )
 
-align_test_tensor <- torch_tensor(
-  low_align_unq_test,
-  requires_grad = TRUE 
-)
-
 rm(low_align_unq_train, low_align_unq_val, low_align_unq_test)
 
 # positions
@@ -108,11 +83,6 @@ pos_val_tensor <- torch_tensor(
   requires_grad = TRUE 
 )
 
-pos_test_tensor <- torch_tensor(
-  low_pos_unq_test,
-  requires_grad = TRUE 
-)
-
 rm(low_pos_unq_train, low_pos_unq_val, low_pos_unq_test)
 
 # rhos
@@ -123,11 +93,6 @@ rho_train_tensor <- torch_tensor(
 
 rho_val_tensor <- torch_tensor(
   low_rho_unq_val_centered,
-  requires_grad = TRUE
-)
-
-rho_test_tensor <- torch_tensor(
-  low_rho_unq_test_centered,
   requires_grad = TRUE
 )
 
@@ -148,21 +113,14 @@ validation_ds <- tensor_dataset(
   data_pos = pos_val_tensor, 
   data_rho = rho_val_tensor
 )
-test_ds <- tensor_dataset(
-  data_align = align_test_tensor, 
-  data_pos = pos_test_tensor, 
-  data_rho = rho_test_tensor
-)
 
-#train_ds$.getitem(1)
-#train_ds$.getitem(1)$data_align
 
 #--------------- DATA SETS TO DATA LOADERS --------------------
 
 # need to transform data sets to loaders for use in batches
 train_dl <- train_ds %>% dataloader(batch_size = 32, shuffle = TRUE)
 validation_dl <- validation_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
-#test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
+
 
 #--------------- DEFINE MODEL --------------------
 
@@ -349,81 +307,6 @@ history_torch %>%
   ylab("Loss (RMSE)")
 
 
-# #--------------- EVALUATE MODEL --------------------
-# 
-# model$eval()
-# 
-# test_dl <- test_ds %>% dataloader(batch_size = test_ds$.length(), shuffle = FALSE)
-# iter <- test_dl$.iter()
-# b <- iter$.next()
-# test_loss <- c()
-# 
-# output <- model(b[[1]], b[[2]])
-# output <- torch_squeeze(output, 2)
-# test_loss <- nnf_mse_loss(output, b[[3]])
-# test_loss <- c(test_loss, test_loss$item())
-# preds <- output %>% as.array()
-# 
-# actual <- test_ds$tensors$data_rho %>% as_array()
-# 
-# performance_rho <- tibble(
-#   sample = seq(1:length(actual)),
-#   rho_train_prediction = preds,
-#   rho_actual = actual
-# )
-# 
-# performance_rho %>% 
-#   ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
-#   geom_point()
-# 
-# 
-# library(caret)
-# caret::postResample(
-#   pred = preds, 
-#   obs = actual
-# ) -> r2_results_torch
-# 
-# # RMSE           Rsquared       MAE 
-# # 1.1105597      0.3436091      0.9062051
-# 
-# performance_rho -> performance_torch
-# history -> history_torch
-# save(
-#   history_torch, performance_torch,
-#   r2_results_torch,
-#   file = file.path(
-#     '/stor/home/mmj2238/genotype-alignment-information/notes', 
-#     'torch_subset_25_epoch_1e-5_lr.RData')
-# )
-
-
-# test_batch <- function(b) {
-#   
-#   output <- model(b[[1]], b[[2]])
-#   output <- torch_squeeze(output, 2)
-#   labels <- b[[3]]
-#   loss <- nnf_mse_loss(output, labels)
-#   
-#   test_losses <<- c(test_losses, loss$item())
-#   # torch_max returns a list, with position 1 containing the values
-#   # and position 2 containing the respective indices
-#   predicted <- output %>% as_array()
-#   
-# }
-# 
-# test_losses <- c()
-# 
-# for (b in enumerate(test_dl)) {
-#   test_batch(b)
-# }
-# 
-# # warning message from above
-# # The `enumerate` construct is deprecated in favor of the `coro::loop` syntax.
-# # * See https://github.com/mlverse/torch/issues/558 for more information. 
-# 
-# mean(test_losses) #1.883575
-
-
 #--------------- SAVE MODEL --------------------
 
 # save training history
@@ -444,49 +327,4 @@ torch_save(
     "torch_cnn_low_dup_unq_18_epoch_1e-5_lr_1e-4_l2.rt"
   )
 )
-
-#' 
-#' # 
-#' # reload_model <- torch_load(file.path(path_to_models, "torch_model_hist_low_dup_all_150.rt"))
-#' # 
-#' # reload_model(align_test_tensor, pos_test_tensor)
-
-
-#' #--------------- SAVE MODEL PERFORMANCE --------------------
-#' 
-#' rho_train_prediction <- rho_pred %>% as_array()
-#' rho_actual <- rho_train_tensor %>% as_array()
-#' 
-#' performance_rho <- tibble(
-#'   sample = seq(1:72000),
-#'   rho_train_prediction,
-#'   rho_actual
-#' )
-#' 
-#' performance_rho %>% 
-#'   ggplot(aes(x = rho_train_prediction, y = rho_actual)) +
-#'   geom_point()
-#' 
-#' # performance_rho %>% 
-#' #   ggplot(aes(x = rho_actual, y = rho_actual)) +
-#' #   geom_point()
-#' 
-#' performance_rho %>% 
-#'   ggplot(aes(x = rho_actual)) +
-#'   geom_density()
-#' 
-#' library(caret)
-#' caret::postResample(
-#'   pred = rho_train_prediction, 
-#'   obs = rho_actual
-#' )
-#' 
-#' # save training history
-#' save(
-#'   performance_rho,
-#'   file = file.path(
-#'     path_to_results, 
-#'     'models', 
-#'     #'torch_model_results_low_dup_all_25_epoch_1e-4_lr.RData')
-#' )
 
