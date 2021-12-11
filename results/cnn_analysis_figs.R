@@ -66,8 +66,8 @@ r2_text <- data.frame(
 )
 
 mse_text <- data.frame(
-  label = c("*MSE* = 0.638",
-            "*MSE* = 0.665"),
+  label = c("*RMSE* = 0.638",
+            "*RMSE* = 0.665"),
   set = c("low_all", "low_unq"),
   x = c(3, 3),
   y = c(-3.5, -3.5)
@@ -109,7 +109,7 @@ fig_low_dup
 
 save_plot(
   file.path(path_to_results, 'figures', 'low_dup_performance.png'),
-  fig_low_dup, ncol = 1, nrow = 1, base_height = 3.71,
+  fig_low_dup, ncol = 1, nrow = 1, base_height = 4.71,
   base_asp = 1.618, base_width = NULL
 )
 
