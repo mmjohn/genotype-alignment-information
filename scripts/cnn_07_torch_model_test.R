@@ -31,9 +31,9 @@ path_to_models <- "/stor/work/Wilke/mmj2238/trained_models/dup_analysis"
 #--------------- LOAD IN DATA --------------------
 
 # load data saved from cnn_05_model_data_prep.R
-# load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
+load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
-load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
+# load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 # load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
 
 
@@ -45,40 +45,40 @@ load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
 
 # alignments
 align_test_tensor <- torch_tensor(
-  high_align_all_test,
-  #low_align_all_test,
+  #high_align_all_test,
+  low_align_all_test,
   #low_align_unq_test,
   requires_grad = TRUE 
 )
 
-rm(high_align_all_train, high_align_all_val, high_align_all_test)
-#rm(low_align_all_train, low_align_all_val, low_align_all_test)
+#rm(high_align_all_train, high_align_all_val, high_align_all_test)
+rm(low_align_all_train, low_align_all_val, low_align_all_test)
 #rm(low_align_unq_train, low_align_unq_val, low_align_unq_test)
 
 # positions
 pos_test_tensor <- torch_tensor(
-  high_pos_all_test,
-  #low_pos_all_test,
+  #high_pos_all_test,
+  low_pos_all_test,
   #low_pos_unq_test,
   requires_grad = TRUE 
 )
 
-rm(high_pos_all_train, high_pos_all_val, high_pos_all_test)
-#rm(low_pos_all_train, low_pos_all_val, low_pos_all_test)
+#rm(high_pos_all_train, high_pos_all_val, high_pos_all_test)
+rm(low_pos_all_train, low_pos_all_val, low_pos_all_test)
 #rm(low_pos_unq_train, low_pos_unq_val, low_pos_unq_test)
 
 # rhos
 rho_test_tensor <- torch_tensor(
-  high_rho_all_test_centered,
-  #low_rho_all_test_centered,
+  #high_rho_all_test_centered,
+  low_rho_all_test_centered,
   #low_rho_unq_test_centered,
   requires_grad = TRUE
 )
 
-rm(high_rho_all_train, high_rho_all_val, high_rho_all_test, high_rho_all_train_centered, 
-   high_rho_all_val_centered, high_rho_all_test_centered)
-# rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_centered, 
-#    low_rho_all_val_centered, low_rho_all_test_centered)
+# rm(high_rho_all_train, high_rho_all_val, high_rho_all_test, high_rho_all_train_centered, 
+#    high_rho_all_val_centered, high_rho_all_test_centered)
+rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_centered,
+   low_rho_all_val_centered, low_rho_all_test_centered)
 # rm(low_rho_unq_train, low_rho_unq_val, low_rho_unq_test, low_rho_unq_train_centered, 
 #    low_rho_unq_val_centered, low_rho_unq_test_centered)
 
@@ -100,11 +100,11 @@ test_dl <- test_ds %>% dataloader(batch_size = 32, shuffle = FALSE)
 
 #--------------- RELOAD MODEL --------------------
 
-#low_all_model <- torch_load(file.path(path_to_models, "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"))
+low_all_model <- torch_load(file.path(path_to_models, "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"))
 
 #low_unq_model <- torch_load(file.path(path_to_models, "torch_cnn_low_dup_unq_18_epoch_1e-5_lr_1e-4_l2.rt"))
 
-high_all_model <- torch_load(file.path(path_to_models, "torch_cnn_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"))
+#high_all_model <- torch_load(file.path(path_to_models, "torch_cnn_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"))
 
 #--------------- EVALUATE MODEL --------------------
 
@@ -129,7 +129,7 @@ coro::loop(for (b in test_dl) {
   test_batch(b)
 })
 
-mean(test_losses_all) # 0.6376667
+mean(test_losses_all) # 0.6477986
 
 actual <- test_ds$tensors$data_rho %>% as_array()
 
@@ -151,8 +151,9 @@ caret::postResample(
   obs = actual
 ) -> r2_results_low_all
 
+r2_results_low_all
 # RMSE           Rsquared       MAE
-# 0.7985404      0.7899489      0.6052439
+# 0.8048594      0.7895099      0.6052452 
 
 # low unique model
 test_batch <- function(b) {

@@ -24,6 +24,28 @@ path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
 
 #--------------- LOAD DATA SETS --------------------
 
+# CNN training data
+# low duplicate set
+load(
+  file.path(
+    path_to_results, 'models', 
+    'torch_cnn_hist_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
+  )
+)
+history_low <- history_torch
+rm(history_torch)
+
+# high duplicate set
+load(
+  file.path(
+    path_to_results, 'models', 
+    'torch_cnn_hist_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
+  )
+)
+history_high <- history_torch
+rm(history_torch)
+
+# CNN performance data
 # low duplicate set
 load(
   file.path(
@@ -32,48 +54,84 @@ load(
   )
 )
 
+# high duplicate set
 load(
   file.path(
     path_to_results, 'models', 
-    'torch_cnn_results_low_dup_unq_18_epoch_1e-5_lr_1e-4_l2.RData'
+    'torch_cnn_results_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
   )
 )
 
 
 #--------------- TIDY DATA --------------------
 
+# training data
+history_low %>% 
+  mutate(dup = "low") -> history_low
+
+history_high %>% 
+  mutate(dup = "high") -> history_high
+
+dup_training <- full_join(history_low, history_high) %>% 
+  pivot_longer(train_mean_losses:valid_mean_losses, names_to = "set", values_to = "mse")
+
+# performance data
 performance_rho_low_all %>% 
-  mutate(set = "low_all") -> performance_rho_low_all
+  mutate(set = "low") -> performance_rho_low_all
 
-performance_rho_low_unq %>% 
-  mutate(set = "low_unq") -> performance_rho_low_unq
+performance_rho_high_all %>% 
+  mutate(set = "high") -> performance_rho_high_all
 
-low_dup_performance <- full_join(performance_rho_low_all, performance_rho_low_unq)
+dup_performance <- full_join(performance_rho_low_all, performance_rho_high_all)
+
+
+#--------------- CNN TRAINING FIGURES --------------------
+
+dup_training %>%
+  ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
+  geom_point(size = 2) +
+  geom_path(size = 1.75) +
+  scale_color_viridis_d(
+    begin = 0.25,
+    name = "Set",
+    labels = c("Train", "Validation")
+  ) +
+  scale_x_continuous(name = "Epoch") +
+  scale_y_continuous(name = "RMSE") +
+  facet_grid(
+    vars(dup),
+    labeller = labeller(dup = c("low" = "Low", "high" = "High")),
+    scales = "free_y"
+  ) +
+  theme_half_open() +
+  background_grid() -> fig_dup_training
+
+fig_dup_training
 
 
 #--------------- CNN PERFORMANCE FIGURES --------------------
 
 # figures for cnn performance on test set
 r2_results_low_all
-r2_results_low_unq
+r2_results_high_all
 
 r2_text <- data.frame(
   label = c("*R*<sup>2</sup> = 0.790",
-            "*R*<sup>2</sup> = 0.783"),
-  set = c("low_all", "low_unq"),
+            "*R*<sup>2</sup> = 0.305"),
+  set = c("low", "high"),
   x = c(3, 3),
   y = c(-2.5, -2.5)
 )
 
 mse_text <- data.frame(
-  label = c("*RMSE* = 0.638",
-            "*RMSE* = 0.665"),
-  set = c("low_all", "low_unq"),
+  label = c("*RMSE* = 0.805",
+            "*RMSE* = 1.426"),
+  set = c("low", "high"),
   x = c(3, 3),
   y = c(-3.5, -3.5)
 )
 
-low_dup_performance %>%
+dup_performance %>%
   ggplot(aes(x = rho_predict, y = rho_actual)) +
   geom_point(alpha = 0.1) +
   geom_abline(color = "goldenrod", size = 1.5) +
@@ -93,46 +151,35 @@ low_dup_performance %>%
   scale_x_continuous(name = "Estimate") +
   facet_grid(
     vars(set),
-    labeller = labeller(set = c("low_all" = "All", "low_unq" = "Unique"))
+    labeller = labeller(set = c("low" = "Low", "high" = "High"))
   ) +
   theme_half_open(12) +
   background_grid() +
   panel_border() +
   theme(
     strip.background = element_rect(fill = "gray90")
-  ) -> fig_low_dup
+  ) -> fig_low_v_high
 
-fig_low_dup
+fig_low_v_high
 
 
 #--------------- SAVE FIGURES --------------------
 
 save_plot(
-  file.path(path_to_results, 'figures', 'low_dup_performance.png'),
-  fig_low_dup, ncol = 1, nrow = 1, base_height = 4.71,
+  file.path(path_to_results, 'figures', 'low_v_high_dup_training.png'),
+  fig_dup_training, ncol = 1, nrow = 1, base_height = 4.71,
+  base_asp = 1.618, base_width = NULL
+)
+
+
+save_plot(
+  file.path(path_to_results, 'figures', 'low_v_high_dup_performance.png'),
+  fig_low_v_high, ncol = 1, nrow = 1, base_height = 4.71,
   base_asp = 1.618, base_width = NULL
 )
 
 
 
 
-
-
-#--------------- CNN TRAINING FIGURES --------------------
-# 
-# torch_38_hist %>% 
-#   ggplot(aes(x = epochs, y = sqrt(loss), color = set)) +
-#   geom_point(size = 2) +
-#   geom_path(size = 1.75) +
-#   scale_color_viridis_d(
-#     begin = 0.25, 
-#     name = "Set",
-#     labels = c("Train", "Validation")
-#   ) +
-#   scale_x_continuous(name = "Epoch") +
-#   scale_y_continuous(name = "RMSE") +
-#   theme_half_open() +
-#   background_grid() -> fig_torch_38_hist
-# 
 
 
