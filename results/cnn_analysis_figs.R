@@ -86,9 +86,30 @@ dup_performance <- full_join(performance_rho_low_all, performance_rho_high_all)
 
 
 # back-transform rho performance data
-performance_rho_low_all
+# get mean from cnn_05_model_data_prep.R
+# low mean = 3.785511
+# high mean =  3.796978
+performance_rho_low_all %>% 
+  mutate(
+    est_tmp = rho_predict + 3.785511,
+    act_tmp = rho_actual + 3.785511
+  ) %>% 
+  mutate(
+    rho_predict_trans = exp(est_tmp),
+    rho_actual_trans = exp(act_tmp)
+  ) -> performance_rho_low_all
 
-performance_rho_high_all
+performance_rho_high_all %>% 
+  mutate(
+    est_tmp = rho_predict + 3.796978,
+    act_tmp = rho_actual + 3.796978
+  ) %>% 
+  mutate(
+    rho_predict_trans = exp(est_tmp),
+    rho_actual_trans = exp(act_tmp)
+  ) -> performance_rho_high_all
+
+dup_perf_trans <- full_join(performance_rho_low_all, performance_rho_high_all)
 
 
 #--------------- CNN TRAINING FIGURE --------------------
@@ -172,6 +193,39 @@ fig_low_v_high
 
 #--------------- CNN BACK TRANSFORMED FIGURE --------------------
 
+dup_perf_trans %>%
+  ggplot(aes(x = rho_actual_trans, y = rho_predict_trans)) +
+  geom_point(alpha = 0.1) +
+  geom_abline(color = "goldenrod", size = 1.5) +
+  # geom_richtext(
+  #   data = r2_text,
+  #   aes(x = x, y = y,label = label),
+  #   label.color = NA,
+  #   inherit.aes = FALSE
+  # ) +
+  # geom_richtext(
+  #   data = mse_text,
+  #   aes(x = x, y = y,label = label),
+  #   label.color = NA,
+  #   inherit.aes = FALSE
+  # ) +
+  scale_x_continuous(name = "Actual &rho;") +
+  scale_y_continuous(name = "Estimated &rho;") +
+  coord_fixed() +
+  facet_grid(
+    cols = vars(set),
+    labeller = labeller(set = c("low" = "Low", "high" = "High"))
+  ) +
+  theme_half_open(12) +
+  background_grid() +
+  panel_border() +
+  theme(
+    strip.background = element_rect(fill = "gray90"),
+    axis.title.x = element_markdown(),
+    axis.title.y = element_markdown()
+  ) -> fig_low_v_high_trans
+
+fig_low_v_high_trans
 
 
 
@@ -190,6 +244,11 @@ save_plot(
   base_asp = 1.618, base_width = NULL
 )
 
+save_plot(
+  file.path(path_to_results, 'figures', 'low_v_high_dup_perform_trans.png'),
+  fig_low_v_high_trans, ncol = 1, nrow = 1, base_height = 4.71,
+  base_asp = 1.618, base_width = NULL
+)
 
 
 

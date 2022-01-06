@@ -400,11 +400,11 @@ rm(high_dup_unq_align, high_dup_pos_unq, high_dup_rho_unq,
 #--------------- PREP DATA: TRANSFORM RHO --------------------
 
 # currently using the mean of the training set for all normalization - seems wrong ??
-mean_all_train <- mean(log(low_rho_all_train))
-mean_unq_train <- mean(log(low_rho_unq_train))
+mean_all_train <- mean(log(low_rho_all_train)) # 3.785511
+mean_unq_train <- mean(log(low_rho_unq_train)) # 3.819025
 
-h_mean_all_train <- mean(log(high_rho_all_train))
-h_mean_unq_train <- mean(log(high_rho_unq_train))
+h_mean_all_train <- mean(log(high_rho_all_train)) # 3.796978
+h_mean_unq_train <- mean(log(high_rho_unq_train)) # 4.437992
 
 # normalize all rho data sets
 # low dup set
