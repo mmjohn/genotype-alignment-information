@@ -85,7 +85,13 @@ performance_rho_high_all %>%
 dup_performance <- full_join(performance_rho_low_all, performance_rho_high_all)
 
 
-#--------------- CNN TRAINING FIGURES --------------------
+# back-transform rho performance data
+performance_rho_low_all
+
+performance_rho_high_all
+
+
+#--------------- CNN TRAINING FIGURE --------------------
 
 dup_training %>%
   ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
@@ -109,7 +115,7 @@ dup_training %>%
 fig_dup_training
 
 
-#--------------- CNN PERFORMANCE FIGURES --------------------
+#--------------- CNN PERFORMANCE FIGURE --------------------
 
 # figures for cnn performance on test set
 r2_results_low_all
@@ -119,20 +125,20 @@ r2_text <- data.frame(
   label = c("*R*<sup>2</sup> = 0.790",
             "*R*<sup>2</sup> = 0.305"),
   set = c("low", "high"),
-  x = c(3, 3),
-  y = c(-2.5, -2.5)
+  x = c(2.5, 2.5),
+  y = c(-3, -3)
 )
 
 mse_text <- data.frame(
   label = c("*RMSE* = 0.805",
             "*RMSE* = 1.426"),
   set = c("low", "high"),
-  x = c(3, 3),
+  x = c(2.5, 2.5),
   y = c(-3.5, -3.5)
 )
 
 dup_performance %>%
-  ggplot(aes(x = rho_predict, y = rho_actual)) +
+  ggplot(aes(x = rho_actual, y = rho_predict)) +
   geom_point(alpha = 0.1) +
   geom_abline(color = "goldenrod", size = 1.5) +
   geom_richtext(
@@ -147,10 +153,11 @@ dup_performance %>%
     label.color = NA,
     inherit.aes = FALSE
   ) +
-  scale_y_continuous(name = "Actual") +
-  scale_x_continuous(name = "Estimate") +
+  scale_x_continuous(name = "Actual") +
+  scale_y_continuous(name = "Estimate") +
+  coord_fixed() +
   facet_grid(
-    vars(set),
+    cols = vars(set),
     labeller = labeller(set = c("low" = "Low", "high" = "High"))
   ) +
   theme_half_open(12) +
@@ -161,6 +168,11 @@ dup_performance %>%
   ) -> fig_low_v_high
 
 fig_low_v_high
+
+
+#--------------- CNN BACK TRANSFORMED FIGURE --------------------
+
+
 
 
 #--------------- SAVE FIGURES --------------------
