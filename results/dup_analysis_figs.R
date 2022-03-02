@@ -92,6 +92,7 @@ full_join(dup_df, dup_unsort_df) -> dup_full_df
 
 dup_full_df %>% 
   filter(set == "fixed_mu") %>% 
+  mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
   ggplot(aes(x = pop_size, y = prop_dup, color = factor(mut_rate))) +
   geom_point(size = 2) +
   geom_path(size = 1.25) +
@@ -125,6 +126,7 @@ fig_dup_n_full
 
 dup_full_df %>% 
   filter(set == "fixed_n") %>% 
+  mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
   ggplot(aes(x = mut_rate, y = prop_dup, color = factor(pop_size))) +
   geom_point(size = 2) +
   geom_path(size = 1.25) +
