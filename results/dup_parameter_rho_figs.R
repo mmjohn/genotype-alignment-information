@@ -64,7 +64,7 @@ rho_mu_df %>%
     name = "&rho;"
   ) +
   scale_fill_discrete_sequential(
-    palette = "Light Grays",
+    palette = "TealGrn", #"Light Grays",
     labels = scales::math_format(
       expr = 1.5%*%10^.x, 
       format = function(x) log10(as.numeric(x)/1.5)
@@ -106,6 +106,7 @@ labels_n <- c(
 rho_mu_full %>% 
   filter(mut_rate == 1.5e-8) %>% 
   filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
+  mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
   ggplot(
     aes(x = rho, fill = status)
   ) +
@@ -169,6 +170,7 @@ labels_mu <- c(
 rho_n_full %>% 
   filter(pop_size == 10000) %>% 
   filter(mut_rate == 1.00e-10 | mut_rate == 3.16e-10 | mut_rate == 1.00e-09) %>% 
+  mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
   ggplot(
     aes(x = rho, fill = status)
   ) +
