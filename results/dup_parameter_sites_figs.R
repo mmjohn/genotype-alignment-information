@@ -62,6 +62,7 @@ labels_n <- c(
 sites_mu_full_df %>% 
   filter(mut_rate == 1.5e-8) %>% 
   filter(pop_size == 100 | pop_size == 316 | pop_size == 1000) %>% 
+  mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
   ggplot(aes(x = segsites, fill = status)) +
   geom_bar(position = "stack") +
   facet_grid(
@@ -110,6 +111,7 @@ labels_mu <- c(
 sites_n_full_df %>% 
   filter(pop_size == 10000) %>% 
   filter(mut_rate == 1e-10 | mut_rate == 3.16e-10 | mut_rate == 1e-9) %>% 
+  mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
   ggplot(aes(x = segsites, fill = status)) +
   geom_bar(position = "stack") +
   facet_grid(
