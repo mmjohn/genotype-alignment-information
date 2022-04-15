@@ -220,7 +220,7 @@ optimizer <- optim_adam(
 )
 
 # define number of epochs for training
-epochs <- 54 # 18
+epochs <- 18 # 54 # 18
 
 # number of batches
 train_dl$.length() # 2250
@@ -311,7 +311,7 @@ save(
     history_torch,
     file = file.path(
       path_to_results, 'models',
-      'torch_cnn_alt_hist_high_dup_all_54_epoch_1e-5_lr_1e-4_l2.RData'
+      'torch_cnn_alt_hist_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
       # 'torch_cnn_hist_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
     )
   )
@@ -323,7 +323,7 @@ torch_save(
   model,
   file.path(
     path_to_models,
-    "torch_cnn_alt_high_dup_all_54_epoch_1e-5_lr_1e-4_l2.rt"
+    "torch_cnn_alt_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
     # "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
   )
 )
