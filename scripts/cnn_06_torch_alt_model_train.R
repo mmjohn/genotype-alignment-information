@@ -349,7 +349,6 @@ save(
     history_torch,
     file = file.path(
       path_to_results, 'models',
-      # 'torch_cnn_alt_hist_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
       glue('torch_cnn_alt_hist_{sim_set}_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData')
     )
   )
@@ -361,7 +360,6 @@ torch_save(
   model,
   file.path(
     path_to_models,
-    #"torch_cnn_alt_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
     glue("torch_cnn_alt_{sim_set}_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt")
   )
 )
