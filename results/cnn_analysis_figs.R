@@ -53,6 +53,8 @@ load(
     'torch_cnn_results_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
   )
 )
+test_losses_low <- test_losses_all
+rm(test_losses_all)
 
 # high duplicate set
 load(
@@ -61,7 +63,6 @@ load(
     'torch_cnn_results_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
   )
 )
-
 
 #--------------- TIDY DATA --------------------
 
@@ -117,7 +118,7 @@ dup_perf_trans <- full_join(performance_rho_low_all, performance_rho_high_all)
 dup_training %>%
   ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
   geom_point(size = 2) +
-  geom_path(size = 1.75) +
+  geom_path(size = 1.75, alpha = 0.8) +
   scale_color_viridis_d(
     begin = 0.25,
     name = "Set",
@@ -128,7 +129,7 @@ dup_training %>%
   facet_grid(
     vars(dup),
     labeller = labeller(dup = c("low" = "Low", "high" = "High")),
-    scales = "free_y"
+    #scales = "free_y"
   ) +
   theme_half_open() +
   background_grid() -> fig_dup_training
@@ -193,22 +194,38 @@ fig_low_v_high
 
 #--------------- CNN BACK TRANSFORMED FIGURE --------------------
 
+r2_text_trans <- data.frame(
+  label = c("*R*<sup>2</sup> = 0.790",
+            "*R*<sup>2</sup> = 0.305"),
+  set = c("low", "high"),
+  x = c(250, 250),
+  y = c(1425, 1425)
+)
+
+mse_text_trans <- data.frame(
+  label = c("*RMSE* = 0.805",
+            "*RMSE* = 1.426"),
+  set = c("low", "high"),
+  x = c(250, 250),
+  y = c(1325, 1325)
+)
+
 dup_perf_trans %>%
   ggplot(aes(x = rho_actual_trans, y = rho_predict_trans)) +
   geom_point(alpha = 0.1) +
   geom_abline(color = "goldenrod", size = 1.5) +
-  # geom_richtext(
-  #   data = r2_text,
-  #   aes(x = x, y = y,label = label),
-  #   label.color = NA,
-  #   inherit.aes = FALSE
-  # ) +
-  # geom_richtext(
-  #   data = mse_text,
-  #   aes(x = x, y = y,label = label),
-  #   label.color = NA,
-  #   inherit.aes = FALSE
-  # ) +
+  geom_richtext(
+    data = r2_text_trans,
+    aes(x = x, y = y,label = label),
+    label.color = NA,
+    inherit.aes = FALSE
+  ) +
+  geom_richtext(
+    data = mse_text_trans,
+    aes(x = x, y = y,label = label),
+    label.color = NA,
+    inherit.aes = FALSE
+  ) +
   scale_x_continuous(name = "Actual &rho;") +
   scale_y_continuous(name = "Estimated &rho;") +
   coord_fixed() +
@@ -232,20 +249,20 @@ fig_low_v_high_trans
 #--------------- SAVE FIGURES --------------------
 
 save_plot(
-  file.path(path_to_results, 'figures', 'low_v_high_dup_training.png'),
+  file.path(path_to_results, 'figures', 'fig_low_v_high_dup_training.png'),
   fig_dup_training, ncol = 1, nrow = 1, base_height = 4.71,
   base_asp = 1.618, base_width = NULL
 )
 
 
 save_plot(
-  file.path(path_to_results, 'figures', 'low_v_high_dup_performance.png'),
+  file.path(path_to_results, 'figures', 'fig_low_v_high_dup_performance.png'),
   fig_low_v_high, ncol = 1, nrow = 1, base_height = 4.71,
   base_asp = 1.618, base_width = NULL
 )
 
 save_plot(
-  file.path(path_to_results, 'figures', 'low_v_high_dup_perform_trans.png'),
+  file.path(path_to_results, 'figures', 'fig_low_v_high_dup_perform_trans.png'),
   fig_low_v_high_trans, ncol = 1, nrow = 1, base_height = 4.71,
   base_asp = 1.618, base_width = NULL
 )
