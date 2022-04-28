@@ -132,7 +132,10 @@ dup_training %>%
     #scales = "free_y"
   ) +
   theme_half_open() +
-  background_grid() -> fig_dup_training
+  background_grid() +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA)
+  ) -> fig_dup_training
 
 fig_dup_training
 
@@ -186,7 +189,8 @@ dup_performance %>%
   background_grid() +
   panel_border() +
   theme(
-    strip.background = element_rect(fill = "gray90")
+    strip.background = element_rect(fill = "gray90"),
+    plot.background = element_rect(fill = "white", color = NA)
   ) -> fig_low_v_high
 
 fig_low_v_high
@@ -238,6 +242,7 @@ dup_perf_trans %>%
   panel_border() +
   theme(
     strip.background = element_rect(fill = "gray90"),
+    plot.background = element_rect(fill = "white", color = NA),
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown()
   ) -> fig_low_v_high_trans
@@ -253,7 +258,6 @@ save_plot(
   fig_dup_training, ncol = 1, nrow = 1, base_height = 4.71,
   base_asp = 1.618, base_width = NULL
 )
-
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_low_v_high_dup_performance.png'),
