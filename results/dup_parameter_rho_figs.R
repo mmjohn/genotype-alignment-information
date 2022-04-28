@@ -16,7 +16,7 @@ library(ggplot2)
 library(cowplot)
 library(ggtext)
 library(colorspace)
-
+library(patchwork)
 
 #--------------- GLOBAL PARAMETERS --------------------
 
@@ -260,6 +260,9 @@ fig_rho_site <- plot_grid(
   nrow = 2
 )
 
+fig_rho_site <- fig_rho_dup_v_unq_fixed_mu / fig_sites_sort_v_unsort_fixed_mu
+
+fig_rho_site
 
 #--------------- SAVE FIGURES --------------------
 
