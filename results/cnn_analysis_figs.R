@@ -17,6 +17,7 @@ library(ggplot2)
 library(cowplot)
 library(ggtext)
 library(colorspace)
+library(forcats)
 
 # paths to data
 path_to_results <- '/stor/home/mmj2238/genotype-alignment-information/results/'
@@ -150,19 +151,20 @@ r2_text <- data.frame(
   label = c("*R*<sup>2</sup> = 0.790",
             "*R*<sup>2</sup> = 0.305"),
   set = c("low", "high"),
-  x = c(2.5, 2.5),
-  y = c(-3, -3)
+  x = c(-2.25, -2.25),
+  y = c(2.95, 2.95)
 )
 
 mse_text <- data.frame(
   label = c("*RMSE* = 0.805",
             "*RMSE* = 1.426"),
   set = c("low", "high"),
-  x = c(2.5, 2.5),
-  y = c(-3.5, -3.5)
+  x = c(-2.25, -2.25),
+  y = c(2.35, 2.35)
 )
 
 dup_performance %>%
+  mutate(set = fct_relevel(set, "low", "high")) %>% 
   ggplot(aes(x = rho_actual, y = rho_predict)) +
   geom_point(alpha = 0.1) +
   geom_abline(color = "goldenrod", size = 1.5) +
