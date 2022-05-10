@@ -454,7 +454,7 @@ save_plot(
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_cnn_trans_perfrom.png'),
-  fig_cnn_trans_perform, ncol = 1, nrow = 1, base_height = 4.71,
+  fig_cnn_trans_perform, ncol = 1, nrow = 1, base_height = 5.71,
   base_asp = 1.618, base_width = NULL
 )
 
