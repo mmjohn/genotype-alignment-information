@@ -142,7 +142,7 @@ dup_full_df %>%
     name = "Percent duplicated"
   ) +
   scale_color_discrete_sequential(
-    palette = "Burg",
+    palette = "OrYel",
     labels = scales::math_format(
       format = function(x) log10(as.numeric(x))
     ),
@@ -165,7 +165,9 @@ plot_grid(
   nrow = 2,
   align = "v",
   labels = "AUTO"
-) -> fig_dup_n_mu_full
+) + theme(
+    plot.background = element_rect(fill = "white", color = NA)
+  ) -> fig_dup_n_mu_full
 
 fig_dup_n_mu_full
 
