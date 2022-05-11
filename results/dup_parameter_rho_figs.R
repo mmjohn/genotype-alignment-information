@@ -169,7 +169,9 @@ sites_mu_df %>%
   theme_bw(16) + # 12
   theme(
     strip.text = element_markdown(),
-    legend.position = "none"
+    legend.position = "none",
+    axis.text = element_text(color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, size = 1)
   ) -> fig_sites_sort_v_unsort_fixed_mu
 
 fig_sites_sort_v_unsort_fixed_mu
@@ -257,7 +259,9 @@ sites_n_df %>%
   theme_bw(16) +
   theme(
     strip.text = element_markdown(),
-    legend.position = "none"
+    legend.position = "none",
+    axis.text = element_text(color = "black"),
+    panel.border = element_rect(color = "black", fill = NA, size = 1)
   ) -> fig_sites_sort_v_unsort_fixed_n
 
 fig_sites_sort_v_unsort_fixed_n
