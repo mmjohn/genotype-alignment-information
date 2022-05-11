@@ -87,7 +87,7 @@ rho_mu_df %>%
 fig_rho_n
 
 
-#--------------- FIXED MU RHO DISTRIBUTION FIGURES --------------------
+#--------------- FIXED MU SITE & RHO DISTRIBUTION FIGURES --------------------
 
 # manually set labels
 labels_n <- c(
@@ -140,9 +140,6 @@ rho_mu_df %>%
 
 fig_rho_dup_v_unq_fixed_mu
 
-
-#--------------- FIXED MU SITES DISTRIBUTION FIGURES --------------------
-
 # figure showing seg. sites of duplicates compared to whole data set
 sites_mu_df %>% 
   filter(mut_rate == 1.5e-8) %>% 
@@ -177,14 +174,99 @@ sites_mu_df %>%
 
 fig_sites_sort_v_unsort_fixed_mu
 
-
-#--------------- SAVE FIGURES --------------------
-
-fig_rho_dup_v_unq_fixed_mu / fig_sites_sort_v_unsort_fixed_mu
-
-fig_rho_site <- fig_rho_dup_v_unq_fixed_mu / fig_sites_sort_v_unsort_fixed_mu
+fig_rho_site <- fig_rho_dup_v_unq_fixed_mu / fig_sites_sort_v_unsort_fixed_mu &
+  plot_annotation(tag_levels = "A")
 
 fig_rho_site
+
+
+#--------------- FIXED N SITE & RHO DISTRIBUTION FIGURES --------------------
+
+# manually set labels
+labels_mu <- c(
+  "1e-10" = "&mu; = 1.0e-10",
+  "3.16e-10" = "&mu; = 3.16e-10",
+  "1e-09" = "&mu; = 1.0e-9"
+)
+
+# figure showing rho values of duplicates compared to whole data set
+rho_n_df %>%
+  filter(pop_size == 10000) %>%
+  filter(mut_rate == 1.00e-10 | mut_rate == 3.16e-10 | mut_rate == 1.00e-09) %>%
+  ggplot(
+    aes(x = rho, fill = status)
+  ) +
+  geom_density(
+    aes(y = after_stat(count)),
+    alpha = 0.7,
+    position = "fill"
+  ) +
+  facet_grid(
+    cols = vars(mut_rate),
+    scales = "free_x",
+    labeller = labeller(mut_rate = labels_mu)
+  ) +
+  scale_x_continuous(
+    expand = c(0 ,0),
+    name = "&rho;"
+  ) +
+  scale_y_continuous(
+    breaks = c(0.25, 0.5, 0.75, 1),
+    expand = c(0, 0),
+    name = "Density"
+  ) +
+  scale_fill_discrete_sequential(
+    palette = "Burg",
+    name = "Identity",
+    labels = c("Duplicate", "Unique")
+  ) +
+  theme_linedraw(16) +
+  theme(
+    axis.title.x = element_markdown(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    strip.background = element_rect(fill = "grey92"),
+    strip.text = element_markdown(color = "black")
+  ) -> fig_rho_dup_v_unq_fixed_n
+
+fig_rho_dup_v_unq_fixed_n
+
+sites_n_df %>% 
+  filter(pop_size == 10000) %>% 
+  filter(mut_rate == 1e-10 | mut_rate == 3.16e-10 | mut_rate == 1e-9) %>% 
+  ggplot(aes(x = segsites, fill = status)) +
+  geom_bar(position = "stack") +
+  facet_grid(
+    cols = vars(mut_rate),
+    labeller = labeller(mut_rate = labels_mu)
+  ) +
+  scale_fill_discrete_sequential(
+    palette = "Burg",
+    name = "Identity",
+    labels = c("Duplicate", "Unique")
+  ) +
+  coord_cartesian(xlim = c(-0.2,10)) +
+  scale_x_continuous(
+    breaks = c(0, 2, 4, 6, 8, 10),
+    name = "Number of segregating sites"
+  ) +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, .05)), 
+    name = "Count"
+  ) +
+  theme_bw(16) +
+  theme(
+    strip.text = element_markdown(),
+    legend.position = "none"
+  ) -> fig_sites_sort_v_unsort_fixed_n
+
+fig_sites_sort_v_unsort_fixed_n
+
+fig_rho_site_n <- fig_rho_dup_v_unq_fixed_n / fig_sites_sort_v_unsort_fixed_n &
+  plot_annotation(tag_levels = "A")
+
+fig_rho_site_n
+
 
 #--------------- SAVE FIGURES --------------------
 
@@ -197,6 +279,12 @@ save_plot(
 save_plot(
   file.path(path_to_results, 'figures', 'fig_rho_site.png'),
   fig_rho_site, ncol = 1, nrow = 1, base_height = 5.71,
+  base_asp = 1.618, base_width = NULL
+)
+
+save_plot(
+  file.path(path_to_results, 'figures', 'fig_rho_site_n.png'),
+  fig_rho_site_n, ncol = 1, nrow = 1, base_height = 5.71,
   base_asp = 1.618, base_width = NULL
 )
 
