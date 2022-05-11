@@ -152,6 +152,13 @@ dup_alt_training <- full_join(history_alt_low, history_alt_high) %>%
 
 rm(history_alt_low, history_alt_high)
 
+cnn_train <- full_join(
+  dup_training,
+  dup_alt_training
+)
+
+rm(dup_training, dup_alt_training)
+
 # performance data
 performance_rho_low %>% 
   mutate(set = "low") -> performance_rho_low
@@ -254,53 +261,35 @@ rm(dup_perf_trans, dup_perf_alt_trans)
 
 #--------------- CNN TRAINING FIGURE --------------------
 
-dup_training %>%
+cnn_train$dup <- as.factor(cnn_train$dup)
+
+cnn_train %>%
+  mutate(dup = fct_relevel(dup, "low", "high")) %>% 
   ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
   geom_point(size = 2) +
   geom_path(size = 1.75, alpha = 0.8) +
   scale_color_viridis_d(
     begin = 0.25,
     name = "Set",
-    labels = c("Train", "Validation")
+    labels = c("Training", "Validation")
   ) +
   scale_x_continuous(name = "Epoch") +
   scale_y_continuous(name = "RMSE") +
   facet_grid(
-    vars(dup),
-    labeller = labeller(dup = c("low" = "Low", "high" = "High")),
-    #scales = "free_y"
+    cols = vars(dup),
+    rows = vars(model),
+    labeller = labeller(
+      dup = c("low" = "Low", "high" = "High"),
+      model = c("cnn" = "Alignments and positions", "alt_cnn" = "Alignment only")
+    )
   ) +
-  theme_half_open() +
+  theme_bw(16) +
   background_grid() +
   theme(
     plot.background = element_rect(fill = "white", color = NA)
-  ) -> fig_dup_training
+  ) -> fig_cnn_train
 
-fig_dup_training
-
-dup_alt_training %>%
-  ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
-  geom_point(size = 2) +
-  geom_path(size = 1.75, alpha = 0.8) +
-  scale_color_viridis_d(
-    begin = 0.25,
-    name = "Set",
-    labels = c("Train", "Validation")
-  ) +
-  scale_x_continuous(name = "Epoch") +
-  scale_y_continuous(name = "RMSE") +
-  facet_grid(
-    vars(dup),
-    labeller = labeller(dup = c("low" = "Low", "high" = "High")),
-    #scales = "free_y"
-  ) +
-  theme_half_open() +
-  background_grid() +
-  theme(
-    plot.background = element_rect(fill = "white", color = NA)
-  ) -> fig_dup_alt_training
-
-fig_dup_alt_training
+fig_cnn_train
 
 
 #--------------- CNN PERFORMANCE FIGURE --------------------
@@ -435,14 +424,8 @@ fig_cnn_trans_perform
 #--------------- SAVE FIGURES --------------------
 
 save_plot(
-  file.path(path_to_results, 'figures', 'fig_low_v_high_dup_training.png'),
-  fig_dup_training, ncol = 1, nrow = 1, base_height = 4.71,
-  base_asp = 1.618, base_width = NULL
-)
-
-save_plot(
-  file.path(path_to_results, 'figures', 'fig_alt_low_v_high_dup_training.png'),
-  fig_dup_alt_training, ncol = 1, nrow = 1, base_height = 4.71,
+  file.path(path_to_results, 'figures', 'fig_cnn_train.png'),
+  fig_cnn_train, ncol = 1, nrow = 1, base_height = 5.71,
   base_asp = 1.618, base_width = NULL
 )
 
