@@ -81,7 +81,8 @@ rho_mu_df %>%
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
     legend.title = element_markdown(),
-    legend.text = element_text(vjust = 1)
+    legend.text = element_text(vjust = 1),
+    axis.text = element_text(color = "black")
   ) -> fig_rho_n
 
 fig_rho_n
