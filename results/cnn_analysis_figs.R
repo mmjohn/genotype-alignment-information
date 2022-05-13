@@ -264,7 +264,10 @@ rm(dup_perf_trans, dup_perf_alt_trans)
 cnn_train$dup <- as.factor(cnn_train$dup)
 
 cnn_train %>%
-  mutate(dup = fct_relevel(dup, "low", "high")) %>% 
+  mutate(
+    dup = fct_relevel(dup, "low", "high"),
+    model = fct_relevel(model, "cnn", "alt_cnn")
+  ) %>% 
   ggplot(aes(x = epochs, y = sqrt(mse), color = set)) +
   geom_point(size = 2) +
   geom_path(size = 1.75, alpha = 0.8) +
@@ -324,7 +327,10 @@ mse_text <- data.frame(
 )
 
 cnn_perform %>%
-  mutate(set = fct_relevel(set, "low", "high")) %>% 
+  mutate(
+    set = fct_relevel(set, "low", "high"),
+    model = fct_relevel(model, "cnn", "alt_cnn")
+  ) %>% 
   ggplot() +
   geom_point(aes(x = rho_actual, y = rho_predict), alpha = 0.1) +
   geom_abline(color = "goldenrod", size = 1.5) +
@@ -381,7 +387,10 @@ fig_cnn_performance
 # )
 
 cnn_trans_perform %>%
-  mutate(set = fct_relevel(set, "low", "high")) %>% 
+  mutate(
+    set = fct_relevel(set, "low", "high"),
+    model = fct_relevel(model, "cnn", "alt_cnn")
+  ) %>% 
   ggplot(aes(x = rho_actual_trans, y = rho_predict_trans)) +
   geom_point(alpha = 0.1) +
   geom_abline(color = "goldenrod", size = 1.5) +
