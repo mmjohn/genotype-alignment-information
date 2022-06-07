@@ -193,7 +193,7 @@ dup_full_df %>%
     ),
     name = "&mu;"
   ) +
-  theme_half_open() +
+  theme_half_open(14) +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
@@ -224,7 +224,7 @@ dup_full_df %>%
     ),
     name = "*N*"
   ) +
-  theme_half_open() +
+  theme_half_open(14) +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
@@ -262,7 +262,7 @@ dup_full_df %>%
     ),
     name = "&mu;"
   ) +
-  theme_half_open() +
+  theme_half_open(14) +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
@@ -293,7 +293,7 @@ dup_full_df %>%
     ),
     name = "*N*"
   ) +
-  theme_half_open() +
+  theme_half_open(14) +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
@@ -349,7 +349,7 @@ plot_grid(
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_dup_by_param_full.png'),
-  fig_dup_param, ncol = 1, nrow = 1, base_height = 6.71,
+  fig_dup_param, ncol = 1, nrow = 1, base_height = 5.71,
   base_asp = 1.618, base_width = NULL
 )
 
