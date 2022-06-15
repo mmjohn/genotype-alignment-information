@@ -90,87 +90,6 @@ full_join(dup_df, dup_unsort_df) -> dup_full_df
 
 # figures for duplicates for sorted vs unsorted alignments in fixed n and mu parameter sets
 
-# dup_full_df %>% 
-#   filter(set == "fixed_mu") %>% 
-#   mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
-#   ggplot(aes(x = pop_size, y = prop_dup, color = factor(mut_rate))) +
-#   geom_point(size = 2) +
-#   geom_path(size = 1.25) +
-#   facet_grid(. ~ processing) +
-#   scale_x_log10(
-#     labels = scales::math_format(format = log10),
-#     name = "*N*"
-#   ) +
-#   scale_y_continuous(
-#     labels = scales::percent_format(),
-#     name = "Percent duplicated"
-#   ) +
-#   scale_color_discrete_sequential(
-#     palette = "TealGrn",
-#     labels = scales::math_format(
-#       expr = 1.5%*%10^.x, 
-#       format = function(x) log10(as.numeric(x)/1.5)
-#       ),
-#     name = "&mu;"
-#   ) +
-#   theme_half_open() +
-#   background_grid(minor = 'none')  +
-#   theme(
-#     axis.title.x = element_markdown(),
-#     axis.title.y = element_markdown(),
-#     legend.title = element_markdown(),
-#     legend.text = element_text(vjust = 1)
-#   ) -> fig_dup_n_full
-# 
-# fig_dup_n_full
-# 
-# dup_full_df %>% 
-#   filter(set == "fixed_n") %>% 
-#   mutate(processing = factor(processing, levels = c("Unsorted", "Sorted"))) %>% 
-#   ggplot(aes(x = mut_rate, y = prop_dup, color = factor(pop_size))) +
-#   geom_point(size = 2) +
-#   geom_path(size = 1.25) +
-#   facet_grid(. ~ processing) +
-#   scale_x_log10(
-#     labels = scales::math_format(
-#       format = log10
-#     ),
-#     name = "&mu;"
-#   ) +
-#   scale_y_continuous(
-#     labels = scales::percent_format(),
-#     name = "Percent duplicated"
-#   ) +
-#   scale_color_discrete_sequential(
-#     palette = "OrYel",
-#     labels = scales::math_format(
-#       format = function(x) log10(as.numeric(x))
-#     ),
-#     name = "*N*"
-#   ) +
-#   theme_half_open() +
-#   background_grid(minor = 'none')  +
-#   theme(
-#     axis.title.x = element_markdown(),
-#     axis.title.y = element_markdown(),
-#     legend.title = element_markdown(),
-#     legend.text = element_text(vjust = 1)
-#   ) -> fig_dup_mu_full
-# 
-# fig_dup_mu_full
-# 
-# 
-# plot_grid(
-#   fig_dup_n_full, fig_dup_mu_full,
-#   nrow = 2,
-#   align = "v",
-#   labels = "AUTO"
-# ) + theme(
-#     plot.background = element_rect(fill = "white", color = NA)
-#   ) -> fig_dup_n_mu_full
-# 
-# fig_dup_n_mu_full
-
 # unsorted
 dup_full_df %>% 
   filter(processing == "Unsorted" & set == "fixed_mu") %>% 
@@ -193,13 +112,15 @@ dup_full_df %>%
     ),
     name = "&mu;"
   ) +
-  theme_half_open(14) +
+  theme_half_open() +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
     legend.title = element_markdown(),
-    legend.text = element_text(vjust = 1)
+    legend.text = element_text(vjust = 1),
+    legend.position = c(1,1),
+    legend.justification = c(1,1)
   ) -> dup_unsort_mu
 
 dup_full_df %>% 
@@ -224,20 +145,16 @@ dup_full_df %>%
     ),
     name = "*N*"
   ) +
-  theme_half_open(14) +
+  theme_half_open() +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
     legend.title = element_markdown(),
-    legend.text = element_text(vjust = 1)
+    legend.text = element_text(vjust = 1),
+    legend.position = c(1,1),
+    legend.justification = c(1,1)
   ) -> dup_unsort_n
-
-
-plot_grid(
-  dup_unsort_mu + theme(legend.position="none"),
-  dup_unsort_n + theme(legend.position="none")
-) -> dup_unsort_full
 
 # sorted
 
@@ -262,13 +179,12 @@ dup_full_df %>%
     ),
     name = "&mu;"
   ) +
-  theme_half_open(14) +
+  theme_half_open() +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
-    legend.title = element_markdown(),
-    legend.text = element_text(vjust = 1)
+    legend.position = "none"
   ) -> dup_sort_mu
 
 dup_full_df %>% 
@@ -293,59 +209,26 @@ dup_full_df %>%
     ),
     name = "*N*"
   ) +
-  theme_half_open(14) +
+  theme_half_open() +
   background_grid(minor = 'none')  +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
-    legend.title = element_markdown(),
-    legend.text = element_text(vjust = 1)
+    legend.position = "none"
   ) -> dup_sort_n
 
 plot_grid(
-  dup_sort_mu + theme(legend.position="none"),
-  dup_sort_n + theme(legend.position="none")
-) -> dup_sort_full
-
-legend_mu <- get_legend(
-  dup_unsort_mu + 
-    guides(color = guide_legend(nrow = 1)) +
-    theme(legend.position = "bottom")
-)
-
-legend_n <- get_legend(
-  dup_unsort_n + 
-    guides(color = guide_legend(nrow = 1)) +
-    theme(legend.position = "bottom")
-)
-
-legends <- plot_grid(legend_mu, legend_n, nrow = 1)
-
-plots <- plot_grid(
-  dup_unsort_full,
-  dup_sort_full, 
-  labels = c("A", "B"),
-  align = "hv",
-  nrow = 2
-)
-
-plot_grid(
-  plots,
-  legends,
-  ncol = 1,
-  rel_heights = c(1, .1)
+  dup_unsort_mu, dup_unsort_n, dup_sort_mu, dup_sort_n,
+  ncol = 2,
+  labels = c("A", "", "B", "")
 ) + theme(
     plot.background = element_rect(fill = "white", color = NA)
   ) -> fig_dup_param
 
+fig_dup_param
+
 
 #--------------- SAVE FIGURES --------------------
-
-# save_plot(
-#   file.path(path_to_results, 'figures', 'fig_dup_by_param_full.png'),
-#   fig_dup_n_mu_full, ncol = 1, nrow = 1, base_height = 5.71,
-#   base_asp = 1.618, base_width = NULL
-# )
 
 save_plot(
   file.path(path_to_results, 'figures', 'fig_dup_by_param_full.png'),
