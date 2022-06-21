@@ -120,7 +120,12 @@ dup_full_df %>%
     legend.title = element_markdown(),
     legend.text = element_text(vjust = 1),
     legend.position = c(1,1),
-    legend.justification = c(1,1)
+    legend.justification = c(1,1),
+    legend.box.background = element_rect(
+      fill = "grey90", 
+      color = "white"
+    ),
+    legend.box.margin = margin(l = 1.5, r = 1.5)
   ) -> dup_unsort_mu
 
 dup_full_df %>% 
@@ -153,7 +158,12 @@ dup_full_df %>%
     legend.title = element_markdown(),
     legend.text = element_text(vjust = 1),
     legend.position = c(1,1),
-    legend.justification = c(1,1)
+    legend.justification = c(1,1),
+    legend.box.background = element_rect(
+      fill = "grey90", 
+      color = "white"
+    ),
+    legend.box.margin = margin(l = 1.5, r = 1.5, t = 2)
   ) -> dup_unsort_n
 
 # sorted
