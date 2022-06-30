@@ -14,6 +14,10 @@
 # Large data files
 *log_*.txt
 
+# Uncompressed 
+/scripts/msprime_simulations/cnn_sims/
+/scripts/msprime_simulations/dup_sims/
+
 # Old figures
 /results/tmpfigs/
 /results/initial_set/tmpfigs/
