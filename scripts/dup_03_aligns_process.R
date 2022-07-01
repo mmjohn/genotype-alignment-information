@@ -39,9 +39,6 @@ path_to_data <- '/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/'
 # size of alignments
 num_chrom <- 50
 
-# go back to padding to maximum size of alignments in set to accommodate large pops with high mu
-# # max_size - need to use one standard size for consistency across training and test sets
-# max_size <- 400 
 
 #--------------- READ IN DATA - FIXED MU --------------------
 

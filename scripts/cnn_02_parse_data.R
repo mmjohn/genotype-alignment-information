@@ -116,7 +116,6 @@ rm(pop_high_n1_unsorted, pop_high_n2_unsorted, pop_high_n3_unsorted,
 #--------------- PARSE DATA: RHOS --------------------
 
 # read in rho values
-# NEED TO MOVE NEW FUNCTION TO PACKAGE
 
 get_rho_msp <- function(all_data) {
   

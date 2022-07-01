@@ -2,7 +2,7 @@
 .Rhistory
 
 # Session data files
-*.RData
+.RData
 
 # User-specific files
 .Rproj.user
@@ -22,6 +22,9 @@
 /results/tmpfigs/
 /results/initial_set/tmpfigs/
 /results/figures/old/
+
+# Old models
+/results/models/old/
 
 # Notes
 /notes/

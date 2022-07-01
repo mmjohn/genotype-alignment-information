@@ -246,7 +246,6 @@ rm(pop_n3_mu1_unsorted, pop_n3_mu2_unsorted, pop_n3_mu3_unsorted,
 # read in rhos
 
 # read in rho value (y)  
-#get_rho_data() not working - NEED TO MOVE NEW FUNCTION TO PACKAGE
 get_rho_msp <- function(all_data) {
   
   # define pattern
@@ -379,7 +378,6 @@ rm(pop_n3_mu1_rho, pop_n3_mu2_rho, pop_n3_mu3_rho,
 #--------------- PARSE DATA: SEG SITES --------------------
 
 # read in seg. sites
-
 get_seg_sites <- function(all_data){
   
   # get relevant line numbers
