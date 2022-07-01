@@ -390,6 +390,7 @@ save(
   low_dup_set, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'low_dup_align_results.RData'
   )
 )
@@ -398,6 +399,7 @@ save(
   high_dup_set, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'high_dup_align_results.RData'
   )
 )

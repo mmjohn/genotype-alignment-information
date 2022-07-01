@@ -1155,6 +1155,7 @@ save(
   fixed_n1_vary_mu, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_fixed_n1_align_results.RData'
   )
 )
@@ -1163,6 +1164,7 @@ save(
   fixed_n2_vary_mu, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_fixed_n2_align_results.RData'
   )
 )
@@ -1171,6 +1173,7 @@ save(
   fixed_n3_vary_mu, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_fixed_n3_align_results.RData'
   )
 )
