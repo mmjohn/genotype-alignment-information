@@ -28,7 +28,7 @@ num_sims <- 120000
 
 # paths to data
 path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/cnn_dup/"
-path_to_index <- "/stor/home/mmj2238/genotype-alignment-information/results/"
+path_to_index <- "/stor/home/mmj2238/genotype-alignment-information/results/indices/"
 
 # size of alignments
 num_chrom <- 50

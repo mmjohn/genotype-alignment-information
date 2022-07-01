@@ -108,34 +108,34 @@ load(
 # fixed mu
 load(
   file = file.path(
-    path_to_results, 'fixed_mu1_align_indices.RData'
+    path_to_results, 'indices', 'fixed_mu1_align_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_mu2_align_indices.RData'
+    path_to_results, 'indices', 'fixed_mu2_align_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_mu3_align_indices.RData'
+    path_to_results, 'indices', 'fixed_mu3_align_indices.RData'
   )
 )
 
 # fixed n
 load(
   file = file.path(
-    path_to_results, 'fixed_n1_align_indices.RData'
+    path_to_results, 'indices', 'fixed_n1_align_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_n2_align_indices.RData'
+    path_to_results, 'indices', 'fixed_n2_align_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_n3_align_indices.RData'
+    path_to_results, 'indices', 'fixed_n3_align_indices.RData'
   )
 )
 
@@ -965,6 +965,7 @@ save(
   rho_mu_df, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_rho_fixed_mu_results.RData'
   )
 )
@@ -973,6 +974,7 @@ save(
   rho_n_df, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_rho_fixed_n_results.RData'
   )
 )
@@ -1801,6 +1803,7 @@ save(
   sites_mu_df, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_sites_fixed_mu_results.RData'
   )
 )
@@ -1809,6 +1812,7 @@ save(
   sites_n_df, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_sites_fixed_n_results.RData'
   )
 )

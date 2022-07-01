@@ -18,13 +18,12 @@
 /data/msprime_simulations/cnn_sims/
 /data/msprime_simulations/dup_sims/
 
-# Old figures
+# Old figures, models, and results
 /results/tmpfigs/
 /results/initial_set/tmpfigs/
 /results/figures/old/
-
-# Old models
 /results/models/old/
+/results/dup_align/old/
 
 # Notes
 /notes/

@@ -108,34 +108,34 @@ load(
 # fixed mu
 load(
   file = file.path(
-    path_to_results, 'fixed_mu1_align_unsort_indices.RData'
+    path_to_results, 'indices', 'fixed_mu1_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_mu2_align_unsort_indices.RData'
+    path_to_results, 'indices', 'fixed_mu2_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_mu3_align_unsort_indices.RData'
+    path_to_results, 'indices', 'fixed_mu3_align_unsort_indices.RData'
   )
 )
 
 # fixed n
 load(
   file = file.path(
-    path_to_results, 'fixed_n1_align_unsort_indices.RData'
+    path_to_results, 'indices', 'fixed_n1_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_n2_align_unsort_indices.RData'
+    path_to_results, 'indices', 'fixed_n2_align_unsort_indices.RData'
   )
 )
 load(
   file = file.path(
-    path_to_results, 'fixed_n3_align_unsort_indices.RData'
+    path_to_results, 'indices', 'fixed_n3_align_unsort_indices.RData'
   )
 )
 
@@ -1801,6 +1801,7 @@ save(
   sites_mu_unsort_df, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_sites_fixed_mu_unsort_results.RData'
   )
 )
@@ -1809,6 +1810,7 @@ save(
   sites_n_unsort_df, 
   file = file.path(
     path_to_results,
+    'dup_align',
     'dup_analysis_sites_fixed_n_unsort_results.RData'
   )
 )
