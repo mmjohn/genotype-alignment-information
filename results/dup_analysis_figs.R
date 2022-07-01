@@ -34,14 +34,14 @@ num_chrom <- 50
 
 # alignment data - sorted
 # fixed mu
-load(file.path(path_to_results, 'dup_analysis_fixed_mu1_align_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_mu2_align_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_mu3_align_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_mu1_align_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_mu2_align_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_mu3_align_results.RData'))
 
 # fixed n
-load(file.path(path_to_results, 'dup_analysis_fixed_n1_align_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_n2_align_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_n3_align_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_n1_align_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_n2_align_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_n3_align_results.RData'))
 
 # join alignment data sets
 dup_mu_df <- full_join(fixed_mu1_vary_n, fixed_mu2_vary_n) %>% 
@@ -57,14 +57,14 @@ rm(dup_mu_df, dup_n_df)
 
 # alignment data - unsorted
 # fixed mu
-load(file.path(path_to_results, 'dup_analysis_fixed_mu1_align_unsort_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_mu2_align_unsort_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_mu3_align_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_mu1_align_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_mu2_align_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_mu3_align_unsort_results.RData'))
 
 # fixed n
-load(file.path(path_to_results, 'dup_analysis_fixed_n1_align_unsort_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_n2_align_unsort_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_fixed_n3_align_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_n1_align_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_n2_align_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_fixed_n3_align_unsort_results.RData'))
 
 # join alignment data sets
 dup_mu_unsort_df <- full_join(fixed_mu1_vary_n_unsort, fixed_mu2_vary_n_unsort) %>% 
