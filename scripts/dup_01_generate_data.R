@@ -14,10 +14,6 @@ library(tidyr)
 library(readr)
 library(glue)
 
-# # load R package
-# library(devtools)
-# devtools::load_all("/stor/home/mmj2238/popgencnn/") # path for Wilk comp
-
 # record session info
 sessionInfo()
 
@@ -27,13 +23,8 @@ sessionInfo()
 path_to_data_TACC <- 'Ignore'
 path_to_scripts_TACC <- 'Ignore'
 
-# path_to_data_Wilkcomp <- '/stor/work/Wilke/mmj2238/rho_cnn_data/raw/'
-# path_to_scripts_Wilkcomp <- '/stor/home/mmj2238/bio-cnns/code/recombination/scripts/'
-
 
 #--------------- GENERATE SCRIPTS --------------------
-Sys.time()
-cat("\nGenerating scripts for simulations.....\n")
 
 # simulations for duplicate parameter analysis
 
@@ -347,7 +338,11 @@ mu1_n1_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu1_n1.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu1_n1.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -358,7 +353,11 @@ mu1_n2_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu1_n2.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu1_n2.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -369,7 +368,11 @@ mu1_n3_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu1_n3.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu1_n3.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -380,7 +383,11 @@ mu1_n4_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu1_n4.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu1_n4.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -391,7 +398,11 @@ mu1_n5_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu1_n5.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu1_n5.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -402,7 +413,11 @@ mu1_n6_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu1_n6.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu1_n6.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -414,7 +429,11 @@ mu2_n1_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu2_n1.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu2_n1.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -425,7 +444,11 @@ mu2_n2_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu2_n2.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu2_n2.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -436,7 +459,11 @@ mu2_n3_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu2_n3.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu2_n3.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -447,7 +474,11 @@ mu2_n4_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu2_n4.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu2_n4.sh' 
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -458,7 +489,11 @@ mu2_n5_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu2_n5.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu2_n5.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -469,7 +504,11 @@ mu2_n6_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu2_n6.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu2_n6.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -481,7 +520,11 @@ mu3_n1_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu3_n1.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu3_n1.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -492,7 +535,11 @@ mu3_n2_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu3_n2.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu3_n2.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -503,7 +550,11 @@ mu3_n3_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu3_n3.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu3_n3.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -514,7 +565,11 @@ mu3_n4_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu3_n4.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu3_n4.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -525,7 +580,11 @@ mu3_n5_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu3_n5.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu3_n5.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -536,7 +595,11 @@ mu3_n6_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedmu3_n6.sh', # updated for TACC
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedmu3_n6.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -857,7 +920,11 @@ n1_mu1_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn1_mu1.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn1_mu1.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -868,7 +935,11 @@ n1_mu2_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn1_mu2.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn1_mu2.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -879,7 +950,11 @@ n1_mu3_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn1_mu3.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn1_mu3.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -890,7 +965,11 @@ n1_mu4_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn1_mu4.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn1_mu4.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -901,7 +980,11 @@ n1_mu5_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn1_mu5.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn1_mu5.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -912,7 +995,11 @@ n1_mu6_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn1_mu6.sh',
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn1_mu6.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -924,7 +1011,11 @@ n2_mu1_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn2_mu1.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn2_mu1.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -935,7 +1026,11 @@ n2_mu2_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn2_mu2.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn2_mu2.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -946,7 +1041,11 @@ n2_mu3_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn2_mu3.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn2_mu3.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -957,7 +1056,11 @@ n2_mu4_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn2_mu4.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn2_mu4.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -968,7 +1071,11 @@ n2_mu5_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn2_mu5.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn2_mu5.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -979,7 +1086,11 @@ n2_mu6_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn2_mu6.sh',
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn2_mu6.sh'
+    ),
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -991,7 +1102,11 @@ n3_mu1_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn3_mu1.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn3_mu1.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -1002,7 +1117,11 @@ n3_mu2_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn3_mu2.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn3_mu2.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -1013,7 +1132,11 @@ n3_mu3_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn3_mu3.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn3_mu3.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -1024,7 +1147,11 @@ n3_mu4_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn3_mu4.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn3_mu4.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -1035,7 +1162,11 @@ n3_mu5_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn3_mu5.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn3_mu5.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,
@@ -1046,7 +1177,11 @@ n3_mu6_set_tidy %>%
   select(call) %>% 
   readr::write_delim(
     .,
-    'msprime_fixedn3_mu6.sh', 
+    file.path(
+      'data',
+      'msprime_simulations', 
+      'msprime_fixedn3_mu6.sh'
+    ), 
     delim = "",
     col_names = FALSE,
     quote_escape = FALSE,

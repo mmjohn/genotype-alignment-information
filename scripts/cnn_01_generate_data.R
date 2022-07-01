@@ -14,7 +14,6 @@ library(tidyr)
 library(readr)
 library(glue)
 
-
 #--------------- GLOBAL PARAMETERS --------------------
 
 # general msprime function call
@@ -233,7 +232,7 @@ low_dup_n1_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_low_n1000.sh'
     ),
@@ -248,7 +247,7 @@ low_dup_n2_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_low_n2000.sh'
     ),
@@ -263,7 +262,7 @@ low_dup_n3_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_low_n5000.sh'
     ),
@@ -278,7 +277,7 @@ low_dup_n4_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_low_n10000.sh'
     ),
@@ -293,7 +292,7 @@ low_dup_n5_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_low_n15000.sh'
     ),
@@ -308,7 +307,7 @@ low_dup_n6_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_low_n20000.sh'
     ),
@@ -323,7 +322,7 @@ high_dup_n1_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_high_n1000.sh'
     ),
@@ -338,7 +337,7 @@ high_dup_n2_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_high_n2000.sh'
     ),
@@ -353,7 +352,7 @@ high_dup_n3_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_high_n5000.sh'
     ),
@@ -368,7 +367,7 @@ high_dup_n4_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_high_n10000.sh'
     ),
@@ -383,7 +382,7 @@ high_dup_n5_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_high_n15000.sh'
     ),
@@ -398,7 +397,7 @@ high_dup_n6_set %>%
   readr::write_delim(
     .,
     file.path(
-      'scripts',
+      'data',
       'msprime_simulations', 
       'msprime_cnn_high_n20000.sh'
     ),
