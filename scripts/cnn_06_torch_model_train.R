@@ -18,6 +18,7 @@ library(tidyr)
 library(torch)
 library(coro)
 library(ggplot2)
+library(glue)
 
 # record session info
 sessionInfo()
@@ -27,30 +28,31 @@ path_to_data <- "/stor/work/Wilke/mmj2238/rho_cnn_data/parsed/dup_analysis/cnn_d
 path_to_results <- "/stor/home/mmj2238/genotype-alignment-information/results/"
 path_to_models <- "/stor/work/Wilke/mmj2238/trained_models/dup_analysis"
 
+# define data set
+sim_set <- "low"
+# sim_set <- "high"
 
 #--------------- LOAD IN DATA --------------------
 
 # load data saved from cnn_05_model_data_prep.R
-# load(file.path(path_to_data, 'model_data_low_dup_all.RData'))
-# load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
-load(file.path(path_to_data, 'model_data_high_dup_all.RData'))
-# load(file.path(path_to_data, 'model_data_high_dup_unq.RData'))
+load(file.path(path_to_data, glue('model_data_{sim_set}_dup_all.RData')))
 
 
 #--------------- GLOBAL PARAMETERS --------------------
 
 # number of simulations in data set
-num_sims <- 120000   # for all
-# num_sims <- 118512   # for low unq
-# num_sims <- 60000   # for high unq
+num_sims <- 120000  
 
 # size of alignments
 # number of samples
 num_chrom <- 50
 
 # number of sites
-# max_size <- 174   # for low
-max_size <- 27    # for high
+if (sim_set == "low") {
+  max_size <- 174
+} else {
+  max_size <- 27
+}
 
 
 #--------------- DATA TO TENSORS --------------------
@@ -60,54 +62,88 @@ max_size <- 27    # for high
 # error messages should clearly state if this is an issue
 
 # alignments
-align_train_tensor <- torch_tensor(
-  #low_align_all_train,
-  high_align_all_train,
-  requires_grad = TRUE # this is required for nn training; tracks computations to calc. deriv.
-)
+if (sim_set == "low") {
+  # train set
+  align_train_tensor <- torch_tensor(
+    low_align_all_train,
+    requires_grad = TRUE 
+  )
+  # validation set
+  align_val_tensor <- torch_tensor(
+    low_align_all_val
+  )
+  # clean up
+  rm(low_align_all_train, low_align_all_val, low_align_all_test)
+} else {
+  # train set
+  align_train_tensor <- torch_tensor(
+    high_align_all_train,
+    requires_grad = TRUE 
+  )
+  # validation set
+  align_val_tensor <- torch_tensor(
+    high_align_all_val
+  )
+  # clean up
+  rm(high_align_all_train, high_align_all_val, high_align_all_test)
+}
 
-align_val_tensor <- torch_tensor(
-  #low_align_all_val,
-  high_align_all_val,
-  requires_grad = TRUE 
-)
-
-#rm(low_align_all_train, low_align_all_val, low_align_all_test)
-rm(high_align_all_train, high_align_all_val, high_align_all_test)
 
 # positions
-pos_train_tensor <- torch_tensor(
-  #low_pos_all_train,
-  high_pos_all_train,
-  requires_grad = TRUE 
-)
-
-pos_val_tensor <- torch_tensor(
-  #low_pos_all_val,
-  high_pos_all_val,
-  requires_grad = TRUE 
-)
-
-#rm(low_pos_all_train, low_pos_all_val, low_pos_all_test)
-rm(high_pos_all_train, high_pos_all_val, high_pos_all_test)
+if (sim_set == "low") {
+  # train set
+  pos_train_tensor <- torch_tensor(
+    low_pos_all_train,
+    requires_grad = TRUE 
+  )
+  # validation set
+  pos_val_tensor <- torch_tensor(
+    low_pos_all_val
+  )
+  # clean up
+  rm(low_pos_all_train, low_pos_all_val, low_pos_all_test)
+} else {
+  # train set
+  pos_train_tensor <- torch_tensor(
+    high_pos_all_train,
+    requires_grad = TRUE 
+  )
+  # validation set
+  pos_val_tensor <- torch_tensor(
+    high_pos_all_val
+  )
+  # clean up
+  rm(high_pos_all_train, high_pos_all_val, high_pos_all_test)
+}
 
 # rhos
-rho_train_tensor <- torch_tensor(
-  #low_rho_all_train_centered,
-  high_rho_all_train_centered,
-  requires_grad = TRUE
-)
-
-rho_val_tensor <- torch_tensor(
-  #low_rho_all_val_centered,
-  high_rho_all_val_centered,
-  requires_grad = TRUE
-)
-
-# rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_centered, 
-#    low_rho_all_val_centered, low_rho_all_test_centered)
-rm(high_rho_all_train, high_rho_all_val, high_rho_all_test, high_rho_all_train_centered, 
-   high_rho_all_val_centered, high_rho_all_test_centered)
+if (sim_set == "low") {
+  # train set
+  rho_train_tensor <- torch_tensor(
+    low_rho_all_train_centered,
+    requires_grad = TRUE 
+  )
+  # validation set
+  rho_val_tensor <- torch_tensor(
+    low_rho_all_val_centered
+  )
+  # clean up
+  rm(low_rho_all_train, low_rho_all_val, low_rho_all_test, low_rho_all_train_centered, 
+     low_rho_all_val_centered, low_rho_all_test_centered)
+} else {
+  # train set
+  rho_train_tensor <- torch_tensor(
+    high_rho_all_train_centered,
+    requires_grad = TRUE 
+  )
+  # validation set
+  rho_val_tensor <- torch_tensor(
+    high_rho_all_val_centered
+  )
+  # clean up
+  rm(high_rho_all_train, high_rho_all_val, high_rho_all_test, high_rho_all_train_centered, 
+     high_rho_all_val_centered, high_rho_all_test_centered)
+}
 
 
 #--------------- DATA TENSORS TO DATA SETS --------------------
@@ -324,24 +360,46 @@ history_torch %>%
 #--------------- SAVE MODEL --------------------
 
 # save training history
-save(
+if (sim_set == "low") {
+  save(
     history_torch,
     file = file.path(
-      path_to_results, 'models',
-      'torch_cnn_hist_high_dup_all_54_epoch_1e-5_lr_1e-4_l2.RData'
-      # 'torch_cnn_hist_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
+      path_to_results, 
+      'models',
+      'torch_cnn_hist_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
     )
   )
+} else {
+  save(
+    history_torch,
+    file = file.path(
+      path_to_results, 
+      'models',
+      'torch_cnn_hist_high_dup_all_18_epoch_1e-5_lr_1e-4_l2.RData'
+    )
+  )
+}
 
 # save the model
 model$eval()
 
-torch_save(
-  model,
-  file.path(
-    path_to_models,
-    "torch_cnn_high_dup_all_54_epoch_1e-5_lr_1e-4_l2.rt"
-    # "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
+if (sim_set == "low") {
+  torch_save(
+    model,
+    file.path(
+      path_to_models,
+      "torch_cnn_low_dup_all_18_epoch_1e-5_lr_1e-4_l2.rt"
+    )
   )
-)
+} else {
+  torch_save(
+    model,
+    file.path(
+      path_to_models,
+      "torch_cnn_high_dup_all_54_epoch_1e-5_lr_1e-4_l2.rt"
+    )
+  )
+}
+
+
 
