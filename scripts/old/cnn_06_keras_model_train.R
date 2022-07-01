@@ -73,6 +73,7 @@ load(file.path(path_to_data, 'model_data_low_dup_unq.RData'))
 # low_align_all_train <- low_align_all_train[1:24000, 1:174, 1:50]
 # low_align_all_test <- low_align_all_test[1:8000, 1:174, 1:50]
 
+
 #--------------- DEFINE MODEL --------------------
 
 # set l2 regularization parameter
