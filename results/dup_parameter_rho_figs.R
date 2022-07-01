@@ -33,17 +33,13 @@ num_chrom <- 50
 #--------------- LOAD DATA SETS --------------------
 
 # rho data - sorted alignments
-load(file.path(path_to_results, 'dup_analysis_rho_fixed_mu_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_rho_fixed_n_results.RData'))
-
-# # rho data - unsorted alignments
-# load(file.path(path_to_results, 'dup_analysis_rho_fixed_mu_unsort_results.RData'))
-# load(file.path(path_to_results, 'dup_analysis_rho_fixed_n_unsort_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_rho_fixed_mu_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_rho_fixed_n_results.RData'))
 
 # segregating sites data
 # sorted, padded alignments
-load(file.path(path_to_results, 'dup_analysis_sites_fixed_mu_results.RData'))
-load(file.path(path_to_results, 'dup_analysis_sites_fixed_n_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_sites_fixed_mu_results.RData'))
+load(file.path(path_to_results, 'dup_align', 'dup_analysis_sites_fixed_n_results.RData'))
 
 
 #--------------- RHO DISTRIBUTION FIGURES --------------------
