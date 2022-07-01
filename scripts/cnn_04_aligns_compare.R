@@ -410,6 +410,7 @@ save(
   low_n4_index, low_n5_index, low_n6_index,
   file = file.path(
     path_to_results,
+    'indices',
     'low_dup_align_indices.RData'
   )
 )
@@ -419,6 +420,7 @@ save(
   high_n4_index, high_n5_index, high_n6_index,
   file = file.path(
     path_to_results,
+    'indices',
     'high_dup_align_indices.RData'
   )
 )

@@ -1184,6 +1184,7 @@ save(
   n1_mu4_index, n1_mu5_index, n1_mu6_index,
   file = file.path(
     path_to_results,
+    'indices',
     'fixed_n1_align_unsort_indices.RData'
   )
 )
@@ -1193,6 +1194,7 @@ save(
   n2_mu4_index, n2_mu5_index, n2_mu6_index,
   file = file.path(
     path_to_results,
+    'indices',
     'fixed_n2_align_unsort_indices.RData'
   )
 )
@@ -1202,6 +1204,7 @@ save(
   n3_mu4_index, n3_mu5_index, n3_mu6_index,
   file = file.path(
     path_to_results,
+    'indices',
     'fixed_n3_align_unsort_indices.RData'
   )
 )
